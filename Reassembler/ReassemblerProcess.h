@@ -222,7 +222,7 @@ struct ReassemblerParameters
     int minOverlap;
     int maxOverlap;
 
-    // PACBIO
+    // TGS
     int minKmerLength;
     int FMWKmerThreshold;
     int seedKmerThreshold;
@@ -230,6 +230,7 @@ struct ReassemblerParameters
 
     size_t maxSeedInterval;
     int tgsAvgLen;
+	int searchRange;
 
     // first, reassemble overlap
     // second, reassemble non overlap by one tgs
@@ -348,14 +349,22 @@ class ReassemblerPostProcess : public TGSReassemblerBasicElements
         std::string mostConnectContig(std::vector<OverlapRelation> inputRelationVec);
 		// return most seeds connect tgs 
 		int mostConnectTGS(OverlapSeedVecInfo input);
+		// return most seeds strand 
+		bool mostSeedStrand(OverlapSeedVecInfo input);
+		// return most tgs connect contig 
+		std::string mostTGSConnectContig(OverlapSeedVecInfo input);
         // check two contigs are overlap or not
         int connectVote(size_t tgsIdx, std::vector<OverlapRelation> inputRelationVec);
 		// check two contigs side are not connect, store this pair in hash if not connect
         bool checkConnect(std::string firstID, bool firstSide,std::string secondID, bool secondSide);
         //
 		std::vector<ReassemblerSeedFeature> filterRepeatSeed(std::vector<ReassemblerSeedFeature> inputSeedVec);
+		//
+		void filterErrorStrand(OverlapSeedVecInfo input, OverlapSeedVecInfo &result, bool mostStrand);
 		// 
 		void filterErrorSeeds(OverlapSeedVecInfo input, OverlapSeedVecInfo &result, int mostTGS);
+		//develop
+		void filterErrorSeeds2(OverlapSeedVecInfo input, OverlapSeedVecInfo &result, std::string mostConnectContig);
 		// third step reassembler, construct kmer hash map and tgs seeds vector
 		void buildKmerHashAndTGSKmerVec( std::string tgsConnectContig, bool connectContigSide, int connectContigLength, int tgsIndex, std::vector<ReassemblerSeedFeature> inputSeedVec);
 		//

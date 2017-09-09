@@ -1,0 +1,17 @@
+aclocal.m4
+compile
+depcomp
+missing
+install-sh
+Makefile
+Makefile.in
+stamp-h1
+configure
+config.status
+config.log
+config.h
+config.h.in
+
+*/*.o
+*/*.a
+

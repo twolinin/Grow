@@ -71,6 +71,7 @@ namespace opt
     static int seedKmerThreshold = 2;
     static int collect = 5;
     static int tgsAvgLen = 3000;
+	static int searchRange = 5000;
     
     static bool isFirst = false;
     static bool isSecond = false;
@@ -218,6 +219,7 @@ int ReassemblerMain(int argc, char** argv)
     ecParams.collectedSeeds    = opt::collect;
     ecParams.maxSeedInterval   = 500;
     ecParams.tgsAvgLen      = opt::tgsAvgLen*1.5;
+	ecParams.searchRange    = opt::searchRange;
     ecParams.isFirst  = opt::isFirst;
     ecParams.isSecond = opt::isSecond;
     ecParams.isThird  = opt::isThird;
@@ -229,7 +231,7 @@ int ReassemblerMain(int argc, char** argv)
               << "large kmer freq. cutoff : " << ecParams.seedKmerThreshold  << std::endl
               << "small kmer freq. cutoff : " << ecParams.FMWKmerThreshold   << std::endl
               << "TGS average length   :    " << opt::tgsAvgLen              << std::endl
-              << "search range (avg length 1.5*) : "<< ecParams.tgsAvgLen << std::endl
+              << "search range : "<< ecParams.searchRange << std::endl
 	      << std::endl;
 				
     // Setup post-processor
