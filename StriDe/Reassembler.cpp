@@ -272,7 +272,7 @@ int ReassemblerMain(int argc, char** argv)
     {
         postProcessor.buildGraphByOneTGS();
 		
-	SGGraphStatsVisitor statsVisit;
+	    SGGraphStatsVisitor statsVisit;
         pGraph->visit(statsVisit);        
         pGraph->writeDot("1_Raw_Overlap_Graph.dot", 0);
         
@@ -284,9 +284,9 @@ int ReassemblerMain(int argc, char** argv)
     }
     else if(opt::isSecond)
     {
-	postProcessor.buildGraphByOneTGS();
+	    postProcessor.buildGraphByOneTGS();
 		
-	SGGraphStatsVisitor statsVisit;
+	    SGGraphStatsVisitor statsVisit;
         pGraph->visit(statsVisit);        
         pGraph->writeDot("1_Raw_NonOverlap_Graph.dot", 0);
         
@@ -298,17 +298,19 @@ int ReassemblerMain(int argc, char** argv)
     }
     else if(opt::isThird)
     {
-	postProcessor.buildGraphByTwoTGS();
+	    postProcessor.buildGraphByTwoTGS();
 		
-	SGGraphStatsVisitor statsVisit;
+	    SGGraphStatsVisitor statsVisit;
         pGraph->visit(statsVisit);        
         pGraph->writeDot("1_Raw_NonOverlapByTwoTGS_Graph.dot", 0);
         
         pGraph->pacbioSimplify();
         pGraph->writeDot("2_make_NonOverlapByTwoTGS_Graph.dot", 0);
         
+		//SGFastaVisitor av("Scaffold_third_NonOverlapByTwoPB.fa");
         SGFastaVisitor av("Reassembler_third_NonOverlapByTwoPB.fa");
-        pGraph->visit(av);
+        
+		pGraph->visit(av);
     }
     
     delete pBWT;

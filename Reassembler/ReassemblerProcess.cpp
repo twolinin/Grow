@@ -11,10 +11,12 @@
 #include "ContigVertex.h"
 #include "ContigEdge.h"
 
-		///************************************************///
+        ///************************************************///
         ///******* TGS Reassemble Basic Elements *********///
         ///************************************************///
 
+bool showProcess = false;
+		
 TGSReassemblerBasicElements::TGSReassemblerBasicElements(const ReassemblerParameters params): m_params(params)
 {
 }
@@ -23,6 +25,11 @@ TGSReassemblerBasicElements::~TGSReassemblerBasicElements()
 }
 
 std::vector<ReassemblerSeedFeature> TGSReassemblerBasicElements::seedingByDynamicKmer(const std::string readSeq)
+{
+    return seedingByDynamicKmer( readSeq, 0, readSeq.length() );
+}
+
+std::vector<ReassemblerSeedFeature> TGSReassemblerBasicElements::seedingByDynamicKmer(const std::string readSeq, int scanStart, int scanEnd)
 {
     std::vector<ReassemblerSeedFeature> seedVec;
     const size_t smallKmerSize = m_params.kmerLength;
@@ -37,7 +44,7 @@ std::vector<ReassemblerSeedFeature> TGSReassemblerBasicElements::seedingByDynami
 
     // search for solid kmers and group consecutive solids kmers into one seed
     // reduce kmer size and kmerThreshold if no seeds can be found within maxSeedInterval
-    for(size_t i = 0 ; i+dynamicKmerSize <= readSeq.length() ; i++)
+    for(size_t i = scanStart ; i+dynamicKmerSize <= scanEnd ; i++)
     {
         std::string kmer = readSeq.substr(i, dynamicKmerSize);
 
@@ -58,7 +65,7 @@ std::vector<ReassemblerSeedFeature> TGSReassemblerBasicElements::seedingByDynami
             
             // Group consecutive solid kmers into one seed if possible
             size_t maxKmerFreq = kmerFreqs;
-            for(i++ ; i+dynamicKmerSize <= readSeq.length(); i++)
+            for(i++ ; i+dynamicKmerSize <= scanEnd; i++)
             {
                 kmer = readSeq.substr(i, dynamicKmerSize);
 
@@ -155,10 +162,12 @@ std::vector<ReassemblerSeedFeature> TGSReassemblerBasicElements::collectKmer(con
         size_t rvcKmerFreqsUsingTGS = BWTAlgorithms::countSequenceOccurrencesSingleStrand(reverseKmer, m_params.indices);
         size_t KmerFreqsUsingTGS = fwdKmerFreqsUsingTGS + rvcKmerFreqsUsingTGS;
         
-		if(KmerFreqsUsingTGS<2)continue;
+		if( fwdKmerFreqsUsingTGS == 0 || rvcKmerFreqsUsingTGS == 0 )continue;
 		
-		if(isLowComplexity(kmer, 0.7)) continue;
-		
+        if(KmerFreqsUsingTGS<2)continue;
+        
+        if(isLowComplexity(kmer, 0.7)) continue;
+        
         ReassemblerSeedFeature newSeed(i, readSeq.substr(i, kmerSize), false, kmerSize, 0);
         seedVec.push_back(newSeed);    
     }
@@ -319,7 +328,7 @@ std::string TGSReassemblerBasicElements::backtrackTGS(const BWTIndexSet indices,
     return backtrackTGS;
 }
 
-		///************************************************///
+        ///************************************************///
         ///*********** TGS Reassembler Process ************///
         ///************************************************///
 
@@ -349,10 +358,10 @@ ReassemblerResult ReassemblerProcess::PBReassembler(const SequenceWorkItem& work
     std::string headContigSeq = contigSeq.substr(0,m_params.searchRange);
     std::string tailContigSeq = contigSeq.substr(contigSeq.length()-m_params.searchRange,m_params.searchRange);
 
-	// using recheck overlap position
-	std::string headPartialSeq = contigSeq.substr(0,400);
+    // using recheck overlap position
+    std::string headPartialSeq = contigSeq.substr(0,400);
     std::string tailPartialSeq = contigSeq.substr(contigSeq.length()-400,400);
-	
+    
     // find seeds on head and tail n length
     headSeedVec = seedingByDynamicKmer(headContigSeq);
     tailSeedVec = seedingByDynamicKmer(tailContigSeq);
@@ -366,8 +375,8 @@ ReassemblerResult ReassemblerProcess::PBReassembler(const SequenceWorkItem& work
     {
         SeedByTGSHashMap::iterator pbIterator = result.seedHash.find((*iter).tgsIndex);
         
-		//std::cout << (*iter).seedLength << " ";
-		
+        //std::cout << (*iter).seedLength << " ";
+        
         // filter short seed
         if( (*iter).seedLength<=15 )continue;
 
@@ -423,7 +432,7 @@ void ReassemblerProcess::findSeedOnLongRead(const BWTIndexSet indices, std::stri
     }
 }
 
-		///************************************************///
+        ///************************************************///
         ///********* TGS Reassembler Post Process *********///
         ///************************************************///
 
@@ -436,13 +445,71 @@ ReassemblerPostProcess::ReassemblerPostProcess(const ReassemblerParameters param
     singleContigHashMap.set_deleted_key(-1);
     collectAllKmerHashMap.set_deleted_key("");
     
+	onePB = ResultCount();
+    twoPB = ResultCount();
+	
     seedCount_15 = 0;
-	seedCount_11 = 0;
+    seedCount_11 = 0;
 }
 ReassemblerPostProcess::~ReassemblerPostProcess()
 {
+    std::cout << "\n";
+	
+	std::cout << "tgs's 11mer freq by tgs indices :\n"  
+              << kmerSizeFreqByTGS_11[seedCount_11/10*1] << "\t" << kmerSizeFreqByTGS_11[seedCount_11/10*2] << "\t"
+              << kmerSizeFreqByTGS_11[seedCount_11/10*3] << "\t" << kmerSizeFreqByTGS_11[seedCount_11/10*4] << "\t"
+              << kmerSizeFreqByTGS_11[seedCount_11/10*5] << "\t" << kmerSizeFreqByTGS_11[seedCount_11/10*6] << "\t"
+              << kmerSizeFreqByTGS_11[seedCount_11/10*7] << "\t" << kmerSizeFreqByTGS_11[seedCount_11/10*8] << "\t"
+              << kmerSizeFreqByTGS_11[seedCount_11/10*9] << "\t" << kmerSizeFreqByTGS_11[seedCount_11-1]    << "\n";
+	
+	std::cout << "\ntgs's 15mer freq by tgs indices :\n"  
+              << kmerSizeFreqByTGS_15[seedCount_15/10*1] << "\t" << kmerSizeFreqByTGS_15[seedCount_15/10*2] << "\t"
+              << kmerSizeFreqByTGS_15[seedCount_15/10*3] << "\t" << kmerSizeFreqByTGS_15[seedCount_15/10*4] << "\t"
+              << kmerSizeFreqByTGS_15[seedCount_15/10*5] << "\t" << kmerSizeFreqByTGS_15[seedCount_15/10*6] << "\t"
+              << kmerSizeFreqByTGS_15[seedCount_15/10*7] << "\t" << kmerSizeFreqByTGS_15[seedCount_15/10*8] << "\t"
+              << kmerSizeFreqByTGS_15[seedCount_15/10*9] << "\t" << kmerSizeFreqByTGS_15[seedCount_15-1]    << "\n";
+                                        
+    std::cout << "tgs's 15mer freq by contig indices :\n" 
+              << kmerFreqByContig_15[seedCount_15/10*1] << "\t" << kmerFreqByContig_15[seedCount_15/10*2] << "\t"
+              << kmerFreqByContig_15[seedCount_15/10*3] << "\t" << kmerFreqByContig_15[seedCount_15/10*4] << "\t"
+              << kmerFreqByContig_15[seedCount_15/10*5] << "\t" << kmerFreqByContig_15[seedCount_15/10*6] << "\t"
+              << kmerFreqByContig_15[seedCount_15/10*7] << "\t" << kmerFreqByContig_15[seedCount_15/10*8] << "\t"
+              << kmerFreqByContig_15[seedCount_15/10*9] << "\t" << kmerFreqByContig_15[seedCount_15-1]    << "\n";
+
+    std::cout<<"\n";
+	
+	if( m_params.isThird )
+    {    
+        std::cout<< "tgs align one contig : "                        << twoPB.totalCount            << "\n"
+                 << "pass tgs number      : "                        << twoPB.passCount             << "\n"
+                 << "case 1. two flank are repeats   : "             << twoPB.repeatSeeds           << "\n"
+                 << "case 2. seeds num less than two : "             << twoPB.seedsThreshold        << "\n"
+                 << "case 3. seeds different strand  : "             << twoPB.seedDifferentStrand   << "\n"
+                 << "case 4. seeds order discordant  : "             << twoPB.seedOrderDiscordant   << "\n"
+                 << "case 5. abnormal overlap length : "             << twoPB.abnormalOverlapLength << "\n"
+                 << "case 6. abnormal distance between two seeds : " << twoPB.abnormalDistance      << "\n"
+                 << "case 7. insufficient non overlap length     : " << twoPB.insufficientLength    << "\n"
+				 << "reassemble number : "                           << twoPB.sucsess               << "\n";
+    }    
+    if( m_params.isFirst || m_params.isSecond )
+    {
+        std::cout<< "tgs align two contig    : "                     << onePB.totalCount            << "\n"
+                 << "align more than two contig : "                  << onePB.partialCount          << "\n"
+                 << "pass tgs number      : "                        << onePB.passCount             << "\n"
+                 << "case 1. two reads are same side : "             << onePB.repeatStatus          << "\n"
+                 << "case 2. two flank are repeats   : "             << onePB.repeatSeeds           << "\n"
+                 << "case 3. seeds num less than two : "             << onePB.seedsThreshold        << "\n"
+                 << "case 4. seeds different strand  : "             << onePB.seedDifferentStrand   << "\n"
+                 << "case 5. seeds order discordant  : "             << onePB.seedOrderDiscordant   << "\n"
+                 << "case 6. abnormal overlap length : "             << onePB.abnormalOverlapLength << "\n"
+                 << "case 7. abnormal distance between two seeds : " << onePB.abnormalDistance      << "\n" 
+                 << "case 7. palindrome reads : "                    << onePB.palindrome            << "\n"
+				 << "reassemble number : "                           << onePB.sucsess               << "\n";
+    }
+	
+	std::cout<<"\n\n\n";
 }
-		
+        
 void ReassemblerPostProcess::process(const SequenceWorkItem& item, /*const*/ ReassemblerResult& result)
 {    
     for(SeedByTGSHashMap::iterator currentPbIdx = result.seedHash.begin() ; currentPbIdx != result.seedHash.end() ; ++currentPbIdx)
@@ -467,26 +534,27 @@ void ReassemblerPostProcess::process(const SequenceWorkItem& item, /*const*/ Rea
 
 void ReassemblerPostProcess::filterErrorTGS()
 {
-    std::cout<< "\n------------filter error tgs------------\n";
-	
-	ResultCount onePB = ResultCount();
-	ResultCount twoPB = ResultCount();
+    std::cout<< "\n------------filter error connect between contig and tgs------------\n";
 
+	// 15mer distribution using tgs
+    std::sort(kmerSizeFreqByTGS_15,kmerSizeFreqByTGS_15+seedCount_15);
+    std::sort(kmerFreqByContig_15,kmerFreqByContig_15+seedCount_15);
+	
     int tmp = 0;
     for(SeedByTGSHashMap::iterator pbIterator = collectSeedHashMap.begin() ; pbIterator!=collectSeedHashMap.end() ; ++pbIterator )
     {    
-        //std::cout<< std::flush << '\r' << "total overlap between contig and tgs : (" << ++tmp << "/" << collectSeedHashMap.size() << ")";
+        if(showProcess)std::cout<< std::flush << '\r' << "total overlap between contig and tgs : (" << ++tmp << "/" << collectSeedHashMap.size() << ")";
         
         std::vector<OverlapSeedVecInfo>::iterator firstContigIter  ;
         std::vector<OverlapSeedVecInfo>::iterator secondContigIter ;
-		/*
-		if (pbIterator->first == 27008)
-		{
-			std::cout<< "27008\t" << pbIterator->second.size() << "\n";
-		}*/
-		//std::vector<OverlapSeedVecInfo>::iterator t = pbIterator->second.begin();
-		//std::cout<< (*t).SeedInfoVec.size() << "\n";
-		
+        /*
+        if (pbIterator->first == 27008)
+        {
+            std::cout<< "27008\t" << pbIterator->second.size() << "\n";
+        }*/
+        //std::vector<OverlapSeedVecInfo>::iterator t = pbIterator->second.begin();
+        //std::cout<< (*t).SeedInfoVec.size() << "\n";
+        
         if( pbIterator->second.size()==2 )
         {   
             onePB.totalCount++;
@@ -498,14 +566,14 @@ void ReassemblerPostProcess::filterErrorTGS()
         }
         else if(pbIterator->second.size()>2)
         {   
-			onePB.partialCount++;
+            onePB.partialCount++;
             // multiple align,
             // this tgs overlap three or more contigs
             // select the most seeds and the second most seeds
             
             size_t firstSize  = 0;
             size_t secondSize = 0;
-			
+            
             for(std::vector<OverlapSeedVecInfo>::iterator contigIter = pbIterator->second.begin() ; contigIter!=pbIterator->second.end() ; ++contigIter)
             {
                 if( firstSize < (*contigIter).SeedInfoVec.size())
@@ -523,245 +591,197 @@ void ReassemblerPostProcess::filterErrorTGS()
                 }
             }
         }
-		else if( !m_params.isThird ) continue;
-		
-		// two read progress
-		if( m_params.isThird )
-		{
-			// one read align one contig
-			if( pbIterator->second.size()==1 )
-			{
-				twoPB.totalCount++;
+        else if( !m_params.isThird ) continue;
+        
+        // two read progress
+        if( m_params.isThird )
+        {
+            // one read align one contig
+            if( pbIterator->second.size()==1 )
+            {
+                twoPB.totalCount++;
 
-				TGSScanAndOverlapPosition singleOverlap;
-				std::vector<OverlapSeedVecInfo>::iterator contigIter = pbIterator->second.begin();
+                TGSScanAndOverlapPosition singleOverlap;
+                std::vector<OverlapSeedVecInfo>::iterator contigIter = pbIterator->second.begin();
 
-				// each contig have three or more seeds on this tgs
-				if((*contigIter).SeedInfoVec.size()<3){ twoPB.seedsThreshold++;        continue; }
-				// filter tgs if it concurrently exist different strand seed and all seeds length are rather than 19
-				if(checkContigSeed(*contigIter,19))    { twoPB.seedDifferentStrand++;   continue; }
-				// check repeat by contig index.
-				if(checkRepeatByContig(*contigIter))   { twoPB.repeatSeeds++;           continue; }
-				// check seeds orientations concordant or discordant 
-				if(checkSeedsOrientations(*contigIter)){ twoPB.seedOrderDiscordant++;   continue; }
-				// check distance between to seeds
-				if(checkSeedsDistance(*contigIter))    { twoPB.abnormalDistance++;      continue; }
-				// check overlap length 
-				if(checkOverlapLength(*contigIter))    { twoPB.abnormalOverlapLength++; continue; }
-				// check nonOverlap length
-				if(checkNonOverlapPartialLength(*contigIter,singleOverlap)){twoPB.insufficientLength++; continue; }
+                // each contig have three or more seeds on this tgs
+                if((*contigIter).SeedInfoVec.size()<3){ twoPB.seedsThreshold++;        continue; }
+                // filter tgs if it concurrently exist different strand seed and all seeds length are rather than 19
+                if(checkContigSeed(*contigIter,19))    { twoPB.seedDifferentStrand++;   continue; }
+                // check repeat by contig index.
+                if(checkRepeatByContig(*contigIter))   { twoPB.repeatSeeds++;           continue; }
+                // check seeds orientations concordant or discordant 
+                if(checkSeedsOrientations(*contigIter)){ twoPB.seedOrderDiscordant++;   continue; }
+                // check distance between to seeds
+                if(checkSeedsDistance(*contigIter))    { twoPB.abnormalDistance++;      continue; }
+                // check overlap length 
+                if(checkOverlapLength(*contigIter))    { twoPB.abnormalOverlapLength++; continue; }
+                // check nonOverlap length
+                if(checkNonOverlapPartialLength(*contigIter,singleOverlap)){twoPB.insufficientLength++; continue; }
 
-				twoPB.passCount++;
-				
-				insertSingleRelationHash(*contigIter,singleOverlap);
-			}
-			else
-			{
-				
-				twoPB.totalCount = twoPB.totalCount + 2;
-				
-				TGSScanAndOverlapPosition singleOverlap1;
-				TGSScanAndOverlapPosition singleOverlap2;
+                twoPB.passCount++;
+                
+                insertSingleRelationHash(*contigIter,singleOverlap);
+            }
+            else
+            {
+                
+                twoPB.totalCount = twoPB.totalCount + 2;
+                
+                TGSScanAndOverlapPosition singleOverlap1;
+                TGSScanAndOverlapPosition singleOverlap2;
 
-				// each contig have three or more seeds on this tgs
-				if((*firstContigIter).SeedInfoVec.size()<3){ twoPB.seedsThreshold++; }
-				// filter tgs if it concurrently exist different strand seed and all seeds length are rather than 19
-				else if(checkContigSeed(*firstContigIter,19))    { twoPB.seedDifferentStrand++; }
-				// check repeat by contig index.
-				else if(checkRepeatByContig(*firstContigIter))   { twoPB.repeatSeeds++; }
-				// check seeds orientations concordant or discordant 
-				else if(checkSeedsOrientations(*firstContigIter)){ twoPB.seedOrderDiscordant++; }
-				// check distance between to seeds
-				else if(checkSeedsDistance(*firstContigIter))    { twoPB.abnormalDistance++; }
-				// check overlap length 
-				else if(checkOverlapLength(*firstContigIter))    { twoPB.abnormalOverlapLength++; }
-				// check nonOverlap length
-				else if(checkNonOverlapPartialLength(*firstContigIter,singleOverlap1)){twoPB.insufficientLength++; }
-				else 
-				{
-					twoPB.passCount++;
-					insertSingleRelationHash(*firstContigIter,singleOverlap1);
-				}
-				
-				// each contig have three or more seeds on this tgs
-				if((*secondContigIter).SeedInfoVec.size()<3){ twoPB.seedsThreshold++; }
-				// filter tgs if it concurrently exist different strand seed and all seeds length are rather than 19
-				else if(checkContigSeed(*secondContigIter,19))    { twoPB.seedDifferentStrand++; }
-				// check repeat by contig index.
-				else if(checkRepeatByContig(*secondContigIter))   { twoPB.repeatSeeds++; }
-				// check seeds orientations concordant or discordant 
-				else if(checkSeedsOrientations(*secondContigIter)){ twoPB.seedOrderDiscordant++; }
-				// check distance between to seeds
-				else if(checkSeedsDistance(*secondContigIter))    { twoPB.abnormalDistance++; }
-				// check overlap length 
-				else if(checkOverlapLength(*secondContigIter))    { twoPB.abnormalOverlapLength++; }
-				// check nonOverlap length
-				else if(checkNonOverlapPartialLength(*secondContigIter,singleOverlap2)){twoPB.insufficientLength++; }
-				else 
-				{
-					twoPB.passCount++;
-					insertSingleRelationHash(*secondContigIter,singleOverlap2);
-				}
-				
-			}
-			
-		}
-		
-		// one read progress
+                // each contig have three or more seeds on this tgs
+                if((*firstContigIter).SeedInfoVec.size()<3){ twoPB.seedsThreshold++; }
+                // filter tgs if it concurrently exist different strand seed and all seeds length are rather than 19
+                else if(checkContigSeed(*firstContigIter,19))    { twoPB.seedDifferentStrand++; }
+                // check repeat by contig index.
+                else if(checkRepeatByContig(*firstContigIter))   { twoPB.repeatSeeds++; }
+                // check seeds orientations concordant or discordant 
+                else if(checkSeedsOrientations(*firstContigIter)){ twoPB.seedOrderDiscordant++; }
+                // check distance between to seeds
+                else if(checkSeedsDistance(*firstContigIter))    { twoPB.abnormalDistance++; }
+                // check overlap length 
+                else if(checkOverlapLength(*firstContigIter))    { twoPB.abnormalOverlapLength++; }
+                // check nonOverlap length
+                else if(checkNonOverlapPartialLength(*firstContigIter,singleOverlap1)){twoPB.insufficientLength++; }
+                else 
+                {
+                    twoPB.passCount++;
+                    insertSingleRelationHash(*firstContigIter,singleOverlap1);
+                }
+                
+                // each contig have three or more seeds on this tgs
+                if((*secondContigIter).SeedInfoVec.size()<3){ twoPB.seedsThreshold++; }
+                // filter tgs if it concurrently exist different strand seed and all seeds length are rather than 19
+                else if(checkContigSeed(*secondContigIter,19))    { twoPB.seedDifferentStrand++; }
+                // check repeat by contig index.
+                else if(checkRepeatByContig(*secondContigIter))   { twoPB.repeatSeeds++; }
+                // check seeds orientations concordant or discordant 
+                else if(checkSeedsOrientations(*secondContigIter)){ twoPB.seedOrderDiscordant++; }
+                // check distance between to seeds
+                else if(checkSeedsDistance(*secondContigIter))    { twoPB.abnormalDistance++; }
+                // check overlap length 
+                else if(checkOverlapLength(*secondContigIter))    { twoPB.abnormalOverlapLength++; }
+                // check nonOverlap length
+                else if(checkNonOverlapPartialLength(*secondContigIter,singleOverlap2)){twoPB.insufficientLength++; }
+                else 
+                {
+                    twoPB.passCount++;
+                    insertSingleRelationHash(*secondContigIter,singleOverlap2);
+                }
+                
+            }
+            
+        }
+        
+        // one read progress
         if( m_params.isFirst || m_params.isSecond )
         {
-			OverlapSeedVecInfo firstResultVec;
-			OverlapSeedVecInfo secondResultVec;
-			
-			filterErrorStrand((*firstContigIter),firstResultVec,mostSeedStrand((*firstContigIter)));
-			filterErrorStrand((*secondContigIter),secondResultVec,mostSeedStrand((*secondContigIter)));
+            OverlapSeedVecInfo firstResultVec;
+            OverlapSeedVecInfo secondResultVec;
+            
+            filterErrorStrand((*firstContigIter),firstResultVec,mostSeedStrand((*firstContigIter)));
+            filterErrorStrand((*secondContigIter),secondResultVec,mostSeedStrand((*secondContigIter)));
 
-			std::string firstContig  = (*firstContigIter).contig;
-			std::string secondContig = (*secondContigIter).contig;
-			bool firstStrand         = firstResultVec.SeedInfoVec[0].strand;
-			bool secondStrand        = secondResultVec.SeedInfoVec[0].strand;
-			bool firstContigSide     = firstResultVec.SeedInfoVec[0].contigSide;
-			bool secondContigSide    = secondResultVec.SeedInfoVec[0].contigSide;
-			int firstContigLength    = firstResultVec.SeedInfoVec[0].contigLength;
-			int secondContigLength   = secondResultVec.SeedInfoVec[0].contigLength;
-			
-			std::string originTGS  = backtrackTGS( m_params.indices, pbIterator->first );
+            std::string firstContig  = (*firstContigIter).contig;
+            std::string secondContig = (*secondContigIter).contig;
+            bool firstStrand         = firstResultVec.SeedInfoVec[0].strand;
+            bool secondStrand        = secondResultVec.SeedInfoVec[0].strand;
+            bool firstContigSide     = firstResultVec.SeedInfoVec[0].contigSide;
+            bool secondContigSide    = secondResultVec.SeedInfoVec[0].contigSide;
+            int firstContigLength    = firstResultVec.SeedInfoVec[0].contigLength;
+            int secondContigLength   = secondResultVec.SeedInfoVec[0].contigLength;
+            
+            std::string originTGS  = backtrackTGS( m_params.indices, pbIterator->first );
+            /*
+            if (false)
+            {
+                std::cout << pbIterator->first                 << "\t"
+                          << firstContig                       << "\t"
+                          << (*firstContigIter).SeedInfoVec.size() << "\t"
+                          << secondContig                      << "\t"
+                          << (*secondContigIter).SeedInfoVec.size() << "\n";
+                
+                std::cout << pbIterator->first                 << "\t"
+                          << firstContig                       << "\t"
+                          << firstResultVec.SeedInfoVec.size() << "\t"
+                          << secondContig                      << "\t"
+                          << secondResultVec.SeedInfoVec.size() << "\n";
+                          
+                std::cout <<  "Palindrome : " << (checkPalindrome(originTGS) ? "true" : "false") << "\t"
+                          << checkContigRelation((*firstContigIter).SeedInfoVec[0].contigSide,
+                                                 (*firstContigIter).SeedInfoVec[0].strand,
+                                                 (*secondContigIter).SeedInfoVec[0].contigSide,
+                                                 (*secondContigIter).SeedInfoVec[0].strand) << "\t"
+                          << checkContigRelation(firstContigSide,firstStrand,secondContigSide,secondStrand) << "\t"
+                          << "\n";
+                      
+            }
+            */
 			/*
-			if (pbIterator->first == 27008)
-			{
-				std::cout << pbIterator->first                 << "\t"
-						  << firstContig                       << "\t"
-						  << (*firstContigIter).SeedInfoVec.size() << "\t"
-						  << secondContig                      << "\t"
-						  << (*secondContigIter).SeedInfoVec.size() << "\n";
-				
-				std::cout << pbIterator->first                 << "\t"
-						  << firstContig                       << "\t"
-						  << firstResultVec.SeedInfoVec.size() << "\t"
-						  << secondContig                      << "\t"
-						  << secondResultVec.SeedInfoVec.size() << "\n";
-						  
-				std::cout <<  "Palindrome : " << (checkPalindrome(originTGS) ? "true" : "false") << "\t"
-				          << checkContigRelation((*firstContigIter).SeedInfoVec[0].contigSide,
-						                         (*firstContigIter).SeedInfoVec[0].strand,
-												 (*secondContigIter).SeedInfoVec[0].contigSide,
-												 (*secondContigIter).SeedInfoVec[0].strand) << "\t"
-						  << checkContigRelation(firstContigSide,firstStrand,secondContigSide,secondStrand) << "\t"
-						  << "\n";
-					  
-			}*/
-			
-			std::string de1 = "-1";
-			std::string de2 = "-1";
-			int debug = -1;
-			
-			if( (firstContig == de1 && secondContig == de2) || (secondContig == de2 && firstContig == de1) )
-			{
-				std::cout << pbIterator->first                 << "\t"
-						  << firstContig                       << "\t"
-						  << firstResultVec.SeedInfoVec.size() << "\t"
-						  << secondContig                      << "\t"
-						  << secondResultVec.SeedInfoVec.size() << "\n";
-			}			  
-			//each contig have three or more seeds on this tgs
-			if(firstResultVec.SeedInfoVec.size()>=3 && secondResultVec.SeedInfoVec.size()>=3)
-			{  
+            std::string de1 = "-1";
+            std::string de2 = "-1";
+            int debug = -1;
+            
+            if( (firstContig == de1 && secondContig == de2) || (secondContig == de2 && firstContig == de1) )
+            {
+                std::cout << pbIterator->first                 << "\t"
+                          << firstContig                       << "\t"
+                          << firstResultVec.SeedInfoVec.size() << "\t"
+                          << secondContig                      << "\t"
+                          << secondResultVec.SeedInfoVec.size() << "\n";
+            } 
+			*/
+            //each contig have three or more seeds on this tgs
+            if(firstResultVec.SeedInfoVec.size()>=3 && secondResultVec.SeedInfoVec.size()>=3)
+            {  
+                    /*
 					if( (firstContig == de1 && secondContig == de2) || (secondContig == de2 && firstContig == de1) )
-					
-					{
-							  std::cout << pbIterator->first          << "\t"
-							  << firstContig                          << "\t"
-							  << (firstContigSide ? "Head" : "Tail")  << "\t"
+                    
+                    {
+                              std::cout << pbIterator->first          << "\t"
+                              << firstContig                          << "\t"
+                              << (firstContigSide ? "Head" : "Tail")  << "\t"
                               << (firstStrand     ? "NonRC" : "RC")   << "\t"
-							  << firstResultVec.SeedInfoVec.size()    << "\t"
-							  << secondContig                         << "\t"
-							  << (secondContigSide ? "Head" : "Tail") << "\t"
+                              << firstResultVec.SeedInfoVec.size()    << "\t"
+                              << secondContig                         << "\t"
+                              << (secondContigSide ? "Head" : "Tail") << "\t"
                               << (secondStrand     ? "NonRC" : "RC")  << "\t"
-							  << secondResultVec.SeedInfoVec.size()   << "\n";
-					}	  
-				
-				if( pbIterator->first == debug)std::cout << "a\n";
-				// filter palindrome reads
-				if(checkPalindrome(originTGS)) { onePB.palindrome++; continue; }
-				if( pbIterator->first == debug)std::cout << "b\n";
-				// prevent large repeat, filter tgs if it concurrently exist same/different side and strand
-				if(checkContigRelation(firstContigSide,firstStrand,secondContigSide,secondStrand))   { onePB.repeatStatus++;          continue; }
-				if( pbIterator->first == debug)std::cout << "c\n";
-				// check repeat by tgs index, old version. It can't detect every repeat seed.
-				//if(checkRepeatByTGS((*firstContigIter)) || checkRepeatByTGS((*secondContigIter)))continue;
-				// check repeat by contig index
-				if(checkRepeatByContig(firstResultVec) || checkRepeatByContig(secondResultVec))      { onePB.repeatSeeds++;           continue; }
-				if( pbIterator->first == debug)std::cout << "d\n";
-				// filter tgs if it concurrently exist different strand seed and all seeds length are rather than 19
-				if(checkContigSeed(firstResultVec,19) || checkContigSeed(secondResultVec,19))        { onePB.seedDifferentStrand++;   continue; }
-				if( pbIterator->first == debug)std::cout << "e\n";
-				//check seeds orientations and seeds distance between contig and tgs 
-				if(checkSeedsOrientations(firstResultVec) || checkSeedsOrientations(secondResultVec)){ onePB.seedOrderDiscordant++;   continue; }
-				if( pbIterator->first == debug)std::cout << "f\n";
-				//check distance between to seeds
-				if(checkSeedsDistance(firstResultVec) || checkSeedsDistance(secondResultVec))        { onePB.abnormalDistance++;      continue; }
-				if( pbIterator->first == debug)std::cout << "g\n";
-				//check overlap length 
-				if(checkOverlapLength(firstResultVec) || checkOverlapLength(secondResultVec))        { onePB.abnormalOverlapLength++; continue; }
-				
-				onePB.passCount++;
-				
-				std::vector<OverlapSeedVecInfo> tmp;
-							
-				tmp.push_back(firstResultVec);
-				tmp.push_back(secondResultVec);
-					
-				// build relation hash, use to check how many contig are connect the other contig
-				insertContigRelationHash(firstContig,firstContigSide,firstStrand,secondContig,secondContigSide,secondStrand,firstContigLength,secondContigLength,tmp);
-				insertContigRelationHash(secondContig,secondContigSide,secondStrand,firstContig,firstContigSide,firstStrand,secondContigLength,firstContigLength,tmp);
-			}
-			else onePB.seedsThreshold++;
-		}
-    }
-	
-    // 15mer distribution using tgs
-    std::sort(kmerSizeFreqByTGS_15,kmerSizeFreqByTGS_15+seedCount_15);
-    std::sort(kmerFreqByContig_15,kmerFreqByContig_15+seedCount_15);
-    std::cout << "\ntgs's 15mer freq by tgs indices :\n"  
-              << kmerSizeFreqByTGS_15[seedCount_15/10*1] << "\t" << kmerSizeFreqByTGS_15[seedCount_15/10*2] << "\t"
-              << kmerSizeFreqByTGS_15[seedCount_15/10*3] << "\t" << kmerSizeFreqByTGS_15[seedCount_15/10*4] << "\t"
-              << kmerSizeFreqByTGS_15[seedCount_15/10*5] << "\t" << kmerSizeFreqByTGS_15[seedCount_15/10*6] << "\t"
-              << kmerSizeFreqByTGS_15[seedCount_15/10*7] << "\t" << kmerSizeFreqByTGS_15[seedCount_15/10*8] << "\t"
-              << kmerSizeFreqByTGS_15[seedCount_15/10*9] << "\t" << kmerSizeFreqByTGS_15[seedCount_15-1]    << "\n";
-                                        
-    std::cout << "tgs's 15mer freq by contig indices :\n" 
-              << kmerFreqByContig_15[seedCount_15/10*1] << "\t" << kmerFreqByContig_15[seedCount_15/10*2] << "\t"
-              << kmerFreqByContig_15[seedCount_15/10*3] << "\t" << kmerFreqByContig_15[seedCount_15/10*4] << "\t"
-              << kmerFreqByContig_15[seedCount_15/10*5] << "\t" << kmerFreqByContig_15[seedCount_15/10*6] << "\t"
-              << kmerFreqByContig_15[seedCount_15/10*7] << "\t" << kmerFreqByContig_15[seedCount_15/10*8] << "\t"
-              << kmerFreqByContig_15[seedCount_15/10*9] << "\t" << kmerFreqByContig_15[seedCount_15-1]    << "\n";    
-    
-    std::cout<<"\n";
-    if( m_params.isThird )
-    {
-        std::cout<< "tgs align one contig : "         << twoPB.totalCount            << "\n"
-                 << "pass tgs number      : "         << twoPB.passCount             << "\n"
-                 << "case 1. two flank are repeats   : " << twoPB.repeatSeeds           << "\n"
-                 << "case 2. seeds num less than two : " << twoPB.seedsThreshold        << "\n"
-                 << "case 3. seeds different strand  : " << twoPB.seedDifferentStrand   << "\n"
-                 << "case 4. seeds order discordant  : " << twoPB.seedOrderDiscordant   << "\n"
-                 << "case 5. abnormal overlap length : " << twoPB.abnormalOverlapLength << "\n"
-                 << "case 6. abnormal distance between two seeds : " << twoPB.abnormalDistance   << "\n"
-                 << "case 7. insufficient non overlap length     : " << twoPB.insufficientLength << "\n";
-    }    
-    if( m_params.isFirst || m_params.isSecond )
-    {
-        std::cout<< "tgs align two contig    : "      << onePB.totalCount            << "\n"
-                 << "align more than two contig : "      << onePB.partialCount          << "\n"
-                 << "pass tgs number      : "         << onePB.passCount             << "\n"
-                 << "case 1. two reads are same side : " << onePB.repeatStatus          << "\n"
-                 << "case 2. two flank are repeats   : " << onePB.repeatSeeds           << "\n"
-                 << "case 3. seeds num less than two : " << onePB.seedsThreshold        << "\n"
-                 << "case 4. seeds different strand  : " << onePB.seedDifferentStrand   << "\n"
-                 << "case 5. seeds order discordant  : " << onePB.seedOrderDiscordant   << "\n"
-                 << "case 6. abnormal overlap length : " << onePB.abnormalOverlapLength << "\n"
-                 << "case 7. abnormal distance between two seeds : " << onePB.abnormalDistance << "\n" 
-				 << "case 7. palindrome reads : " << onePB.palindrome << "\n"; 
+                              << secondResultVec.SeedInfoVec.size()   << "\n";
+                    }      
+                    */
+  
+                // filter palindrome reads
+                if(checkPalindrome(originTGS)) { onePB.palindrome++; continue; }
+                // prevent large repeat, filter tgs if it concurrently exist same/different side and strand
+                if(checkContigRelation(firstContigSide,firstStrand,secondContigSide,secondStrand))   { onePB.repeatStatus++;          continue; }
+                // check repeat by tgs index, old version. It can't detect every repeat seed.
+                //if(checkRepeatByTGS((*firstContigIter)) || checkRepeatByTGS((*secondContigIter)))continue;
+                // check repeat by contig index
+                if(checkRepeatByContig(firstResultVec) || checkRepeatByContig(secondResultVec))      { onePB.repeatSeeds++;           continue; }
+                // filter tgs if it concurrently exist different strand seed and all seeds length are rather than 19
+                if(checkContigSeed(firstResultVec,19) || checkContigSeed(secondResultVec,19))        { onePB.seedDifferentStrand++;   continue; }
+                //check seeds orientations and seeds distance between contig and tgs 
+                if(checkSeedsOrientations(firstResultVec) || checkSeedsOrientations(secondResultVec)){ onePB.seedOrderDiscordant++;   continue; }
+                //check distance between to seeds
+                if(checkSeedsDistance(firstResultVec) || checkSeedsDistance(secondResultVec))        { onePB.abnormalDistance++;      continue; }
+                //check overlap length 
+                if(checkOverlapLength(firstResultVec) || checkOverlapLength(secondResultVec))        { onePB.abnormalOverlapLength++; continue; }
+                
+                onePB.passCount++;
+                
+                std::vector<OverlapSeedVecInfo> tmp;
+                            
+                tmp.push_back(firstResultVec);
+                tmp.push_back(secondResultVec);
+                    
+                // build relation hash, use to check how many contig are connect the other contig
+                insertContigRelationHash(firstContig,firstContigSide,firstStrand,secondContig,secondContigSide,secondStrand,firstContigLength,secondContigLength,tmp);
+                insertContigRelationHash(secondContig,secondContigSide,secondStrand,firstContig,firstContigSide,firstStrand,secondContigLength,firstContigLength,tmp);
+            }
+            else onePB.seedsThreshold++;
+        }
     }
 }
 
@@ -841,6 +861,8 @@ void ReassemblerPostProcess::buildGraphByOneTGS()
         
         if( m_params.isSecond && connectAndOverlap!=2 )continue;
         
+		onePB.sucsess++;
+		
             std::cout//<< contigSideIter->first << "\t"
                      //<< contigSideIter->second.size() << "\t"
                      << (connectAndOverlap-1 ? "->...<-" : "-><-   ") << "\t"
@@ -893,270 +915,444 @@ void ReassemblerPostProcess::buildGraphByOneTGS()
 
 void ReassemblerPostProcess::buildGraphByTwoTGS()
 {
-    std::cout << "\n---------build graph by two tgs---------\n";
-	
-	std::sort(kmerSizeFreqByTGS_11,kmerSizeFreqByTGS_11+seedCount_11);
-    std::cout << "tgs's 11mer freq by tgs indices :\n"  
-              << kmerSizeFreqByTGS_11[seedCount_11/10*1] << "\t" << kmerSizeFreqByTGS_11[seedCount_11/10*2] << "\t"
-              << kmerSizeFreqByTGS_11[seedCount_11/10*3] << "\t" << kmerSizeFreqByTGS_11[seedCount_11/10*4] << "\t"
-              << kmerSizeFreqByTGS_11[seedCount_11/10*5] << "\t" << kmerSizeFreqByTGS_11[seedCount_11/10*6] << "\t"
-              << kmerSizeFreqByTGS_11[seedCount_11/10*7] << "\t" << kmerSizeFreqByTGS_11[seedCount_11/10*8] << "\t"
-              << kmerSizeFreqByTGS_11[seedCount_11/10*9] << "\t" << kmerSizeFreqByTGS_11[seedCount_11-1]    << "\n";
-    
-	
-	ResultCount twoPB = ResultCount();
-	
-    int tmp = 0;
-
-    // collect all seeds on tgs fragment
-    for(TGSConnectContigHashMap::iterator tgsIter = singleContigHashMap.begin() ; tgsIter!=singleContigHashMap.end() ; ++tgsIter )
-    {
-		//std::cout<< std::flush << '\r' << "collect seeds on tgs fragment : (" << ++tmp << "/" << singleContigHashMap.size() << ")";
-        std::string originTGS  = backtrackTGS( m_params.indices, tgsIter->first );
-        std::string connectContig = tgsIter->second[0].firstContig;
-        bool connectContigSide    = tgsIter->second[0].firstSide;
-        int connectContigLength   = tgsIter->second[0].firstContigLength;
-		// check palindrome tgs
-		if(checkPalindrome(originTGS)) 
-		{ 
-			//std::cout<< tgsIter->first << "\n";
-			twoPB.palindrome++; 
-			continue; 
-		}
-		
-		//int startPos = tgsIter->second[0].singleOverlap.scanTGSStart < tgsIter->second[0].singleOverlap.scanTGSEnd ? tgsIter->second[0].singleOverlap.scanTGSStart : tgsIter->second[0].singleOverlap.scanTGSEnd;
-		//int endPos   = tgsIter->second[0].singleOverlap.scanTGSStart > tgsIter->second[0].singleOverlap.scanTGSEnd ? tgsIter->second[0].singleOverlap.scanTGSStart : tgsIter->second[0].singleOverlap.scanTGSEnd;
-		
-		// collect seeds on tgs
-		std::vector<ReassemblerSeedFeature> tgsSeedVec = seedingByDynamicKmer(originTGS);
-		//std::vector<ReassemblerSeedFeature> tgsSeedVec = collectKmer(originTGS, startPos, endPos);
-		// filter repeat seed
-		std::vector<ReassemblerSeedFeature> filterTGSSeedVec = filterRepeatSeed(tgsSeedVec);
-        buildKmerHashAndTGSKmerVec( connectContig, connectContigSide, connectContigLength, tgsIter->first, filterTGSSeedVec);
-		//buildKmerHashAndTGSKmerVec( connectContig, connectContigSide, connectContigLength, tgsIter->first, tgsSeedVec);
-		
-		//std::cout << tgsIter->first << "\t" << tgsSeedVec.size() << "\t" << filterTGSSeedVec.size() << "\n";
-		
-		twoPB.passCount++;		
-    }
-	std::cout<< "\n";
-	std::cout<< "filter palindrome : " << twoPB.palindrome << "\n\n";
-
-    // filter error relation connect between two tgss
-    for(TGSKmerVec::iterator tgsVecIter = AllTGSKmerVec.begin() ; tgsVecIter!=AllTGSKmerVec.end() ; ++tgsVecIter)
-    {	
-		// use to record already connect tgss
-		SparseHashMap<int, int, Int64Hasher> connectTGSCount;
-        // use to find current tgs connect contig
-        TGSConnectContigHashMap::iterator selfTGSIter = singleContigHashMap.find((*tgsVecIter).first);
-        // current tgs connect contig
-        std::string selfContig = selfTGSIter->second[0].firstContig; 
-		// use to collect useful seeds
-		OverlapSeedVecInfo currentSeedVec;
-		// after filter, select most seeds connect tgs
-		OverlapSeedVecInfo resultSeedVec;
-		// look current tgs seeds
-        for(KmerInfoVec::iterator selfSeedIter = tgsVecIter->second.begin() ; selfSeedIter != tgsVecIter->second.end() ; ++selfSeedIter)
-        {
-			KmerHashMap::iterator seedInfo = collectAllKmerHashMap.find((*selfSeedIter).kmerStr);
-            // confirm this seed exist in hash
-            if( seedInfo != collectAllKmerHashMap.end() )
-            {
-				SeedSequenceInfo currentSeed;
-				// use to prevent repeat kmer
-				int connectOtherTGSCount = 0;
-				// look for other tgs if exist current seed
-				for(std::vector<KmerInfo>::iterator otherKmerIter = seedInfo->second.begin() ; otherKmerIter != seedInfo->second.end() ; ++otherKmerIter )
-                {	
-					// prevent two tgs connect same contig
-					if( (*otherKmerIter).tgsConnectContigID == selfContig ) continue;
-                    
-					connectOtherTGSCount++;
-
-					currentSeed.contigID       = (*otherKmerIter).tgsConnectContigID;
-					currentSeed.contigLength   = (*otherKmerIter).tgsConnectContigLength;
-					currentSeed.contigSide     = (*otherKmerIter).tgsConnectContigSide;
-					currentSeed.seedLength     = (*otherKmerIter).kmerStr.length();
-					currentSeed.seedString     = (*otherKmerIter).kmerStr;
-					currentSeed.strand         = (*otherKmerIter).kmerStrand;
-					currentSeed.tgsLocation = (*otherKmerIter).position;
-					currentSeed.tgsIndex    = (*otherKmerIter).tgsIndex;
-					// contigStartPos is self tgs position
-					currentSeed.contigStartPos = (*selfSeedIter).position;
-                }
-				// filter repeat seed
-				if( connectOtherTGSCount>1 || connectOtherTGSCount==0 )continue;
-				// push valid seed to vector
-				currentSeedVec.SeedInfoVec.push_back(currentSeed);
-            }
-        }
-		
-		if( currentSeedVec.SeedInfoVec.size() == 0 ){ twoPB.zeroSeed++;        continue; }
-		
-		TGSConnectContigHashMap::iterator t = singleContigHashMap.find(currentSeedVec.SeedInfoVec[0].tgsIndex);
-			
-		//filterErrorSeeds(currentSeedVec,resultSeedVec,mostConnectTGS(currentSeedVec));
-		filterErrorSeeds2(currentSeedVec,resultSeedVec,mostTGSConnectContig(currentSeedVec));
-
-		//std::cout << "\n";
-		/*
-		std::cout << selfTGSIter->second[0].firstContig   << "\t"
-		          << (*tgsVecIter).first   << "\t"
-				  << t->second[0].firstContig << "\t"
-				  << t->second[0].tgsIndex << "\t"
-				  << currentSeedVec.SeedInfoVec.size() << "\t"
-				  << resultSeedVec.SeedInfoVec.size() << "\t"
-				  << mostTGSConnectContig(currentSeedVec) << "\n";
-		*/
-		/*
-		std::string de1 = "-1";
-		std::string de2 = "-1";
-		std::string firstContig  = selfTGSIter->second[0].firstContig;
-		std::string secondContig = t->second[0].firstContig;
-		*/
-		//if( (firstContig == de1 && secondContig == de2) || (secondContig == de2 && firstContig == de1) ) std::cout << "a\n";	
-
-		if( resultSeedVec.SeedInfoVec.size() < 3 )  { twoPB.seedsThreshold++;        continue; }
-		// filter tgs if it concurrently exist different strand seed and all seeds length are rather than 14
-        if(checkContigSeed(resultSeedVec,14))       { twoPB.seedDifferentStrand++;   continue; }
-		// check repeat by tgs index, old version. It can't detect every repeat seed.
-		if(checkRepeatByTGS(resultSeedVec))         { twoPB.repeatSeeds++;           continue; }
-		// check seeds order concordant or discordant 
-        if(checkSeedsOrientations(resultSeedVec))   { twoPB.seedOrderDiscordant++;   continue; }
-		// check distance between to seeds
-        if(checkSeedsDistance(resultSeedVec))       { twoPB.abnormalDistance++;      continue; }
-		// check overlap length 
-        if(checkOverlapLength(resultSeedVec))       { twoPB.abnormalOverlapLength++; continue; }
-		
-		TGSConnectContigHashMap::iterator targetTGSIter = singleContigHashMap.find(resultSeedVec.SeedInfoVec[0].tgsIndex);
-
-		OverlapRelation connectResult;
-
-		connectResult.firstContig        = selfTGSIter->second[0].firstContig;
-		connectResult.firstContigLength  = selfTGSIter->second[0].firstContigLength;
-		connectResult.firstSide          = selfTGSIter->second[0].firstSide;
-		connectResult.firstStrand        = selfTGSIter->second[0].firstStrand;
-		
-		connectResult.secondContig       = targetTGSIter->second[0].firstContig;
-		connectResult.secondContigLength = targetTGSIter->second[0].firstContigLength;
-		connectResult.secondSide         = targetTGSIter->second[0].firstSide;
-		connectResult.secondStrand       = (resultSeedVec.SeedInfoVec[0].strand ?  targetTGSIter->second[0].firstStrand : !targetTGSIter->second[0].firstStrand );
-
-		connectResult.firContigStart = 0;
-		connectResult.firContigEnd   = 0;
-		connectResult.secContigStart = 0;
-		connectResult.secContigEnd   = 0;
-		connectResult.overlapLength  = 0;
-		
-		connectResult.connect = true;
-		
-		connectResult.isSameStrand = checkSameStrand( (*tgsVecIter).first, resultSeedVec.SeedInfoVec[0].tgsIndex, resultSeedVec.SeedInfoVec);
-
-		// prevent large repeat, filter tgs if it concurrently exist same/different side and strand 
-		if( checkContigRelation( connectResult.firstSide, connectResult.firstStrand, connectResult.secondSide, connectResult.secondStrand )) {twoPB.repeatStatus++;continue;}
-		
-		// check two contigs side are not connect, store this pair in hash if not connect 
-		if( checkConnect(connectResult.firstContig,connectResult.firstSide,connectResult.secondContig,connectResult.secondSide))continue;
-		
-		std::string firstTGSFragment;
-		std::string secondTGSFragment = concordantNonOverlapFragment(resultSeedVec);
-		std::string originTGS  = backtrackTGS( m_params.indices, (*tgsVecIter).first );
-		
-		if( selfTGSIter->second[0].singleOverlap.scanTGSStart == 0 ) 
-		{
-			SeedSequenceInfoVec::iterator first = resultSeedVec.SeedInfoVec.begin();
-			SeedSequenceInfoVec::iterator last = resultSeedVec.SeedInfoVec.end();
-			last--;
-			
-			int start = (*first).contigStartPos > (*last).contigStartPos ? (*first).contigStartPos : (*last).contigStartPos;
-			int end   = selfTGSIter->second[0].singleOverlap.scanTGSEnd;
-			firstTGSFragment  = originTGS.substr( start, end - start );
-			
-			//firstTGSFragment  = originTGS.substr( selfTGSIter->second[0].singleOverlap.scanTGSStart, selfTGSIter->second[0].singleOverlap.scanTGSEnd );
-			connectResult.tgsFragment = secondTGSFragment + firstTGSFragment;
-			
-			//std::cout<< "start1\n";
-			//std::cout<< (*first).contigStartPos << "\t" << (*last).contigStartPos <<"\n";
-			//std::cout<< start << "\t" << end << "\t idx " << (*tgsVecIter).first << "\n";
-		}
-		else 
-		{
-			SeedSequenceInfoVec::iterator first = resultSeedVec.SeedInfoVec.begin();
-			SeedSequenceInfoVec::iterator last = resultSeedVec.SeedInfoVec.end();
-			last--;
-			
-			int start = selfTGSIter->second[0].singleOverlap.scanTGSStart;
-			int end   = (*first).contigStartPos < (*last).contigStartPos ? (*first).contigStartPos : (*last).contigStartPos;
-			
-			firstTGSFragment  = originTGS.substr( start, end - start );
-			
-			//firstTGSFragment  = originTGS.substr( selfTGSIter->second[0].singleOverlap.scanTGSStart, originTGS.length() - selfTGSIter->second[0].singleOverlap.scanTGSStart );
-			connectResult.tgsFragment = firstTGSFragment + secondTGSFragment;
-			
-			//std::cout<< "end1\n";
-			//std::cout<< (*first).contigStartPos << "\t" << (*last).contigStartPos <<"\n";
-			//std::cout<< start << "\t" << end << "\t idx " << (*tgsVecIter).first << "\n";
-		}
-		
-		std::cout    << connectResult.firstContig                      << "\t"
-                     << (connectResult.firstSide    ? "Head" : "Tail") << "\t"
-                     << (connectResult.firstStrand  ? "NonRC" : "RC")  << "\t"
-                     << connectResult.firstContigLength        << "\t"
-                     //<< (firstSide ? "anti" : "sense")   << "\t"
-                     << connectResult.secondContig                     << "\t"
-                     << (connectResult.secondSide   ? "Head" : "Tail") << "\t"
-                     << (connectResult.secondStrand ? "NonRC" : "RC")  << "\t"
-                     << connectResult.secondContigLength       << "\t"
-                     //<< (secondSide ? "anti" : "sense")  << "\t"
-                     << (connectResult.isSameStrand ? "same" : "reverse")      << "\t"
-					 << (*tgsVecIter).first << "\t"
-					 << resultSeedVec.SeedInfoVec[0].tgsIndex << "\t" 
-					 << resultSeedVec.SeedInfoVec.size() << "\t"
-                     << "\n";
-		
-		SeqCoord firstSeqCoord(connectResult.firContigStart,connectResult.firContigEnd,connectResult.firstContigLength); 
-		SeqCoord secondSeqCoord(connectResult.secContigStart,connectResult.secContigEnd,connectResult.secondContigLength);
-				
-		ContigVertex* pVL = ((ContigVertex*)m_pGraph->getVertex(connectResult.firstContig));
-		ContigVertex* pVR = ((ContigVertex*)m_pGraph->getVertex(connectResult.secondContig));
-				
-		ContigEdge* edgeLR = new ContigEdge(pVR,
-											connectResult.firstSide ? ED_ANTISENSE : ED_SENSE,
-											connectResult.isSameStrand ? EC_SAME : EC_REVERSE,
-											firstSeqCoord,
-											connectResult.firstStrand,
-											connectResult.secondStrand,
-											connectResult.tgsFragment,
-											connectResult.overlapLength);
-		ContigEdge* edgeRL = new ContigEdge(pVL,
-											connectResult.secondSide ? ED_ANTISENSE : ED_SENSE,
-											connectResult.isSameStrand ? EC_SAME : EC_REVERSE,
-											secondSeqCoord,
-											connectResult.secondStrand,
-											connectResult.firstStrand,
-											connectResult.tgsFragment,
-											connectResult.overlapLength);
-				
-		edgeLR->setTwin(edgeRL);
-		edgeRL->setTwin(edgeLR);
-		 
-		m_pGraph->addEdge(pVL,edgeLR);
-		m_pGraph->addEdge(pVR,edgeRL);
-	}
+	step1();
+	step2();
+	step3();
 	
 	std::cout<<"\n";
-	std::cout<< "pass tgs number         : "           << twoPB.passCount             << "\n"
+    std::cout<< "pass tgs number         : "           << twoPB.passCount             << "\n"
              << "case 1. repeat status      : "        << twoPB.repeatStatus          << "\n"
-			 << "case 2. zero seed          : "        << twoPB.zeroSeed              << "\n"
+             << "case 2. zero seed          : "        << twoPB.zeroSeed              << "\n"
              << "case 3. seeds num less than three : " << twoPB.seedsThreshold        << "\n"
              << "case 4. seeds different strand  : "   << twoPB.seedDifferentStrand   << "\n"
              << "case 5. seeds order discordant  : "   << twoPB.seedOrderDiscordant   << "\n"
              << "case 6. abnormal overlap length : "   << twoPB.abnormalOverlapLength << "\n"
              << "case 7. abnormal distance between two seeds : " << twoPB.abnormalDistance << "\n\n"; 
-
 }
 
-		///******** filter error tgs function **********///
+void ReassemblerPostProcess::step1()
+{
+    std::cout << "\n---------collect seeds on tgs---------\n";
+    
+    std::sort(kmerSizeFreqByTGS_11,kmerSizeFreqByTGS_11+seedCount_11);
+    
+    ResultCount twoPB = ResultCount();
+    
+    int tmp = 0;
+
+    // collect all seeds on tgs fragment
+    for(TGSConnectContigHashMap::iterator tgsIter = singleContigHashMap.begin() ; tgsIter!=singleContigHashMap.end() ; ++tgsIter )
+    {
+        if(showProcess)std::cout<< std::flush << '\r' << "collect seeds on tgs fragment : (" << ++tmp << "/" << singleContigHashMap.size() << ")";
+        std::string originTGS  = backtrackTGS( m_params.indices, tgsIter->first );
+        std::string connectContig = tgsIter->second[0].firstContig;
+        bool connectContigSide    = tgsIter->second[0].firstSide;
+        int connectContigLength   = tgsIter->second[0].firstContigLength;
+        // check palindrome tgs
+        if(checkPalindrome(originTGS)) 
+        { 
+            //std::cout<< tgsIter->first << "\n";
+            twoPB.palindrome++; 
+            continue; 
+        }
+        
+        int startPos = tgsIter->second[0].singleOverlap.scanTGSStart < tgsIter->second[0].singleOverlap.scanTGSEnd ? tgsIter->second[0].singleOverlap.scanTGSStart : tgsIter->second[0].singleOverlap.scanTGSEnd;
+        int endPos   = tgsIter->second[0].singleOverlap.scanTGSStart > tgsIter->second[0].singleOverlap.scanTGSEnd ? tgsIter->second[0].singleOverlap.scanTGSStart : tgsIter->second[0].singleOverlap.scanTGSEnd;
+        
+        // collect seeds on tgs
+        //std::vector<ReassemblerSeedFeature> tgsSeedVec = seedingByDynamicKmer(originTGS);
+        //std::vector<ReassemblerSeedFeature> tgsSeedVec = seedingByDynamicKmer(originTGS, startPos, endPos);
+        std::vector<ReassemblerSeedFeature> tgsSeedVec = collectKmer(originTGS, startPos, endPos);
+        // filter repeat seed and forward and backward one each
+        //std::vector<ReassemblerSeedFeature> filterTGSSeedVec = filterRepeatSeed(tgsSeedVec);
+        // build AllTGSKmerVec
+        //buildKmerHashAndTGSKmerVec( connectContig, connectContigSide, connectContigLength, tgsIter->first, filterTGSSeedVec);
+        buildKmerHashAndTGSKmerVec( connectContig, connectContigSide, connectContigLength, tgsIter->first, tgsSeedVec);
+        
+        //std::cout << tgsIter->first << "\t" << tgsSeedVec.size() << "\t" << filterTGSSeedVec.size() << "\n";
+        
+        twoPB.passCount++;        
+    }
+    
+	std::cout<< "\nvector size :" << AllTGSKmerVec.size() << "\n";
+	
+	std::cout<< "\n";
+    std::cout<< "filter palindrome : " << twoPB.palindrome << "\n";
+	
+	
+}
+
+void ReassemblerPostProcess::step2()
+{
+    std::cout << "\n---------filter error connect between two tgs---------\n\n";
+	
+	// filter error relation connect between two tgss
+    for(TGSKmerVec::iterator tgsVecIter = AllTGSKmerVec.begin() ; tgsVecIter != AllTGSKmerVec.end() ; ++tgsVecIter)
+    {    
+        // use to record already connect tgss
+        SparseHashMap<int, int, Int64Hasher> connectTGSCount;
+        // use iterator to find current tgs connect contig
+        TGSConnectContigHashMap::iterator selfTGSIter = singleContigHashMap.find((*tgsVecIter).first);
+        // current tgs connect contig string
+        std::string selfContig = selfTGSIter->second[0].firstContig; 
+        // use to collect useful seeds
+        OverlapSeedVecInfo currentSeedVec;
+        // after filter, select most seeds connect tgs
+        OverlapSeedVecInfo resultSeedVec;
+        // look current tgs seeds
+        for(KmerInfoVec::iterator selfSeedIter = tgsVecIter->second.begin() ; selfSeedIter != tgsVecIter->second.end() ; ++selfSeedIter)
+        {
+            KmerHashMap::iterator seedInfo = collectAllKmerHashMap.find((*selfSeedIter).kmerStr);
+            // confirm this seed exist in hash
+            if( seedInfo != collectAllKmerHashMap.end() )
+            {
+                SeedSequenceInfo currentSeed;
+                // use to prevent repeat kmer
+                int connectOtherTGSCount = 0;
+                // look for other tgs if exist current seed
+                for(std::vector<KmerInfo>::iterator otherKmerIter = seedInfo->second.begin() ; otherKmerIter != seedInfo->second.end() ; ++otherKmerIter )
+                {    
+                    // prevent two tgs connect same contig
+                    if( (*otherKmerIter).tgsConnectContigID == selfContig ) continue;
+                    
+                    connectOtherTGSCount++;
+
+                    currentSeed.contigID       = (*otherKmerIter).tgsConnectContigID;
+                    currentSeed.contigLength   = (*otherKmerIter).tgsConnectContigLength;
+                    currentSeed.contigSide     = (*otherKmerIter).tgsConnectContigSide;
+                    currentSeed.seedLength     = (*otherKmerIter).kmerStr.length();
+                    currentSeed.seedString     = (*otherKmerIter).kmerStr;
+                    currentSeed.strand         = (*otherKmerIter).kmerStrand;
+                    currentSeed.tgsLocation = (*otherKmerIter).position;
+                    currentSeed.tgsIndex    = (*otherKmerIter).tgsIndex;
+                    // contigStartPos is self tgs position
+                    currentSeed.contigStartPos = (*selfSeedIter).position;
+                    
+                    // filter repeat seed
+                    //if( connectOtherTGSCount>1 || connectOtherTGSCount==0 )continue;
+                    // push valid seed to vector
+                    currentSeedVec.SeedInfoVec.push_back(currentSeed);
+                }
+                
+            }
+        }
+        
+        if( currentSeedVec.SeedInfoVec.size() == 0 ){ twoPB.zeroSeed++; continue; }
+        
+        TGSConnectContigHashMap::iterator t = singleContigHashMap.find(currentSeedVec.SeedInfoVec[0].tgsIndex);
+            
+        filterErrorSeeds(currentSeedVec,resultSeedVec,mostConnectTGS(currentSeedVec));
+        //filterErrorSeeds2(currentSeedVec,resultSeedVec,mostTGSConnectContig(currentSeedVec));
+
+        //std::cout << "\n";
+        
+        /*
+        std::string de1 = "-1";
+        std::string de2 = "-1";
+        std::string firstContig  = selfTGSIter->second[0].firstContig;
+        std::string secondContig = t->second[0].firstContig;
+        */
+        //if( (firstContig == de1 && secondContig == de2) || (secondContig == de2 && firstContig == de1) ) std::cout << "a\n";    
+
+        
+        // filter tgs if it concurrently exist different strand seed and all seeds length are rather than 14
+        if(checkContigSeed(resultSeedVec,14))       { twoPB.seedDifferentStrand++;   continue; }
+        // check seeds order concordant or discordant 
+        if(checkSeedsOrientations(resultSeedVec))   { twoPB.seedOrderDiscordant++;   continue; }
+		// check distance between to seeds
+        if(checkSeedsDistance(resultSeedVec))       { twoPB.abnormalDistance++;      continue; }
+        // check overlap length 
+        if(checkOverlapLength(resultSeedVec))       { twoPB.abnormalOverlapLength++; continue; }
+		
+        std::cout << "kkmm\t"
+				  << selfTGSIter->second[0].firstContig   << "\t"
+                  << (*tgsVecIter).first   << "\t"
+                  << t->second[0].firstContig << "\t"
+                  << t->second[0].tgsIndex << "\t"
+                  //<< currentSeedVec.SeedInfoVec.size() << "\t"
+                  << resultSeedVec.SeedInfoVec.size() << "\t"
+                  //<< mostTGSConnectContig(currentSeedVec) << "\t" 
+				  << "\n";
+        
+        
+        //checkRepeatByTGS(resultSeedVec);
+        
+        //std::cout<<"\n";
+        
+        
+        /*
+        if( resultSeedVec.SeedInfoVec.size() < 3 )  { twoPB.seedsThreshold++;        continue; }
+        // check repeat by tgs index, old version. It can't detect every repeat seed.
+        if(checkRepeatByTGS(resultSeedVec))         { twoPB.repeatSeeds++;           continue; }
+         */
+		
+		
+		//TGSKmerVec::iterator tgsVecIter
+		// OverlapSeedVecInfo resultSeedVec;
+
+		insertContigRelationHash((*tgsVecIter),resultSeedVec);
+
+    }
+}
+
+void ReassemblerPostProcess::step3()
+{
+	std::cout << "\n---------build graph by two tgs---------\n\n";
+	std::cout<< "contig side number:\t" << connectContigHashMap.size() << "\n";
+    
+    for(ContigRelationHashMap::iterator contigSideIter = connectContigHashMap.begin() ; contigSideIter!=connectContigHashMap.end() ; ++contigSideIter )
+    {
+        // contigA have most tgs to contigB, so and contigB
+        
+        std::vector<OverlapRelation>::iterator iter ;
+        std::string endContig = mostConnectContig(contigSideIter->second);
+
+        if( endContig=="" ) continue;
+        else
+        {
+            std::string startContig;
+            int tmpOverlapLength = -1;
+
+            int ec_same = 0;
+            int ec_rev  = 0;
+            bool ec_vote = true;
+            
+            for(std::vector<OverlapRelation>::iterator tmpIter = contigSideIter->second.begin(); tmpIter != contigSideIter->second.end(); ++tmpIter )
+            {
+                if((*tmpIter).secondContig == endContig)
+                {
+                    if((*tmpIter).isSameStrand) ec_same++;
+                    else ec_rev++;
+                }
+            }
+            
+            if(ec_same == ec_rev) continue;
+            if(ec_same < ec_rev) ec_vote = false;
+            
+            for(std::vector<OverlapRelation>::iterator tmpIter = contigSideIter->second.begin(); tmpIter != contigSideIter->second.end(); ++tmpIter )
+            {
+                if( (*tmpIter).secondContig == endContig )
+                {    
+                    if((*tmpIter).isSameStrand != ec_vote) continue;
+                    
+                    if( ((*tmpIter).overlapLength > tmpOverlapLength) && ((*tmpIter).firstContig == startContig || tmpOverlapLength == -1) )
+                    {
+                        iter = tmpIter;
+                        
+                        tmpOverlapLength = (*tmpIter).overlapLength;
+                        
+                        std::string insertKey = (*tmpIter).secondContig+((*iter).secondSide ? "_Head":"_Tail");
+                    
+                        ContigRelationHashMap::iterator contigIterator = connectContigHashMap.find(insertKey);
+                        
+                        if( contigIterator != connectContigHashMap.end() ) 
+                            startContig = mostConnectContig(contigIterator->second);
+                    }
+                }
+            }
+            
+            if( startContig != (*iter).firstContig ) continue;
+        }
+        
+        std::string firstContig  = (*iter).firstContig;
+        std::string secondContig = (*iter).secondContig;
+        bool firstSide    = (*iter).firstSide;
+        bool secondSide   = (*iter).secondSide;
+        bool firstStrand  = (*iter).firstStrand;
+        bool secondStrand = (*iter).secondStrand;
+        
+        //int connectAndOverlap = connectVote((*iter).tgsIndex,contigSideIter->second);
+        // 0:same number of overlap and connect 1:overlap 2:nonOverlap
+        //if( connectAndOverlap == 0) continue;
+        // check two contigs side are not connect, store this pair in hash if not connect 
+        if(checkConnect(firstContig,firstSide,secondContig,secondSide))continue;
+
+		twoPB.sucsess++;
+		
+            std::cout//<< contigSideIter->first << "\t"
+                     //<< contigSideIter->second.size() << "\t"
+                     //<< (connectAndOverlap-1 ? "->...<-" : "-><-   ") << "\t"
+                     << (*iter).firIdx              << "\t"
+                     //<< (*iter).tgsLength             << "\t"
+                     //<< (*iter).overlapLength            << "\t"
+                     << firstContig                      << "\t"
+                     << (firstSide    ? "Head" : "Tail") << "\t"
+                     << (firstStrand  ? "NonRC" : "RC")  << "\t"
+                     //<< (*iter).firstContigLength        << "\t"
+                     //<< (firstSide ? "anti" : "sense")   << "\t"
+					 << (*iter).secIdx              << "\t"
+                     << secondContig                     << "\t"
+                     << (secondSide   ? "Head" : "Tail") << "\t"
+                     << (secondStrand ? "NonRC" : "RC")  << "\t"
+                     //<< (*iter).secondContigLength       << "\t"
+                     //<< (secondSide ? "anti" : "sense")  << "\t"
+                     << ((*iter).isSameStrand ? "same" : "reverse")      << "\t"
+                     << "\n";
+            
+            SeqCoord firstSeqCoord((*iter).firContigStart,(*iter).firContigEnd,(*iter).firstContigLength); 
+            SeqCoord secondSeqCoord((*iter).secContigStart,(*iter).secContigEnd,(*iter).secondContigLength);
+            
+            ContigVertex* pVL = ((ContigVertex*)m_pGraph->getVertex(firstContig));
+            ContigVertex* pVR = ((ContigVertex*)m_pGraph->getVertex(secondContig));
+            
+            ContigEdge* edgeLR = new ContigEdge(pVR,
+                                                firstSide ? ED_ANTISENSE : ED_SENSE,
+                                                (*iter).isSameStrand ? EC_SAME : EC_REVERSE,
+                                                firstSeqCoord,
+                                                firstStrand,
+                                                secondStrand,
+                                                (*iter).tgsFragment,
+                                                (*iter).overlapLength);
+            ContigEdge* edgeRL = new ContigEdge(pVL,
+                                                secondSide ? ED_ANTISENSE : ED_SENSE,
+                                                (*iter).isSameStrand ? EC_SAME : EC_REVERSE,
+                                                secondSeqCoord,
+                                                secondStrand,
+                                                firstStrand,
+                                                (*iter).tgsFragment,
+                                                (*iter).overlapLength);
+            
+            edgeLR->setTwin(edgeRL);
+            edgeRL->setTwin(edgeLR);
+     
+            m_pGraph->addEdge(pVL,edgeLR);
+            m_pGraph->addEdge(pVR,edgeRL);    
+    }
+	/*
+	{   
+        TGSConnectContigHashMap::iterator targetTGSIter = singleContigHashMap.find(resultSeedVec.SeedInfoVec[0].tgsIndex);
+
+        OverlapRelation connectResult;
+
+        connectResult.firstContig        = selfTGSIter->second[0].firstContig;
+        connectResult.firstContigLength  = selfTGSIter->second[0].firstContigLength;
+        connectResult.firstSide          = selfTGSIter->second[0].firstSide;
+        connectResult.firstStrand        = selfTGSIter->second[0].firstStrand;
+        
+        connectResult.secondContig       = targetTGSIter->second[0].firstContig;
+        connectResult.secondContigLength = targetTGSIter->second[0].firstContigLength;
+        connectResult.secondSide         = targetTGSIter->second[0].firstSide;
+        connectResult.secondStrand       = (resultSeedVec.SeedInfoVec[0].strand ?  targetTGSIter->second[0].firstStrand : !targetTGSIter->second[0].firstStrand );
+
+        connectResult.firContigStart = 0;
+        connectResult.firContigEnd   = 0;
+        connectResult.secContigStart = 0;
+        connectResult.secContigEnd   = 0;
+        connectResult.overlapLength  = 0;
+        
+        connectResult.connect = true;
+        
+        connectResult.isSameStrand = checkSameStrand( (*tgsVecIter).first, resultSeedVec.SeedInfoVec[0].tgsIndex, resultSeedVec.SeedInfoVec);
+
+		
+		
+        // prevent large repeat, filter tgs if it concurrently exist same/different side and strand 
+        if( checkContigRelation( connectResult.firstSide, connectResult.firstStrand, connectResult.secondSide, connectResult.secondStrand )) {twoPB.repeatStatus++;continue;}
+        
+        // check two contigs side are not connect, store this pair in hash if not connect 
+        if( checkConnect(connectResult.firstContig,connectResult.firstSide,connectResult.secondContig,connectResult.secondSide))continue;
+        
+        std::string firstTGSFragment;
+        std::string secondTGSFragment = concordantNonOverlapFragment(resultSeedVec);
+        std::string originTGS  = backtrackTGS( m_params.indices, (*tgsVecIter).first );
+        
+        if( selfTGSIter->second[0].singleOverlap.scanTGSStart == 0 ) 
+        {
+            SeedSequenceInfoVec::iterator first = resultSeedVec.SeedInfoVec.begin();
+            SeedSequenceInfoVec::iterator last = resultSeedVec.SeedInfoVec.end();
+            last--;
+            
+            int start = (*first).contigStartPos > (*last).contigStartPos ? (*first).contigStartPos : (*last).contigStartPos;
+            int end   = selfTGSIter->second[0].singleOverlap.scanTGSEnd;
+            firstTGSFragment  = originTGS.substr( start, end - start );
+            
+            //firstTGSFragment  = originTGS.substr( selfTGSIter->second[0].singleOverlap.scanTGSStart, selfTGSIter->second[0].singleOverlap.scanTGSEnd );
+            connectResult.tgsFragment = secondTGSFragment + firstTGSFragment;
+            
+            //std::cout<< "start1\n";
+            //std::cout<< (*first).contigStartPos << "\t" << (*last).contigStartPos <<"\n";
+            //std::cout<< start << "\t" << end << "\t idx " << (*tgsVecIter).first << "\n";
+        }
+        else 
+        {
+            SeedSequenceInfoVec::iterator first = resultSeedVec.SeedInfoVec.begin();
+            SeedSequenceInfoVec::iterator last = resultSeedVec.SeedInfoVec.end();
+            last--;
+            
+            int start = selfTGSIter->second[0].singleOverlap.scanTGSStart;
+            int end   = (*first).contigStartPos < (*last).contigStartPos ? (*first).contigStartPos : (*last).contigStartPos;
+            
+            firstTGSFragment  = originTGS.substr( start, end - start );
+            
+            //firstTGSFragment  = originTGS.substr( selfTGSIter->second[0].singleOverlap.scanTGSStart, originTGS.length() - selfTGSIter->second[0].singleOverlap.scanTGSStart );
+            connectResult.tgsFragment = firstTGSFragment + secondTGSFragment;
+            
+            //std::cout<< "end1\n";
+            //std::cout<< (*first).contigStartPos << "\t" << (*last).contigStartPos <<"\n";
+            //std::cout<< start << "\t" << end << "\t idx " << (*tgsVecIter).first << "\n";
+        }
+        
+        //std::cout    << connectResult.firstContig                      << "\t"
+        //             << (connectResult.firstSide    ? "Head" : "Tail") << "\t"
+        //             << (connectResult.firstStrand  ? "NonRC" : "RC")  << "\t"
+        //             << connectResult.firstContigLength        << "\t"
+        //             //<< (firstSide ? "anti" : "sense")   << "\t"
+        //             << connectResult.secondContig                     << "\t"
+        //             << (connectResult.secondSide   ? "Head" : "Tail") << "\t"
+        //             << (connectResult.secondStrand ? "NonRC" : "RC")  << "\t"
+        //             << connectResult.secondContigLength       << "\t"
+        //             //<< (secondSide ? "anti" : "sense")  << "\t"
+        //             << (connectResult.isSameStrand ? "same" : "reverse")      << "\t"
+        //             << (*tgsVecIter).first << "\t"
+        //             << resultSeedVec.SeedInfoVec[0].tgsIndex << "\t" 
+        //             << resultSeedVec.SeedInfoVec.size() << "\t"
+        //             << "\n";
+        
+        SeqCoord firstSeqCoord(connectResult.firContigStart,connectResult.firContigEnd,connectResult.firstContigLength); 
+        SeqCoord secondSeqCoord(connectResult.secContigStart,connectResult.secContigEnd,connectResult.secondContigLength);
+                
+        ContigVertex* pVL = ((ContigVertex*)m_pGraph->getVertex(connectResult.firstContig));
+        ContigVertex* pVR = ((ContigVertex*)m_pGraph->getVertex(connectResult.secondContig));
+        
+        twoPB.sucsess++;
+        
+        ContigEdge* edgeLR = new ContigEdge(pVR,
+                                            connectResult.firstSide ? ED_ANTISENSE : ED_SENSE,
+                                            connectResult.isSameStrand ? EC_SAME : EC_REVERSE,
+                                            firstSeqCoord,
+                                            connectResult.firstStrand,
+                                            connectResult.secondStrand,
+                                            connectResult.tgsFragment,
+                                            connectResult.overlapLength);
+        ContigEdge* edgeRL = new ContigEdge(pVL,
+                                            connectResult.secondSide ? ED_ANTISENSE : ED_SENSE,
+                                            connectResult.isSameStrand ? EC_SAME : EC_REVERSE,
+                                            secondSeqCoord,
+                                            connectResult.secondStrand,
+                                            connectResult.firstStrand,
+                                            connectResult.tgsFragment,
+                                            connectResult.overlapLength);
+                
+        edgeLR->setTwin(edgeRL);
+        edgeRL->setTwin(edgeLR);
+         
+        m_pGraph->addEdge(pVL,edgeLR);
+        m_pGraph->addEdge(pVR,edgeRL);
+    }
+    
+    std::cout<<"\n";
+    std::cout<< "pass tgs number         : "           << twoPB.passCount             << "\n"
+             << "case 1. repeat status      : "        << twoPB.repeatStatus          << "\n"
+             << "case 2. zero seed          : "        << twoPB.zeroSeed              << "\n"
+             << "case 3. seeds num less than three : " << twoPB.seedsThreshold        << "\n"
+             << "case 4. seeds different strand  : "   << twoPB.seedDifferentStrand   << "\n"
+             << "case 5. seeds order discordant  : "   << twoPB.seedOrderDiscordant   << "\n"
+             << "case 6. abnormal overlap length : "   << twoPB.abnormalOverlapLength << "\n"
+             << "case 7. abnormal distance between two seeds : " << twoPB.abnormalDistance << "\n\n"; 
+	*/
+}
+
+        ///******** filter error tgs function **********///
 
 bool ReassemblerPostProcess::checkContigRelation(bool firstSide, bool firstStrand, bool secondSide, bool secondStrand)
 {
@@ -1174,7 +1370,7 @@ bool ReassemblerPostProcess::checkContigRelation(bool firstSide, bool firstStran
     
     return false;
 }
-		
+        
 bool ReassemblerPostProcess::checkContigSeed(OverlapSeedVecInfo input, int lengthThreshold)
 {
     // filter tgs if it have different seed status
@@ -1183,15 +1379,15 @@ bool ReassemblerPostProcess::checkContigSeed(OverlapSeedVecInfo input, int lengt
     bool allSmall = true;
     
     for(SeedSequenceInfoVec::iterator iter = input.SeedInfoVec.begin(); iter!=input.SeedInfoVec.end() ; ++iter)
-    {	
-		/*
-		size_t fwdKmerFreqsUsingTGS = BWTAlgorithms::countSequenceOccurrencesSingleStrand((*iter).seedString, m_params.indices);
+    {    
+        /*
+        size_t fwdKmerFreqsUsingTGS = BWTAlgorithms::countSequenceOccurrencesSingleStrand((*iter).seedString, m_params.indices);
         size_t rvcKmerFreqsUsingTGS = BWTAlgorithms::countSequenceOccurrencesSingleStrand(reverseComplement((*iter).seedString), m_params.indices);
         size_t kmerFreqsUsingTGS = fwdKmerFreqsUsingTGS + rvcKmerFreqsUsingTGS;
-		
-		std::cout << "( " << (*iter).contigSide << " , " << (*iter).strand    << " , ";
-				  
-		BWTInterval interval  = BWTAlgorithms::findInterval(m_params.indices,(*iter).seedString) ;
+        
+        std::cout << "( " << (*iter).contigSide << " , " << (*iter).strand    << " , ";
+                  
+        BWTInterval interval  = BWTAlgorithms::findInterval(m_params.indices,(*iter).seedString) ;
         BWTInterval rinterval = BWTAlgorithms::findInterval(m_params.indices,reverseComplement((*iter).seedString));
 
         for(size_t j = interval.lower ; j <= (size_t)interval.upper ; j++)
@@ -1203,12 +1399,12 @@ bool ReassemblerPostProcess::checkContigSeed(OverlapSeedVecInfo input, int lengt
         for(size_t j = rinterval.lower ; j <= (size_t)rinterval.upper ; j++)
         {
             std::pair<size_t, size_t> currentSeed = BacktrackTGSIdx(m_params.indices,j);
-			std::cout << currentSeed.first << " ";
+            std::cout << currentSeed.first << " ";
         }
-				  
-		std::cout << " , " <<(*iter).tgsIndex  << " )";
-		*/
-		if((*iter).seedLength<=lengthThreshold)shortSeedCount++;
+                  
+        std::cout << " , " <<(*iter).tgsIndex  << " )";
+        */
+        if((*iter).seedLength<=lengthThreshold)shortSeedCount++;
         else allSmall = false;
         
         if((*iter).contigSide!=input.SeedInfoVec[0].contigSide || (*iter).strand != input.SeedInfoVec[0].strand)
@@ -1247,20 +1443,20 @@ bool ReassemblerPostProcess::checkSeedsDistance(OverlapSeedVecInfo input)
     {    
         int contigDistanceBetweenTwoSeeds = std::abs((*last).contigStartPos - (*first).contigStartPos);
         int tgsDistanceBetweenTwoSeeds = std::abs((*last).tgsLocation - (*first).tgsLocation);
-			
+            
         if(std::abs(tgsDistanceBetweenTwoSeeds-contigDistanceBetweenTwoSeeds)>200 &&
            std::abs(tgsDistanceBetweenTwoSeeds-contigDistanceBetweenTwoSeeds)>contigDistanceBetweenTwoSeeds*0.2)
-				return true;
+                return true;
 
         first++;
         last++;
     }
     return false;
 }
-		
+        
 bool ReassemblerPostProcess::checkRepeatByTGS(OverlapSeedVecInfo input)
 {
-    int slideWindow = 15;
+    int slideWindow = 11;
     int repeatKmerCount_80 = 0;
     int totalKmerNumber = 0;
     
@@ -1275,6 +1471,8 @@ bool ReassemblerPostProcess::checkRepeatByTGS(OverlapSeedVecInfo input)
             size_t kmerFreqs = fwdKmerFreqs+rvcKmerFreqs;
             
             totalKmerNumber++;
+           
+           std::cout<< kmerFreqs << " ";
            
             // repeat kmer
             if((int)kmerFreqs>=kmerSizeFreqByTGS_15[seedCount_15/10*8])repeatKmerCount_80++;
@@ -1348,87 +1546,87 @@ int Cmp(const void *lhs, const void *rhs) {
 
 bool ReassemblerPostProcess::checkPalindrome(std::string readSeq)
 {
-	SparseHashMap<std::string, KmerInfo, StringHasher> readKmerHashMap;
-	size_t kmerSize = 11;
-	
+    SparseHashMap<std::string, KmerInfo, StringHasher> readKmerHashMap;
+    size_t kmerSize = 11;
+    
     for(size_t i = 0 ; i+kmerSize <= (size_t)readSeq.length() ; i++)
     {
         std::string forwardkmer = readSeq.substr(i, kmerSize);
-		std::string reverseKmer = reverseComplement(forwardkmer);
-		
-		size_t fwdKmerFreqs = BWTAlgorithms::countSequenceOccurrencesSingleStrand(forwardkmer, m_params.indices);
+        std::string reverseKmer = reverseComplement(forwardkmer);
+        
+        size_t fwdKmerFreqs = BWTAlgorithms::countSequenceOccurrencesSingleStrand(forwardkmer, m_params.indices);
         size_t rvcKmerFreqs = BWTAlgorithms::countSequenceOccurrencesSingleStrand(reverseKmer, m_params.indices);
         size_t kmerFreqs = fwdKmerFreqs+rvcKmerFreqs;
-		
-		if( ((int)kmerFreqs > kmerSizeFreqByTGS_11[seedCount_11/10*7])) continue;
-		
-		SparseHashMap<std::string, KmerInfo, StringHasher>::iterator findKmerIter = readKmerHashMap.find(forwardkmer);
-		
-		if( findKmerIter == readKmerHashMap.end() ) 
-		{
-			KmerInfo tmpKmer;
-			tmpKmer.position = (int)i;
-			tmpKmer.secondPosition = 0;
-			tmpKmer.isRepeat = false;
-			readKmerHashMap.insert(std::make_pair(forwardkmer,tmpKmer));
-		}
-		else
-		{
-			findKmerIter->second.isRepeat = true;
-		}
-		
-		findKmerIter = readKmerHashMap.find(reverseKmer);
-		
-		if( findKmerIter!=readKmerHashMap.end() )
-		{
-			if(!findKmerIter->second.isRepeat && findKmerIter->second.secondPosition == 0 )
-				findKmerIter->second.secondPosition = (int)i;
-			else if(!findKmerIter->second.isRepeat)
-			{
-				findKmerIter->second.isRepeat = true;
-			}
-		}
-	}
+        
+        if( ((int)kmerFreqs > kmerSizeFreqByTGS_11[seedCount_11/10*7])) continue;
+        
+        SparseHashMap<std::string, KmerInfo, StringHasher>::iterator findKmerIter = readKmerHashMap.find(forwardkmer);
+        
+        if( findKmerIter == readKmerHashMap.end() ) 
+        {
+            KmerInfo tmpKmer;
+            tmpKmer.position = (int)i;
+            tmpKmer.secondPosition = 0;
+            tmpKmer.isRepeat = false;
+            readKmerHashMap.insert(std::make_pair(forwardkmer,tmpKmer));
+        }
+        else
+        {
+            findKmerIter->second.isRepeat = true;
+        }
+        
+        findKmerIter = readKmerHashMap.find(reverseKmer);
+        
+        if( findKmerIter!=readKmerHashMap.end() )
+        {
+            if(!findKmerIter->second.isRepeat && findKmerIter->second.secondPosition == 0 )
+                findKmerIter->second.secondPosition = (int)i;
+            else if(!findKmerIter->second.isRepeat)
+            {
+                findKmerIter->second.isRepeat = true;
+            }
+        }
+    }
 
-	int tmp = 0;
-	int count = 0;
+    int tmp = 0;
+    int count = 0;
 
-	int positionArray[readSeq.length()][2];
-	
-	for(SparseHashMap<std::string, KmerInfo, StringHasher>::iterator kmerIter = readKmerHashMap.begin() ; kmerIter != readKmerHashMap.end() ; ++kmerIter )
-	{
-		if(!kmerIter->second.isRepeat && kmerIter->second.secondPosition != 0)
-		{
-			positionArray[tmp][0] = kmerIter->second.position;
-			positionArray[tmp][1] = kmerIter->second.secondPosition;
-			tmp++;
-		}
-	}
-	
-	qsort(positionArray,tmp,sizeof(positionArray[0]),Cmp);
-	
-	for(int i = 1; i<tmp ; i++)
-	{
-		if(std::abs(positionArray[i][1] - positionArray[i-1][1]) < 40 && positionArray[i][0] < positionArray[i-1][0]) 
-		{	
-			count++;
-		}
-		else 
-		{
-			count = 0;
-		}
-		if(count>=6)return true;
-	}
-	
-	return false;
+    int positionArray[readSeq.length()][2];
+    
+    for(SparseHashMap<std::string, KmerInfo, StringHasher>::iterator kmerIter = readKmerHashMap.begin() ; kmerIter != readKmerHashMap.end() ; ++kmerIter )
+    {
+        if(!kmerIter->second.isRepeat && kmerIter->second.secondPosition != 0)
+        {
+            positionArray[tmp][0] = kmerIter->second.position;
+            positionArray[tmp][1] = kmerIter->second.secondPosition;
+            tmp++;
+        }
+    }
+    
+    qsort(positionArray,tmp,sizeof(positionArray[0]),Cmp);
+    
+    for(int i = 1; i<tmp ; i++)
+    {
+        if(std::abs(positionArray[i][1] - positionArray[i-1][1]) < 40 && positionArray[i][0] < positionArray[i-1][0]) 
+        {    
+            count++;
+        }
+        else 
+        {
+            count = 0;
+        }
+        if(count>=6)return true;
+    }
+    
+    return false;
 }
 
 bool ReassemblerPostProcess::checkOverlapLength(OverlapSeedVecInfo input)
 {
     SeedSequenceInfoVec::iterator first = input.SeedInfoVec.begin();
     SeedSequenceInfoVec::iterator last  = input.SeedInfoVec.end();
-	--last;
-	
+    --last;
+    
     if(std::abs((int)(*first).contigStartPos - (int)(*last).contigStartPos)<400) return true;
     if(std::abs((int)(*first).tgsLocation - (int)(*last).tgsLocation)<400) return true;
     
@@ -1441,9 +1639,9 @@ bool ReassemblerPostProcess::checkNonOverlapPartialLength(OverlapSeedVecInfo inp
     int tgsIndex  = input.SeedInfoVec[0].tgsIndex;
     int contigLength = input.SeedInfoVec[0].contigLength;
     std::string originTGS = backtrackTGS( m_params.indices, tgsIndex );
-	
-	TGSScanAndOverlapPosition reScanPosition = reScanContigOnTGSRange( input.SeedInfoVec[0].contigPartialSeq, originTGS );
-	
+    
+    TGSScanAndOverlapPosition reScanPosition = reScanContigOnTGSRange( input.SeedInfoVec[0].contigPartialSeq, originTGS );
+    
     int thresholdLength = 400; 
     
     SeedSequenceInfoVec::iterator first = input.SeedInfoVec.begin();
@@ -1458,78 +1656,78 @@ bool ReassemblerPostProcess::checkNonOverlapPartialLength(OverlapSeedVecInfo inp
         {
             if( (int)(*first).tgsLocation - (int)(*first).contigStartPos < thresholdLength ) return true;
             position.scanTGSStart = 0;
-			position.scanTGSEnd   = (*first).tgsLocation - (*first).contigStartPos;
-			position.tgsFragmentStart = 0;
-			position.tgsFragmentEnd   = (*first).tgsLocation;
-			//position.cutContigToEndPointLength = (*first).contigStartPos;
-			
-			if(reScanPosition.kmerCount>10)
-			{
-				position.scanTGSEnd     = reScanPosition.scanTGSStart;
-				position.tgsFragmentEnd = reScanPosition.scanTGSStart;
-			}
+            position.scanTGSEnd   = (*first).tgsLocation - (*first).contigStartPos;
+            position.tgsFragmentStart = 0;
+            position.tgsFragmentEnd   = (*first).tgsLocation;
+            //position.cutContigToEndPointLength = (*first).contigStartPos;
+            
+            if(reScanPosition.kmerCount>10)
+            {
+                position.scanTGSEnd     = reScanPosition.scanTGSStart;
+                position.tgsFragmentEnd = reScanPosition.scanTGSStart;
+            }
         }
         // tgs dir <----
         else
         {
             if( (int)originTGS.length() - ( (*first).tgsLocation + (*first).contigStartPos ) < thresholdLength ) return true;
             position.scanTGSStart = (*first).tgsLocation + (*first).contigStartPos;
-			position.scanTGSEnd   = originTGS.length();
-			position.tgsFragmentStart = (*first).tgsLocation;
-			position.tgsFragmentEnd   = originTGS.length();
-			//position.cutContigToEndPointLength = (*first).contigStartPos;
-			
-			if(reScanPosition.kmerCount>10)
-			{
-				position.scanTGSEnd     = reScanPosition.scanTGSEnd;
-				position.tgsFragmentEnd = reScanPosition.scanTGSEnd;
-			}
+            position.scanTGSEnd   = originTGS.length();
+            position.tgsFragmentStart = (*first).tgsLocation;
+            position.tgsFragmentEnd   = originTGS.length();
+            //position.cutContigToEndPointLength = (*first).contigStartPos;
+            
+            if(reScanPosition.kmerCount>10)
+            {
+                position.scanTGSEnd     = reScanPosition.scanTGSEnd;
+                position.tgsFragmentEnd = reScanPosition.scanTGSEnd;
+            }
         }
     }
     // contig tail side
     else
     {
         int toEndLength = contigLength - (*last).contigStartPos;
-		// tgs dir ---->
-		if( (*first).tgsLocation < (*last).tgsLocation )
+        // tgs dir ---->
+        if( (*first).tgsLocation < (*last).tgsLocation )
         {
-			if( ( (int)originTGS.length() - ( (*last).tgsLocation + toEndLength ) ) < thresholdLength ) return true;
+            if( ( (int)originTGS.length() - ( (*last).tgsLocation + toEndLength ) ) < thresholdLength ) return true;
             position.scanTGSStart = (*last).tgsLocation + toEndLength;
-			position.scanTGSEnd   = originTGS.length();
-			position.tgsFragmentStart = (*last).tgsLocation;
-			position.tgsFragmentEnd   = originTGS.length();
-			//position.cutContigToEndPointLength = toEndLength;
-			
-			if(reScanPosition.kmerCount>10)
-			{
-				position.scanTGSEnd     = reScanPosition.scanTGSEnd;
-				position.tgsFragmentEnd = reScanPosition.scanTGSEnd;
-			}
+            position.scanTGSEnd   = originTGS.length();
+            position.tgsFragmentStart = (*last).tgsLocation;
+            position.tgsFragmentEnd   = originTGS.length();
+            //position.cutContigToEndPointLength = toEndLength;
+            
+            if(reScanPosition.kmerCount>10)
+            {
+                position.scanTGSEnd     = reScanPosition.scanTGSEnd;
+                position.tgsFragmentEnd = reScanPosition.scanTGSEnd;
+            }
         }
-		// tgs dir <----
+        // tgs dir <----
         else
         {
             if( (*last).tgsLocation - toEndLength < thresholdLength ) return true;
-			position.scanTGSStart = 0;
-			position.scanTGSEnd   = (*first).tgsLocation - toEndLength;
-			position.tgsFragmentStart = 0;
-			position.tgsFragmentEnd   = (*last).tgsLocation;
-			//position.cutContigToEndPointLength = toEndLength;
-			
-			if(reScanPosition.kmerCount>10)
-			{
-				position.scanTGSEnd     = reScanPosition.scanTGSStart;
-				position.tgsFragmentEnd = reScanPosition.scanTGSStart;
-			}
+            position.scanTGSStart = 0;
+            position.scanTGSEnd   = (*first).tgsLocation - toEndLength;
+            position.tgsFragmentStart = 0;
+            position.tgsFragmentEnd   = (*last).tgsLocation;
+            //position.cutContigToEndPointLength = toEndLength;
+            
+            if(reScanPosition.kmerCount>10)
+            {
+                position.scanTGSEnd     = reScanPosition.scanTGSStart;
+                position.tgsFragmentEnd = reScanPosition.scanTGSStart;
+            }
         }
     }
     
-	//std::cout<<position.scanTGSStart << "\t" << position.scanTGSEnd <<"   range\n";
+    //std::cout<<position.scanTGSStart << "\t" << position.scanTGSEnd <<"   range\n";
     return false;
 }
 
-		///**************** tool function *****************///
-		
+        ///**************** tool function *****************///
+        
 void ReassemblerPostProcess::insertContigRelationHash(std::string firstContig, bool firstSide, bool firstStrand, std::string secondContig, bool secondSide, bool secondStrand, int firstContigLength, int secondContigLength, std::vector<OverlapSeedVecInfo> contigInfoVec)
 {
     OverlapRelation contigPair;
@@ -1604,6 +1802,99 @@ void ReassemblerPostProcess::insertContigRelationHash(std::string firstContig, b
     }
 }
 
+		//TGSKmerVec::iterator tgsVecIter
+		//TGSConnectContigHashMap::iterator selfTGSIter
+		// OverlapSeedVecInfo resultSeedVec;
+
+void ReassemblerPostProcess::insertContigRelationHash(TGSKmerPair tgsVecIter, OverlapSeedVecInfo resultSeedVec)
+{
+	
+	TGSConnectContigHashMap::iterator selfTGSIter = singleContigHashMap.find(tgsVecIter.first);
+	TGSConnectContigHashMap::iterator targetTGSIter = singleContigHashMap.find(resultSeedVec.SeedInfoVec[0].tgsIndex);
+	
+    OverlapRelation connectResult;
+
+    connectResult.firstContig        = selfTGSIter->second[0].firstContig;
+    connectResult.firstContigLength  = selfTGSIter->second[0].firstContigLength;
+    connectResult.firstSide          = selfTGSIter->second[0].firstSide;
+    connectResult.firstStrand        = selfTGSIter->second[0].firstStrand;
+        
+    connectResult.secondContig       = targetTGSIter->second[0].firstContig;
+    connectResult.secondContigLength = targetTGSIter->second[0].firstContigLength;
+    connectResult.secondSide         = targetTGSIter->second[0].firstSide;
+    connectResult.secondStrand       = (resultSeedVec.SeedInfoVec[0].strand ?  targetTGSIter->second[0].firstStrand : !targetTGSIter->second[0].firstStrand );
+
+    connectResult.firContigStart = 0;
+    connectResult.firContigEnd   = 0;
+    connectResult.secContigStart = 0;
+    connectResult.secContigEnd   = 0;
+    connectResult.overlapLength  = 0;
+        
+    connectResult.connect = true;
+        
+    connectResult.isSameStrand = checkSameStrand( tgsVecIter.first, resultSeedVec.SeedInfoVec[0].tgsIndex, resultSeedVec.SeedInfoVec);
+
+	connectResult.firIdx = tgsVecIter.first;
+	connectResult.secIdx = resultSeedVec.SeedInfoVec[0].tgsIndex;
+	
+	std::string firstTGSFragment;
+    std::string secondTGSFragment = concordantNonOverlapFragment(resultSeedVec);
+    std::string originTGS  = backtrackTGS( m_params.indices, tgsVecIter.first );
+        
+    if( selfTGSIter->second[0].singleOverlap.scanTGSStart == 0 ) 
+    {
+        SeedSequenceInfoVec::iterator first = resultSeedVec.SeedInfoVec.begin();
+        SeedSequenceInfoVec::iterator last = resultSeedVec.SeedInfoVec.end();
+        last--;
+            
+        int start = (*first).contigStartPos > (*last).contigStartPos ? (*first).contigStartPos : (*last).contigStartPos;
+        int end   = selfTGSIter->second[0].singleOverlap.scanTGSEnd;
+        firstTGSFragment  = originTGS.substr( start, end - start );
+            
+        //firstTGSFragment  = originTGS.substr( selfTGSIter->second[0].singleOverlap.scanTGSStart, selfTGSIter->second[0].singleOverlap.scanTGSEnd );
+        connectResult.tgsFragment = secondTGSFragment + firstTGSFragment;
+            
+        //std::cout<< "start1\n";
+        //std::cout<< (*first).contigStartPos << "\t" << (*last).contigStartPos <<"\n";
+        //std::cout<< start << "\t" << end << "\t idx " << tgsVecIter.first << "\n";
+    }
+    else 
+    {
+        SeedSequenceInfoVec::iterator first = resultSeedVec.SeedInfoVec.begin();
+        SeedSequenceInfoVec::iterator last = resultSeedVec.SeedInfoVec.end();
+        last--;
+            
+        int start = selfTGSIter->second[0].singleOverlap.scanTGSStart;
+        int end   = (*first).contigStartPos < (*last).contigStartPos ? (*first).contigStartPos : (*last).contigStartPos;
+            
+        firstTGSFragment  = originTGS.substr( start, end - start );
+            
+        //firstTGSFragment  = originTGS.substr( selfTGSIter->second[0].singleOverlap.scanTGSStart, originTGS.length() - selfTGSIter->second[0].singleOverlap.scanTGSStart );
+        connectResult.tgsFragment = firstTGSFragment + secondTGSFragment;
+            
+        //std::cout<< "end1\n";
+        //std::cout<< (*first).contigStartPos << "\t" << (*last).contigStartPos <<"\n";
+        //std::cout<< start << "\t" << end << "\t idx " << tgsVecIter.first << "\n";
+    }
+	
+	std::string insertKey = selfTGSIter->second[0].firstContig+(selfTGSIter->second[0].firstSide ? "_Head":"_Tail");
+	std::vector<OverlapRelation> insertVec;
+	// prevent different tgs build same relation edge  
+    ContigRelationHashMap::iterator contigIterator = connectContigHashMap.find(insertKey);
+    //this contigSide already exist
+    if( contigIterator != connectContigHashMap.end() ) 
+    {
+        // push this contigSide to hash
+        contigIterator->second.push_back(connectResult);
+    }
+    //this contigSide not exist
+    else
+    {
+        insertVec.push_back(connectResult);
+        connectContigHashMap.insert(std::make_pair(insertKey,insertVec));
+    }
+}
+
 void ReassemblerPostProcess::insertSingleRelationHash(OverlapSeedVecInfo input, TGSScanAndOverlapPosition scanRange)
 {
     OverlapRelation contigPair;
@@ -1611,7 +1902,7 @@ void ReassemblerPostProcess::insertSingleRelationHash(OverlapSeedVecInfo input, 
     
     std::string originTGS = backtrackTGS( m_params.indices, (int)input.SeedInfoVec[0].tgsIndex );
     contigTGSPosition f   = OnTGSRange( input.SeedInfoVec, (int)originTGS.length() );
-	
+    
     contigPair.firstContig   = input.contig;
     contigPair.firstSide     = input.SeedInfoVec[0].contigSide;
     contigPair.firstStrand   = input.SeedInfoVec[0].strand;
@@ -1620,10 +1911,10 @@ void ReassemblerPostProcess::insertSingleRelationHash(OverlapSeedVecInfo input, 
     contigPair.firstContigLength  = input.SeedInfoVec[0].contigLength;
     //contigPair.scanStart = scanRange.first;
     //contigPair.scanEnd   = scanRange.second;
-	contigPair.singleOverlap = scanRange;
-	
-	contigPair.tgsDirection = f.firstTGSStartPos < f.lastTGSStartPos;
-	
+    contigPair.singleOverlap = scanRange;
+    
+    contigPair.tgsDirection = f.firstTGSStartPos < f.lastTGSStartPos;
+    
     TGSConnectContigHashMap::iterator tgsIterator = singleContigHashMap.find(contigPair.tgsIndex);
     
     if( tgsIterator != singleContigHashMap.end() ) 
@@ -1635,8 +1926,8 @@ void ReassemblerPostProcess::insertSingleRelationHash(OverlapSeedVecInfo input, 
         insertVec.push_back(contigPair);
         singleContigHashMap.insert(std::make_pair(contigPair.tgsIndex,insertVec));
     }
-	
-	//std::cout << "(debug)contig : " << input.contig << "\tread : " << input.SeedInfoVec[0].tgsIndex << "\n";
+    
+    //std::cout << "(debug)contig : " << input.contig << "\tread : " << input.SeedInfoVec[0].tgsIndex << "\n";
 }
 
 contigTGSPosition ReassemblerPostProcess::OnTGSRange(SeedSequenceInfoVec inputSeedInfoVec, int64_t tgsLength)
@@ -1651,10 +1942,10 @@ contigTGSPosition ReassemblerPostProcess::OnTGSRange(SeedSequenceInfoVec inputSe
 
     result.offsetOverlapLength = 0;
     
-	std::string originTGS = backtrackTGS( m_params.indices, (int)inputSeedInfoVec[0].tgsIndex );
-	TGSScanAndOverlapPosition reScanPosition = reScanContigOnTGSRange( inputSeedInfoVec[0].contigPartialSeq, originTGS );
-	
-	
+    std::string originTGS = backtrackTGS( m_params.indices, (int)inputSeedInfoVec[0].tgsIndex );
+    TGSScanAndOverlapPosition reScanPosition = reScanContigOnTGSRange( inputSeedInfoVec[0].contigPartialSeq, originTGS );
+    
+    
     for(SeedSequenceInfoVec::iterator iter =inputSeedInfoVec.begin(); iter!=inputSeedInfoVec.end() ; ++iter)
     {
         if( (*iter).contigStartPos < firstContigStartPos )
@@ -1677,9 +1968,9 @@ contigTGSPosition ReassemblerPostProcess::OnTGSRange(SeedSequenceInfoVec inputSe
         {
             contigEndPointOnTGSPos = std::max( firstTGSStartPos - firstContigStartPos, (int64_t)0 );
             
-			if(reScanPosition.kmerCount>10)
-				contigEndPointOnTGSPos  = reScanPosition.scanTGSStart;
-			
+            if(reScanPosition.kmerCount>10)
+                contigEndPointOnTGSPos  = reScanPosition.scanTGSStart;
+            
             //if( firstContigStartPos > firstTGSStartPos )
             //    result.offsetOverlapLength = std::abs(firstTGSStartPos - firstContigStartPos);
         }
@@ -1688,9 +1979,9 @@ contigTGSPosition ReassemblerPostProcess::OnTGSRange(SeedSequenceInfoVec inputSe
         {    
             contigEndPointOnTGSPos = std::min( firstTGSStartPos + firstContigStartPos, tgsLength );
             
-			if(reScanPosition.kmerCount>=10)
-				contigEndPointOnTGSPos  = reScanPosition.scanTGSEnd;
-			
+            if(reScanPosition.kmerCount>=10)
+                contigEndPointOnTGSPos  = reScanPosition.scanTGSEnd;
+            
             //if( firstTGSStartPos - firstContigStartPos > tgsLength)
             //    result.offsetOverlapLength = std::abs(firstTGSStartPos + firstContigStartPos - tgsLength );
         }
@@ -1704,9 +1995,9 @@ contigTGSPosition ReassemblerPostProcess::OnTGSRange(SeedSequenceInfoVec inputSe
         {
             contigEndPointOnTGSPos = std::min( lastTGSStartPos + (contigLength - lastContigStartPos), tgsLength );
             
-			if(reScanPosition.kmerCount>=10)
-				contigEndPointOnTGSPos  = reScanPosition.scanTGSEnd;
-			
+            if(reScanPosition.kmerCount>=10)
+                contigEndPointOnTGSPos  = reScanPosition.scanTGSEnd;
+            
             //if( lastTGSStartPos + (contigLength - lastContigStartPos) > tgsLength)
             //    result.offsetOverlapLength = std::abs( lastTGSStartPos + (contigLength - lastContigStartPos) - tgsLength );
         }
@@ -1715,9 +2006,9 @@ contigTGSPosition ReassemblerPostProcess::OnTGSRange(SeedSequenceInfoVec inputSe
         {
             contigEndPointOnTGSPos = std::max( lastTGSStartPos - (contigLength - lastContigStartPos) , (int64_t)0 );
             
-			if(reScanPosition.kmerCount>10)
-				contigEndPointOnTGSPos  = reScanPosition.scanTGSStart;
-			
+            if(reScanPosition.kmerCount>10)
+                contigEndPointOnTGSPos  = reScanPosition.scanTGSStart;
+            
             //if( lastTGSStartPos - (contigLength - lastContigStartPos) < 0)
             //    result.offsetOverlapLength = std::abs(lastTGSStartPos - (contigLength - lastContigStartPos));
         }
@@ -1734,127 +2025,127 @@ contigTGSPosition ReassemblerPostProcess::OnTGSRange(SeedSequenceInfoVec inputSe
     result.firstTGSStartPos = firstTGSStartPos;
     result.lastTGSStartPos  = lastTGSStartPos;
     result.contigEndPointOnTGSPos = contigEndPointOnTGSPos;
-	
+    
     return result;
 }
 
 TGSScanAndOverlapPosition ReassemblerPostProcess::reScanContigOnTGSRange(std::string partialContig, std::string originTGS)
 {
-	TGSScanAndOverlapPosition result;
-	
-	SparseHashMap<std::string, KmerInfo, StringHasher> contigPartialKmerHashMap;
-	std::vector<TGSScanAndOverlapPosition> rePositionVec;
-	
-	int minPosition = 0;
-	
-	size_t kmerSize = 11;
-	
-	result.kmerCount = 0;
-	result.scanTGSStart = 0;
-	result.scanTGSEnd   = 0;
+    TGSScanAndOverlapPosition result;
+    
+    SparseHashMap<std::string, KmerInfo, StringHasher> contigPartialKmerHashMap;
+    std::vector<TGSScanAndOverlapPosition> rePositionVec;
+    
+    int minPosition = 0;
+    
+    size_t kmerSize = 11;
+    
+    result.kmerCount = 0;
+    result.scanTGSStart = 0;
+    result.scanTGSEnd   = 0;
 
     for(size_t i = 0 ; i+kmerSize <= (size_t)partialContig.length() ; i++)
     {
-		std::string forwardkmer = partialContig.substr(i, kmerSize);
+        std::string forwardkmer = partialContig.substr(i, kmerSize);
 
-		SparseHashMap<std::string, KmerInfo, StringHasher>::iterator forwardKmerIter = contigPartialKmerHashMap.find(forwardkmer);
-		
-		if(forwardKmerIter!=contigPartialKmerHashMap.end())
-		{
-			forwardKmerIter->second.isRepeat = true;
-		}
-		else
-		{
-			KmerInfo tmp;
-			tmp.isRepeat = false;
-			tmp.position = -1;
-			contigPartialKmerHashMap.insert(std::make_pair(forwardkmer,tmp));
-		}
-	}
-	
-	for(size_t i = 0 ; i+kmerSize <= originTGS.length() ; i++)
+        SparseHashMap<std::string, KmerInfo, StringHasher>::iterator forwardKmerIter = contigPartialKmerHashMap.find(forwardkmer);
+        
+        if(forwardKmerIter!=contigPartialKmerHashMap.end())
+        {
+            forwardKmerIter->second.isRepeat = true;
+        }
+        else
+        {
+            KmerInfo tmp;
+            tmp.isRepeat = false;
+            tmp.position = -1;
+            contigPartialKmerHashMap.insert(std::make_pair(forwardkmer,tmp));
+        }
+    }
+    
+    for(size_t i = 0 ; i+kmerSize <= originTGS.length() ; i++)
     {
-		std::string forwardkmer = originTGS.substr(i, kmerSize);
-		std::string reversekmer = reverseComplement(forwardkmer);
-		
-		SparseHashMap<std::string, KmerInfo, StringHasher>::iterator forwardKmerIter = contigPartialKmerHashMap.find(forwardkmer);
-		if(forwardKmerIter!=contigPartialKmerHashMap.end())
-		{
-			if(!forwardKmerIter->second.isRepeat && forwardKmerIter->second.position == -1)
-			{
-				forwardKmerIter->second.position = i;
-			}
-			else if(forwardKmerIter->second.position!= -1)
-			{
-				forwardKmerIter->second.isRepeat = true;
-				forwardKmerIter->second.position = -1;
-			}
-		}
-		
-		SparseHashMap<std::string, KmerInfo, StringHasher>::iterator reverseKmerIter = contigPartialKmerHashMap.find(reversekmer);
-		if(reverseKmerIter!=contigPartialKmerHashMap.end())
-		{
-			if(!reverseKmerIter->second.isRepeat && reverseKmerIter->second.position == -1)
-			{
-				reverseKmerIter->second.position = i;
-			}
-			else if(reverseKmerIter->second.position!= -1)
-			{
-				reverseKmerIter->second.isRepeat = true;
-				reverseKmerIter->second.position = -1;
-			}
-		}
-	}
-	
-	int tmp = 0;
-	int contigOnTGSPosition[partialContig.length()];
-	
-	for(SparseHashMap<std::string, KmerInfo, StringHasher>::iterator kmerIter = contigPartialKmerHashMap.begin() ; kmerIter!=contigPartialKmerHashMap.end() ; ++kmerIter)
-	{
-		if(!kmerIter->second.isRepeat && kmerIter->second.position != -1)
-		{
-			contigOnTGSPosition[tmp] = kmerIter->second.position;
-			tmp++;
-		}
-	}
-	
-	std::sort(contigOnTGSPosition,contigOnTGSPosition+tmp);
-	
-	for(int i =1;i<tmp;i++)
-	{
-		if( (std::abs(contigOnTGSPosition[i] - contigOnTGSPosition[i-1])) < 40 )
-		{
-			if(minPosition==0)
-			{
-				minPosition = contigOnTGSPosition[i-1];
-				TGSScanAndOverlapPosition tmpPosition;
-				tmpPosition.scanTGSStart = contigOnTGSPosition[i-1];
-				tmpPosition.scanTGSEnd   = contigOnTGSPosition[i];
-				tmpPosition.kmerCount = 1;
-				rePositionVec.push_back(tmpPosition);
-			}
-			else
-			{
-				std::vector<TGSScanAndOverlapPosition>::iterator tmpIter = rePositionVec.end();
-				--tmpIter;
-				(*tmpIter).scanTGSEnd = contigOnTGSPosition[i];
-				(*tmpIter).kmerCount++;
-			}
-		}
-		else minPosition = 0;	
-	}
-	
-	for(std::vector<TGSScanAndOverlapPosition>::iterator tmpIter = rePositionVec.begin() ; tmpIter != rePositionVec.end() ; ++tmpIter )
-	{
-		if( (*tmpIter).kmerCount > result.kmerCount )
-		{
-			result.kmerCount = (*tmpIter).kmerCount;
-			result.scanTGSStart = (*tmpIter).scanTGSStart;
-			result.scanTGSEnd = (*tmpIter).scanTGSEnd;
-		}
-	}
+        std::string forwardkmer = originTGS.substr(i, kmerSize);
+        std::string reversekmer = reverseComplement(forwardkmer);
+        
+        SparseHashMap<std::string, KmerInfo, StringHasher>::iterator forwardKmerIter = contigPartialKmerHashMap.find(forwardkmer);
+        if(forwardKmerIter!=contigPartialKmerHashMap.end())
+        {
+            if(!forwardKmerIter->second.isRepeat && forwardKmerIter->second.position == -1)
+            {
+                forwardKmerIter->second.position = i;
+            }
+            else if(forwardKmerIter->second.position!= -1)
+            {
+                forwardKmerIter->second.isRepeat = true;
+                forwardKmerIter->second.position = -1;
+            }
+        }
+        
+        SparseHashMap<std::string, KmerInfo, StringHasher>::iterator reverseKmerIter = contigPartialKmerHashMap.find(reversekmer);
+        if(reverseKmerIter!=contigPartialKmerHashMap.end())
+        {
+            if(!reverseKmerIter->second.isRepeat && reverseKmerIter->second.position == -1)
+            {
+                reverseKmerIter->second.position = i;
+            }
+            else if(reverseKmerIter->second.position!= -1)
+            {
+                reverseKmerIter->second.isRepeat = true;
+                reverseKmerIter->second.position = -1;
+            }
+        }
+    }
+    
+    int tmp = 0;
+    int contigOnTGSPosition[partialContig.length()];
+    
+    for(SparseHashMap<std::string, KmerInfo, StringHasher>::iterator kmerIter = contigPartialKmerHashMap.begin() ; kmerIter!=contigPartialKmerHashMap.end() ; ++kmerIter)
+    {
+        if(!kmerIter->second.isRepeat && kmerIter->second.position != -1)
+        {
+            contigOnTGSPosition[tmp] = kmerIter->second.position;
+            tmp++;
+        }
+    }
+    
+    std::sort(contigOnTGSPosition,contigOnTGSPosition+tmp);
+    
+    for(int i =1;i<tmp;i++)
+    {
+        if( (std::abs(contigOnTGSPosition[i] - contigOnTGSPosition[i-1])) < 40 )
+        {
+            if(minPosition==0)
+            {
+                minPosition = contigOnTGSPosition[i-1];
+                TGSScanAndOverlapPosition tmpPosition;
+                tmpPosition.scanTGSStart = contigOnTGSPosition[i-1];
+                tmpPosition.scanTGSEnd   = contigOnTGSPosition[i];
+                tmpPosition.kmerCount = 1;
+                rePositionVec.push_back(tmpPosition);
+            }
+            else
+            {
+                std::vector<TGSScanAndOverlapPosition>::iterator tmpIter = rePositionVec.end();
+                --tmpIter;
+                (*tmpIter).scanTGSEnd = contigOnTGSPosition[i];
+                (*tmpIter).kmerCount++;
+            }
+        }
+        else minPosition = 0;    
+    }
+    
+    for(std::vector<TGSScanAndOverlapPosition>::iterator tmpIter = rePositionVec.begin() ; tmpIter != rePositionVec.end() ; ++tmpIter )
+    {
+        if( (*tmpIter).kmerCount > result.kmerCount )
+        {
+            result.kmerCount = (*tmpIter).kmerCount;
+            result.scanTGSStart = (*tmpIter).scanTGSStart;
+            result.scanTGSEnd = (*tmpIter).scanTGSEnd;
+        }
+    }
 
-	return result;
+    return result;
 }
 
 std::pair<int,int> ReassemblerPostProcess::overlapPosition(bool side, int contigLength, int overlapLength)
@@ -1897,85 +2188,85 @@ std::string ReassemblerPostProcess::mostConnectContig(std::vector<OverlapRelatio
   
 int ReassemblerPostProcess::mostConnectTGS(OverlapSeedVecInfo input)
 {
-	SparseHashMap<int, int, Int64Hasher> tgsAndCount;
-	int mostconnectTGSIndex = 0;
-	int maxSeedCount = 0;
-	
-	for( SeedSequenceInfoVec::iterator tmpSeedIter = input.SeedInfoVec.begin() ; tmpSeedIter != input.SeedInfoVec.end() ; ++tmpSeedIter )
-	{	
-		SparseHashMap<int, int, Int64Hasher>::iterator findTGSIndex = tgsAndCount.find((*tmpSeedIter).tgsIndex);
-		
-		if( findTGSIndex != tgsAndCount.end() )
-			findTGSIndex->second++;
-		else
-			tgsAndCount.insert(std::make_pair((*tmpSeedIter).tgsIndex,1));
-	}
-	
-	for( SparseHashMap<int, int, Int64Hasher>::iterator tmp = tgsAndCount.begin() ; tmp != tgsAndCount.end() ; tmp++ )
-	{
-		if( tmp->second > maxSeedCount )
-		{
-			mostconnectTGSIndex = tmp->first;
-			maxSeedCount  = tmp->second;
-		}
-	}
-	return mostconnectTGSIndex;
+    SparseHashMap<int, int, Int64Hasher> tgsAndCount;
+    int mostconnectTGSIndex = 0;
+    int maxSeedCount = 0;
+    
+    for( SeedSequenceInfoVec::iterator tmpSeedIter = input.SeedInfoVec.begin() ; tmpSeedIter != input.SeedInfoVec.end() ; ++tmpSeedIter )
+    {    
+        SparseHashMap<int, int, Int64Hasher>::iterator findTGSIndex = tgsAndCount.find((*tmpSeedIter).tgsIndex);
+        
+        if( findTGSIndex != tgsAndCount.end() )
+            findTGSIndex->second++;
+        else
+            tgsAndCount.insert(std::make_pair((*tmpSeedIter).tgsIndex,1));
+    }
+    
+    for( SparseHashMap<int, int, Int64Hasher>::iterator tmp = tgsAndCount.begin() ; tmp != tgsAndCount.end() ; tmp++ )
+    {
+        if( tmp->second > maxSeedCount )
+        {
+            mostconnectTGSIndex = tmp->first;
+            maxSeedCount  = tmp->second;
+        }
+    }
+    return mostconnectTGSIndex;
 }
 
 std::string ReassemblerPostProcess::mostTGSConnectContig(OverlapSeedVecInfo input)
 {
-	SparseHashMap<std::string, int, StringHasher> tgsConnectContig;
-	std::string mostTGSConnectContigString = "";
-	int maxConnectCount = 0;
-	
-	
-	for( SeedSequenceInfoVec::iterator tmpSeedIter = input.SeedInfoVec.begin() ; tmpSeedIter != input.SeedInfoVec.end() ; ++tmpSeedIter )
-	{	
-		TGSConnectContigHashMap::iterator t = singleContigHashMap.find((*tmpSeedIter).tgsIndex);
-		SparseHashMap<std::string, int, StringHasher>::iterator findTGSConnectContig = tgsConnectContig.find(t->second[0].firstContig);
-		
-		if( findTGSConnectContig != tgsConnectContig.end() )
-			findTGSConnectContig->second++;
-		else
-			tgsConnectContig.insert(std::make_pair(t->second[0].firstContig,1));
-		
-		//std::cout << "(debug) " << t->second[0].firstContig << "\n";
-	}
+    SparseHashMap<std::string, int, StringHasher> tgsConnectContig;
+    std::string mostTGSConnectContigString = "";
+    int maxConnectCount = 0;
+    
+    
+    for( SeedSequenceInfoVec::iterator tmpSeedIter = input.SeedInfoVec.begin() ; tmpSeedIter != input.SeedInfoVec.end() ; ++tmpSeedIter )
+    {    
+        TGSConnectContigHashMap::iterator t = singleContigHashMap.find((*tmpSeedIter).tgsIndex);
+        SparseHashMap<std::string, int, StringHasher>::iterator findTGSConnectContig = tgsConnectContig.find(t->second[0].firstContig);
+        
+        if( findTGSConnectContig != tgsConnectContig.end() )
+            findTGSConnectContig->second++;
+        else
+            tgsConnectContig.insert(std::make_pair(t->second[0].firstContig,1));
+        
+        //std::cout << "(debug) " << t->second[0].firstContig << "\n";
+    }
 
-	for( SparseHashMap<std::string, int, StringHasher>::iterator tmp = tgsConnectContig.begin() ; tmp != tgsConnectContig.end() ; tmp++ )
-	{
-		if( tmp->second > maxConnectCount )
-		{
-			mostTGSConnectContigString = tmp->first;
-			maxConnectCount  = tmp->second;
-		}
-	}
+    for( SparseHashMap<std::string, int, StringHasher>::iterator tmp = tgsConnectContig.begin() ; tmp != tgsConnectContig.end() ; tmp++ )
+    {
+        if( tmp->second > maxConnectCount )
+        {
+            mostTGSConnectContigString = tmp->first;
+            maxConnectCount  = tmp->second;
+        }
+    }
 
-	return mostTGSConnectContigString;
+    return mostTGSConnectContigString;
 }
 
 bool ReassemblerPostProcess::mostSeedStrand(OverlapSeedVecInfo input)
 {
-	int forward  = 0;
-	int backward = 0;
-	
-	for( SeedSequenceInfoVec::iterator tmpSeedIter = input.SeedInfoVec.begin() ; tmpSeedIter != input.SeedInfoVec.end() ; ++tmpSeedIter )
-	{
-		if((*tmpSeedIter).strand) forward++;
-		else backward++;
-	}
-	
-	if( forward > backward ) return true;
-	return false;
-}	
+    int forward  = 0;
+    int backward = 0;
+    
+    for( SeedSequenceInfoVec::iterator tmpSeedIter = input.SeedInfoVec.begin() ; tmpSeedIter != input.SeedInfoVec.end() ; ++tmpSeedIter )
+    {
+        if((*tmpSeedIter).strand) forward++;
+        else backward++;
+    }
+    
+    if( forward > backward ) return true;
+    return false;
+}    
 
 int ReassemblerPostProcess::connectVote(size_t tgsIdx, std::vector<OverlapRelation> inputRelationVec)
 {
     // 0:same number of overlap and connect 
-	// 1:overlap case 
-	// 2:nonOverlap case
-	
-	size_t overlap = 0;
+    // 1:overlap case 
+    // 2:nonOverlap case
+    
+    size_t overlap = 0;
     size_t connect = 0;
     size_t tgsStatus = 0;
     
@@ -2022,77 +2313,76 @@ bool ReassemblerPostProcess::checkConnect(std::string firstID, bool firstSide,st
 std::vector<ReassemblerSeedFeature> ReassemblerPostProcess::filterRepeatSeed(std::vector<ReassemblerSeedFeature> inputSeedVec)
 {
     std::vector<ReassemblerSeedFeature> seedVec;
-	
-	int repeatCount = 0;
-	int reCount = 0;
-	
+    
+    int repeatCount = 0;
+    int reCount = 0;
+    
     for(std::vector<ReassemblerSeedFeature>::iterator iter = inputSeedVec.begin(); iter != inputSeedVec.end(); ++iter)
     {
-		if(repeatCount>0){repeatCount--;continue;}
-		
-		size_t fwdSeedFreqByTGS = BWTAlgorithms::countSequenceOccurrencesSingleStrand((*iter).seedStr, m_params.indices);
+        if(repeatCount>0){repeatCount--;continue;}
+        
+        size_t fwdSeedFreqByTGS = BWTAlgorithms::countSequenceOccurrencesSingleStrand((*iter).seedStr, m_params.indices);
         size_t rvcSeedFreqByTGS = BWTAlgorithms::countSequenceOccurrencesSingleStrand(reverseComplement((*iter).seedStr), m_params.indices);
         size_t SeedFreqByTGS = fwdSeedFreqByTGS + rvcSeedFreqByTGS;
-		
-		size_t fwdSeedFreqByContig = BWTAlgorithms::countSequenceOccurrencesSingleStrand((*iter).seedStr, m_params.contigIndices);
+        
+        size_t fwdSeedFreqByContig = BWTAlgorithms::countSequenceOccurrencesSingleStrand((*iter).seedStr, m_params.contigIndices);
         size_t rvcSeedFreqByContig = BWTAlgorithms::countSequenceOccurrencesSingleStrand(reverseComplement((*iter).seedStr), m_params.contigIndices);
         size_t SeedFreqByContig = fwdSeedFreqByContig + rvcSeedFreqByContig;
-		
-		//if((int)SeedFreqByTGS ==2)std::cout<<". ";
-		//else std::cout<<SeedFreqByTGS<<" ";
-		
-		// filter repeat using tgs index and contig index
+        
+        //if((int)SeedFreqByTGS ==2)std::cout<<". ";
+        //else std::cout<<SeedFreqByTGS<<" ";
+        
+        // filter repeat using tgs index and contig index
         if( ((int)SeedFreqByTGS > kmerSizeFreqByTGS_15[seedCount_15/10*5] ) || ((int)SeedFreqByContig > 2) ) 
-		{
-			int localCount = 1;
-			repeatCount = 1;
-			
-			while(!seedVec.empty() && localCount>0 && reCount>0)
-			{
-				localCount--;
-				reCount--;
-				seedVec.pop_back();	
-			}
-			
-			reCount = 0;
-			continue;
-		}
-		
-		reCount++;
+        {
+            int localCount = 1;
+            repeatCount = 1;
+            
+            while(!seedVec.empty() && localCount>0 && reCount>0)
+            {
+                localCount--;
+                reCount--;
+                seedVec.pop_back();    
+            }
+            
+            reCount = 0;
+            continue;
+        }
+        
+        reCount++;
         seedVec.push_back((*iter));    
-		
+        
     }
     return seedVec;
 }
 
 void ReassemblerPostProcess::filterErrorStrand(OverlapSeedVecInfo input, OverlapSeedVecInfo &result, bool mostStrand)
 {
-	for( SeedSequenceInfoVec::iterator tmpSeedIter = input.SeedInfoVec.begin() ; tmpSeedIter != input.SeedInfoVec.end() ; ++tmpSeedIter )
-	{
-		if( (*tmpSeedIter).strand != mostStrand ) continue;
-		result.SeedInfoVec.push_back((*tmpSeedIter));
-	}
+    for( SeedSequenceInfoVec::iterator tmpSeedIter = input.SeedInfoVec.begin() ; tmpSeedIter != input.SeedInfoVec.end() ; ++tmpSeedIter )
+    {
+        if( (*tmpSeedIter).strand != mostStrand ) continue;
+        result.SeedInfoVec.push_back((*tmpSeedIter));
+    }
 }
-
 
 void ReassemblerPostProcess::filterErrorSeeds(OverlapSeedVecInfo input, OverlapSeedVecInfo &result, int mostTGS)
 {
-	for( SeedSequenceInfoVec::iterator tmpSeedIter = input.SeedInfoVec.begin() ; tmpSeedIter != input.SeedInfoVec.end() ; ++tmpSeedIter )
-	{
-		if( (*tmpSeedIter).tgsIndex != mostTGS ) continue;
-		result.SeedInfoVec.push_back((*tmpSeedIter));
-	}
+    for( SeedSequenceInfoVec::iterator tmpSeedIter = input.SeedInfoVec.begin() ; tmpSeedIter != input.SeedInfoVec.end() ; ++tmpSeedIter )
+    {
+        if( (*tmpSeedIter).tgsIndex != mostTGS ) continue;
+        result.SeedInfoVec.push_back((*tmpSeedIter));
+    }
 }
 
 void ReassemblerPostProcess::filterErrorSeeds2(OverlapSeedVecInfo input, OverlapSeedVecInfo &result, std::string mostConnectContig)
 {
-	for( SeedSequenceInfoVec::iterator tmpSeedIter = input.SeedInfoVec.begin() ; tmpSeedIter != input.SeedInfoVec.end() ; ++tmpSeedIter )
-	{
-		TGSConnectContigHashMap::iterator t = singleContigHashMap.find((*tmpSeedIter).tgsIndex);
+    for( SeedSequenceInfoVec::iterator tmpSeedIter = input.SeedInfoVec.begin() ; tmpSeedIter != input.SeedInfoVec.end() ; ++tmpSeedIter )
+    {
+        TGSConnectContigHashMap::iterator t = singleContigHashMap.find((*tmpSeedIter).tgsIndex);
 
-		if( t->second[0].firstContig != mostConnectContig ) continue;
-		result.SeedInfoVec.push_back((*tmpSeedIter));
-	}
+        if( t->second[0].firstContig != mostConnectContig ) continue;
+        result.SeedInfoVec.push_back((*tmpSeedIter));
+    }
 }
 
 void ReassemblerPostProcess::buildKmerHashAndTGSKmerVec( std::string tgsConnectContig, bool connectContigSide, int connectContigLength, int tgsIndex, std::vector<ReassemblerSeedFeature> inputSeedVec)
@@ -2105,7 +2395,7 @@ void ReassemblerPostProcess::buildKmerHashAndTGSKmerVec( std::string tgsConnectC
         
         currentKmer.tgsConnectContigSide   = connectContigSide;
         currentKmer.tgsConnectContigID     = tgsConnectContig;
-		currentKmer.tgsConnectContigLength = connectContigLength;
+        currentKmer.tgsConnectContigLength = connectContigLength;
         currentKmer.tgsIndex = tgsIndex;
         currentKmer.kmerStr     = (*iter).seedStr;
         currentKmer.position    = (*iter).seedStartPos;
@@ -2149,21 +2439,21 @@ void ReassemblerPostProcess::buildKmerHashAndTGSKmerVec( std::string tgsConnectC
 
 bool ReassemblerPostProcess::checkSameStrand(int startTGSIndex, int targetTGSIndex, SeedSequenceInfoVec brigdeSeedVec)
 {
-	bool strand;
-	
-	TGSConnectContigHashMap::iterator startTGSIter  = singleContigHashMap.find(startTGSIndex);
-	TGSConnectContigHashMap::iterator targetTGSIter = singleContigHashMap.find(targetTGSIndex);
-	
-	std::vector<OverlapRelation>::iterator startFirst = startTGSIter->second.begin();
-	std::vector<OverlapRelation>::iterator targetFirst = targetTGSIter->second.begin();
+    bool strand;
+    
+    TGSConnectContigHashMap::iterator startTGSIter  = singleContigHashMap.find(startTGSIndex);
+    TGSConnectContigHashMap::iterator targetTGSIter = singleContigHashMap.find(targetTGSIndex);
+    
+    std::vector<OverlapRelation>::iterator startFirst = startTGSIter->second.begin();
+    std::vector<OverlapRelation>::iterator targetFirst = targetTGSIter->second.begin();
 
 
-	if( (*startFirst).tgsDirection == (*targetFirst).tgsDirection ) strand = true;
-	else strand = false;
-		
-	if(!brigdeSeedVec[0].strand) strand = !strand;
+    if( (*startFirst).tgsDirection == (*targetFirst).tgsDirection ) strand = true;
+    else strand = false;
+        
+    if(!brigdeSeedVec[0].strand) strand = !strand;
 
-	return strand;
+    return strand;
 
 }
 
@@ -2171,49 +2461,49 @@ int ReassemblerPostProcess::overlapLength(OverlapSeedVecInfo input)
 {
     SeedSequenceInfoVec::iterator first = input.SeedInfoVec.begin();
     SeedSequenceInfoVec::iterator last  = input.SeedInfoVec.end();
-	--last;
+    --last;
 
     return std::abs((int)(*first).contigStartPos - (int)(*last).contigStartPos);
 }
 
 std::string ReassemblerPostProcess::concordantNonOverlapFragment(OverlapSeedVecInfo input)
 {
-	TGSConnectContigHashMap::iterator targetTGSIter = singleContigHashMap.find(input.SeedInfoVec[0].tgsIndex);
-	std::string secondTGSRead = backtrackTGS( m_params.indices, input.SeedInfoVec[0].tgsIndex );	
-	std::string fragment;
-	
-	SeedSequenceInfoVec::iterator first = input.SeedInfoVec.begin();
-	SeedSequenceInfoVec::iterator last = input.SeedInfoVec.end();
-	last--;
-	
-	if( targetTGSIter->second[0].singleOverlap.scanTGSStart == 0 )
-	{
-		//int fragmentLength = targetTGSIter->second[0].singleOverlap.scanTGSEnd - overlapLength(input);
-		//fragment = secondTGSRead.substr( overlapLength(input), fragmentLength );
-		int start = (*first).tgsLocation < (*last).tgsLocation ? (*first).tgsLocation : (*last).tgsLocation;
-		int end   = targetTGSIter->second[0].singleOverlap.scanTGSEnd;
-		fragment = secondTGSRead.substr( start, end - start );
-		
-		//std::cout<< "start2\n";
-		//std::cout<< (*first).tgsLocation << "\t" << (*last).tgsLocation <<"\n";
-		//std::cout<< start << "\t" << end << "\t idx " << input.SeedInfoVec[0].tgsIndex << "\n";
-	}
-	else
-	{
-		//int fragmentLength = targetTGSIter->second[0].singleOverlap.scanTGSEnd - targetTGSIter->second[0].singleOverlap.scanTGSStart - overlapLength(input);
-		//fragment = secondTGSRead.substr( targetTGSIter->second[0].singleOverlap.scanTGSStart, fragmentLength );
-		
-		int start = targetTGSIter->second[0].singleOverlap.scanTGSStart;
-		int end   = (*first).tgsLocation > (*last).tgsLocation ? (*first).tgsLocation : (*last).tgsLocation;
-		fragment = secondTGSRead.substr( start, end - start );
-		
-		//std::cout<< "end2\n";
-		//std::cout<< (*first).tgsLocation << "\t" << (*last).tgsLocation <<"\n";
-		//std::cout<< start << "\t" << end << "\t idx " << input.SeedInfoVec[0].tgsIndex << "\n";
-	}
-	
-	if( !input.SeedInfoVec[0].strand ) return reverseComplement(fragment);
-	return fragment;
+    TGSConnectContigHashMap::iterator targetTGSIter = singleContigHashMap.find(input.SeedInfoVec[0].tgsIndex);
+    std::string secondTGSRead = backtrackTGS( m_params.indices, input.SeedInfoVec[0].tgsIndex );    
+    std::string fragment;
+    
+    SeedSequenceInfoVec::iterator first = input.SeedInfoVec.begin();
+    SeedSequenceInfoVec::iterator last = input.SeedInfoVec.end();
+    last--;
+    
+    if( targetTGSIter->second[0].singleOverlap.scanTGSStart == 0 )
+    {
+        //int fragmentLength = targetTGSIter->second[0].singleOverlap.scanTGSEnd - overlapLength(input);
+        //fragment = secondTGSRead.substr( overlapLength(input), fragmentLength );
+        int start = (*first).tgsLocation < (*last).tgsLocation ? (*first).tgsLocation : (*last).tgsLocation;
+        int end   = targetTGSIter->second[0].singleOverlap.scanTGSEnd;
+        fragment = secondTGSRead.substr( start, end - start );
+        
+        //std::cout<< "start2\n";
+        //std::cout<< (*first).tgsLocation << "\t" << (*last).tgsLocation <<"\n";
+        //std::cout<< start << "\t" << end << "\t idx " << input.SeedInfoVec[0].tgsIndex << "\n";
+    }
+    else
+    {
+        //int fragmentLength = targetTGSIter->second[0].singleOverlap.scanTGSEnd - targetTGSIter->second[0].singleOverlap.scanTGSStart - overlapLength(input);
+        //fragment = secondTGSRead.substr( targetTGSIter->second[0].singleOverlap.scanTGSStart, fragmentLength );
+        
+        int start = targetTGSIter->second[0].singleOverlap.scanTGSStart;
+        int end   = (*first).tgsLocation > (*last).tgsLocation ? (*first).tgsLocation : (*last).tgsLocation;
+        fragment = secondTGSRead.substr( start, end - start );
+        
+        //std::cout<< "end2\n";
+        //std::cout<< (*first).tgsLocation << "\t" << (*last).tgsLocation <<"\n";
+        //std::cout<< start << "\t" << end << "\t idx " << input.SeedInfoVec[0].tgsIndex << "\n";
+    }
+    
+    if( !input.SeedInfoVec[0].strand ) return reverseComplement(fragment);
+    return fragment;
 }
 
 void ReassemblerPostProcess::countTotalSeedFreq(std::string seed)
@@ -2238,10 +2528,10 @@ void ReassemblerPostProcess::countTotalSeedFreq(std::string seed)
         kmerFreqByContig_15[seedCount_15] = kmerFreqsUsingContig;
         seedCount_15++;
     }
-	
-	slideWindow = 11;
-	
-	for( int i = 0 ; i < (int)seed.length() - slideWindow + 1 ; i++ )
+    
+    slideWindow = 11;
+    
+    for( int i = 0 ; i < (int)seed.length() - slideWindow + 1 ; i++ )
     {
         std::string kmer = seed.substr(i, slideWindow);
 
@@ -2256,7 +2546,7 @@ void ReassemblerPostProcess::countTotalSeedFreq(std::string seed)
     }
 }
 
-		///********** Reassembler Seed Feature **********///
+        ///********** Reassembler Seed Feature **********///
 
 ReassemblerSeedFeature::ReassemblerSeedFeature(size_t startPos, std::string str, bool repeat, size_t kmerSize, size_t repeatCutoff)
 :seedStartPos(startPos), seedStr(str), isRepeat(repeat), freqUpperBound(repeatCutoff), freqLowerBound(15)
@@ -2264,7 +2554,7 @@ ReassemblerSeedFeature::ReassemblerSeedFeature(size_t startPos, std::string str,
     seedEndPos = seedStartPos + seedStr.length() -1;
     seedLength = seedStr.length();
 
-    if(repeat) startBestKmerSize = endBestKmerSize = seedLength>31?31: seedLength;				
+    if(repeat) startBestKmerSize = endBestKmerSize = seedLength>31?31: seedLength;                
     else startBestKmerSize = endBestKmerSize = kmerSize;
 }
 

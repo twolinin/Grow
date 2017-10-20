@@ -117,7 +117,7 @@ struct SeedSequenceInfo
 struct ResultCount
 {
 	ResultCount():totalCount(0),partialCount(0),passCount(0),zeroSeed(0),seedsThreshold(0),seedDifferentStrand(0),seedOrderDiscordant(0),abnormalDistance(0),repeatSeeds(0),repeatStatus(0),
-	abnormalOverlapLength(0),insufficientLength(0),palindrome(0){}
+	abnormalOverlapLength(0),insufficientLength(0),palindrome(0),sucsess(0){}
 	
 	int totalCount;
 	int partialCount;
@@ -132,6 +132,7 @@ struct ResultCount
     int abnormalOverlapLength;
     int insufficientLength;
 	int palindrome;
+	int sucsess;
 };
 
 struct OverlapSeedVecInfo
@@ -176,6 +177,10 @@ struct OverlapRelation
     
 	bool tgsDirection;
     bool isSameStrand;
+	
+	// two tgs step
+	int firIdx;
+	int secIdx;
 	
 	TGSScanAndOverlapPosition singleOverlap;
 };
@@ -255,6 +260,7 @@ class TGSReassemblerBasicElements
 		~TGSReassemblerBasicElements();
 		
 		std::vector<ReassemblerSeedFeature> seedingByDynamicKmer(const std::string readSeq);
+		std::vector<ReassemblerSeedFeature> seedingByDynamicKmer(const std::string readSeq, int scanStart, int scanEnd);
 		// third step reassembler, take kmer as seed
 		std::vector<ReassemblerSeedFeature> collectKmer(const std::string readSeq, int scanStart, int scanEnd);
 		// return kmer freq of beginning and ending kmers
@@ -307,7 +313,11 @@ class ReassemblerPostProcess : public TGSReassemblerBasicElements
         void buildGraphByTwoTGS();
         
     protected:
-
+		
+		void step1();
+		void step2();
+		void step3();
+		
 		///************************************************///
         ///******** filter error tgs function **********///
         ///************************************************///
@@ -337,6 +347,8 @@ class ReassemblerPostProcess : public TGSReassemblerBasicElements
 		
 		// first and second step reassembler, store two contigs connect relation
         void insertContigRelationHash(std::string firstContig, bool firstSide, bool firstStrand, std::string secondContig, bool secondSide, bool secondStrand, int firstContigLength, int secondContigLength, std::vector<OverlapSeedVecInfo> contigInfoVec);
+		//
+		void insertContigRelationHash(TGSKmerPair tgsVecIter, OverlapSeedVecInfo resultSeedVec);
 		// third step reassembler, store a tgs overlap on contig information 
         void insertSingleRelationHash(OverlapSeedVecInfo input, TGSScanAndOverlapPosition scanRange);
         // found first and last seed position on contig, so and tgs 
@@ -404,6 +416,12 @@ class ReassemblerPostProcess : public TGSReassemblerBasicElements
 		int kmerSizeFreqByTGS_11[100000];
 		int kmerFreqByContig_15[100000];
         void countTotalSeedFreq(std::string seed);
+		
+		///************************************************///
+        ///********* result statistics **********///
+        ///************************************************/// 
+		
+		ResultCount onePB,twoPB;
 
 };
 
