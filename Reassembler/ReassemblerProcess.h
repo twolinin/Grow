@@ -133,6 +133,13 @@ struct ResultCount
     int insufficientLength;
 	int palindrome;
 	int sucsess;
+	
+	int tgsSeedsThreshold;
+	int tgsRepeatSeeds;
+	int tgsSeedDifferentStrand;
+	int tgsSeedOrderDiscordant;
+	int tgsAbnormalDistance;
+	int tgsAbnormalOverlapLength;
 };
 
 struct OverlapSeedVecInfo
@@ -331,7 +338,7 @@ class ReassemblerPostProcess : public TGSReassemblerBasicElements
         // the distance between two contig and tgs
         bool checkSeedsDistance(OverlapSeedVecInfo input);
         // using tgs index check repeat
-        bool checkRepeatByTGS(OverlapSeedVecInfo input);
+        bool checkRepeatByTGS(OverlapSeedVecInfo input, bool show);
         // using contig index check repeat
         bool checkRepeatByContig(OverlapSeedVecInfo input);
 		//
@@ -360,7 +367,7 @@ class ReassemblerPostProcess : public TGSReassemblerBasicElements
         // count all seeds second connect contig. A to B have most connect, B should have most connect to A.
         std::string mostConnectContig(std::vector<OverlapRelation> inputRelationVec);
 		// return most seeds connect tgs 
-		int mostConnectTGS(OverlapSeedVecInfo input);
+		int mostConnectTGS(OverlapSeedVecInfo input, bool show);
 		// return most seeds strand 
 		bool mostSeedStrand(OverlapSeedVecInfo input);
 		// return most tgs connect contig 
