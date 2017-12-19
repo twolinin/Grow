@@ -48,7 +48,7 @@ static const char *CORRECT_USAGE_MESSAGE =
 "      -c, --collect=N                  for each possible source, we consider N downward seeds to collect reads. (default: 5)\n"
 "      --first                          find overlap between two contigs\n"
 "      --second                         find gap between two contigs\n"
-"      --third                          use two TGS reads reassble contigs\n"
+"      --third                          use two Read reads reassble contigs\n"
 "\nReport bugs to " PACKAGE_BUGREPORT "\n\n";
 
 static const char* PROGRAM_IDENT =
@@ -70,7 +70,7 @@ namespace opt
 
     static int seedKmerThreshold = 2;
     static int collect = 5;
-    static int tgsAvgLen = 3000;
+    static int readAvgLen = 3000;
 	static int searchRange = 5000;
     
     static bool isFirst = false;
@@ -159,15 +159,15 @@ int ReassemblerMain(int argc, char** argv)
         }
     }
     
-    std::string tgsFa    = opt::prefix + ".fa";
-    std::string tgsFasta = opt::prefix + ".fasta";
+    std::string readFa    = opt::prefix + ".fa";
+    std::string readFasta = opt::prefix + ".fasta";
 	
-    std::ifstream TGSin1( tgsFa.c_str() );
-    std::ifstream TGSin2( tgsFasta.c_str() );	
+    std::ifstream ReadIn1( readFa.c_str() );
+    std::ifstream ReadIn2( readFasta.c_str() );	
 
-	if(!TGSin1.is_open() && !TGSin2.is_open())
+	if(!ReadIn1.is_open() && !ReadIn2.is_open())
 	{
-		std::cout << "can't open TGS rawdata, please check prefix is fa or fasta.\n";
+		std::cout << "can't open Read rawdata, please check prefix is fa or fasta.\n";
 		std::cout << "...nothing to do\n";
 		return 0;
 	}
@@ -175,26 +175,26 @@ int ReassemblerMain(int argc, char** argv)
     std::string name;
     std::string data;
 	
-    size_t tgsReadNumber=0;
-    size_t tgsTotalBase=0;
+    size_t readReadNumber=0;
+    size_t readTotalBase=0;
     
-    while(TGSin1 && TGSin1.is_open())
+    while(ReadIn1 && ReadIn1.is_open())
     {
-         TGSin1 >> name;
-         TGSin1 >> data;
+         ReadIn1 >> name;
+         ReadIn1 >> data;
 	 if( data.length() < 1000 ) continue;
-         tgsTotalBase += data.length();
-         tgsReadNumber++;
+         readTotalBase += data.length();
+         readReadNumber++;
     }
-	while(TGSin2 && TGSin2.is_open())
+	while(ReadIn2 && ReadIn2.is_open())
     {
-         TGSin2 >> name;
-         TGSin2 >> data;
+         ReadIn2 >> name;
+         ReadIn2 >> data;
 	 if( data.length() < 1000 ) continue;
-         tgsTotalBase += data.length();
-         tgsReadNumber++;
+         readTotalBase += data.length();
+         readReadNumber++;
     }
-    opt::tgsAvgLen = tgsTotalBase/tgsReadNumber;
+    opt::readAvgLen = readTotalBase/readReadNumber;
     
     BWTIndexSet indexSet;
     indexSet.pBWT = pBWT;
@@ -218,7 +218,7 @@ int ReassemblerMain(int argc, char** argv)
     ecParams.FMWKmerThreshold  = opt::kmerThreshold;
     ecParams.collectedSeeds    = opt::collect;
     ecParams.maxSeedInterval   = 500;
-    ecParams.tgsAvgLen      = opt::tgsAvgLen*1.5;
+    ecParams.readAvgLen      = opt::readAvgLen*1.5;
 	ecParams.searchRange    = opt::searchRange;
     ecParams.isFirst  = opt::isFirst;
     ecParams.isSecond = opt::isSecond;
@@ -230,7 +230,7 @@ int ReassemblerMain(int argc, char** argv)
               << "large kmer size      :    " << ecParams.kmerLength         << std::endl 
               << "large kmer freq. cutoff : " << ecParams.seedKmerThreshold  << std::endl
               << "small kmer freq. cutoff : " << ecParams.FMWKmerThreshold   << std::endl
-              << "TGS average length   :    " << opt::tgsAvgLen              << std::endl
+              << "Read average length   :    " << opt::readAvgLen              << std::endl
               << "search range : "<< ecParams.searchRange << std::endl
 	      << std::endl;
 				
@@ -258,19 +258,19 @@ int ReassemblerMain(int argc, char** argv)
         }
 
         SequenceProcessFramework::processSequencesParallel<SequenceWorkItem,
-        ReassemblerResult,
-        ReassemblerProcess,
-        ReassemblerPostProcess>(opt::readsFile, processorVector, &postProcessor);
+														   ReassemblerResult,
+														   ReassemblerProcess,
+														   ReassemblerPostProcess>(opt::readsFile, processorVector, &postProcessor);
 
         for(int i = 0; i < opt::numThreads; ++i)
             delete processorVector[i];
     }
 
-    postProcessor.filterErrorTGS();
+    postProcessor.filterErrorRead();
 
     if(opt::isFirst)
     {
-        postProcessor.buildGraphByOneTGS();
+        postProcessor.buildGraphByOneRead();
 		
 	    SGGraphStatsVisitor statsVisit;
         pGraph->visit(statsVisit);        
@@ -284,7 +284,7 @@ int ReassemblerMain(int argc, char** argv)
     }
     else if(opt::isSecond)
     {
-	    postProcessor.buildGraphByOneTGS();
+	    postProcessor.buildGraphByOneRead();
 		
 	    SGGraphStatsVisitor statsVisit;
         pGraph->visit(statsVisit);        
@@ -298,14 +298,14 @@ int ReassemblerMain(int argc, char** argv)
     }
     else if(opt::isThird)
     {
-	    postProcessor.buildGraphByTwoTGS();
+	    postProcessor.buildGraphByTwoRead();
 		
 	    SGGraphStatsVisitor statsVisit;
         pGraph->visit(statsVisit);        
-        pGraph->writeDot("1_Raw_NonOverlapByTwoTGS_Graph.dot", 0);
+        pGraph->writeDot("1_Raw_NonOverlapByTwoRead_Graph.dot", 0);
         
         pGraph->pacbioSimplify();
-        pGraph->writeDot("2_make_NonOverlapByTwoTGS_Graph.dot", 0);
+        pGraph->writeDot("2_make_NonOverlapByTwoRead_Graph.dot", 0);
         
 		//SGFastaVisitor av("Scaffold_third_NonOverlapByTwoPB.fa");
         SGFastaVisitor av("Reassembler_third_NonOverlapByTwoPB.fa");

@@ -54,6 +54,6 @@ RollingNode* RollingNode::createChild(const std::string& label)
 	pAdded->currRvcHashValue = this->currRvcHashValue;
 	
 	m_children.push_back(pAdded);
-    
+    //
     return pAdded;
 }
