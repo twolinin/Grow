@@ -17,6 +17,7 @@
 #include "ContigGraph.h"
 
 typedef std::tr1::hash<int> Int64Hasher;
+typedef std::tr1::hash<size_t> SizetHasher;
 
 // collect all first step seeds. store seeds, read and contig information 
 struct SeedSequenceInfo;
@@ -36,6 +37,8 @@ typedef std::pair<int, KmerInfoVec> ReadKmerPair;
 typedef std::vector<ReadKmerPair> ReadKmerVec;
 // all kmers infomation
 typedef SparseHashMap<std::string, std::vector<KmerInfo>, StringHasher> KmerHashMap;
+// speed up backtrack
+typedef std::pair<size_t, size_t> sizetPair;
 
 struct ReassemblerSeedFeature
 {
@@ -202,7 +205,8 @@ struct ReassemblerParameters
     
     int numKmerRounds;
     int kmerLength;
-
+	int numThreads;
+	
     // tree search parameters
     int maxLeaves;
     int minOverlap;
@@ -249,12 +253,15 @@ class ReadReassemblerBasicElements
 		// ratio of A,T,C,G
 		bool isLowComplexity (std::string seq, float threshold);
 		// backtrack to '$' and return index
-		std::pair<size_t, size_t> BacktrackReadIdx(const BWTIndexSet indices, size_t idx);
+		std::pair<size_t, size_t> BacktrackReadIdx(const BWTIndexSet indices, size_t idx, bool activeHash);
 		// backtrack origin read
 		std::string backtrackRead(const BWTIndexSet indices, int64_t inputIdx);
+		// return string frequency
+		size_t getFrequency(const BWTIndexSet indices, std::string query);
 		
 	protected:
 		
+		SparseHashMap<size_t, sizetPair, SizetHasher> recordBacktrackIndex;
 		ReassemblerParameters m_params;
 };
 
@@ -300,7 +307,7 @@ class ReassemblerPostProcess : public ReadReassemblerBasicElements
         ///************************************************///
 		
 		//
-		void combineEveryCheckFunction(OverlapSeedVecInfo firVec, OverlapSeedVecInfo secVec, int readIndex, int section);
+		void combineEveryCheckFunction(OverlapSeedVecInfo firVec, OverlapSeedVecInfo secVec, std::string firContig, std::string secContig, int readIndex, int section);
         // check two contigs side and strand status
         bool checkContigRelation(bool firstSide, bool firstStrand, bool secondSide, bool secondStrand);
         // check each seed status and length

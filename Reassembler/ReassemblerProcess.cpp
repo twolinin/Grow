@@ -95,22 +95,20 @@ void ReassemblerProcess::findSeedOnLongRead(const BWTIndexSet indices, std::stri
         BWTInterval interval  = BWTAlgorithms::findInterval(indices,(*iter).seedStr) ;
         BWTInterval rinterval = BWTAlgorithms::findInterval(indices,reverseComplement((*iter).seedStr)) ;
         
-        size_t fwdSeedFreqs = BWTAlgorithms::countSequenceOccurrencesSingleStrand((*iter).seedStr, m_params.indices);
-        size_t rvcSeedFreqs = BWTAlgorithms::countSequenceOccurrencesSingleStrand(reverseComplement((*iter).seedStr), m_params.indices);
-        size_t SeedFreqs = fwdSeedFreqs + rvcSeedFreqs;
+        size_t SeedFreqs = getFrequency(m_params.indices,(*iter).seedStr);
 
         currentSeedInfo.setContigSeq(contigID, contigPartialSeq, contigLength, contigStartPos, contigEndPos, contigSide);                          
 
         for(size_t j = interval.lower ; j <= (size_t)interval.upper ; j++)
         {
-            std::pair<size_t, size_t> currentSeed = BacktrackReadIdx(indices,j);
+            std::pair<size_t, size_t> currentSeed = BacktrackReadIdx(indices,j, (m_params.numThreads == 1) );
             currentSeedInfo.setReadSeq((*iter).seedStr, SeedFreqs, currentSeed.first, currentSeed.second, true);
             result.push_back(currentSeedInfo);
         }
             
         for(size_t j = rinterval.lower ; j <= (size_t)rinterval.upper ; j++)
         {
-            std::pair<size_t, size_t> currentSeed = BacktrackReadIdx(indices,j);
+            std::pair<size_t, size_t> currentSeed = BacktrackReadIdx(indices,j, (m_params.numThreads == 1) );
             currentSeedInfo.setReadSeq(reverseComplement((*iter).seedStr), SeedFreqs, currentSeed.first, currentSeed.second, false);
             result.push_back(currentSeedInfo);
         }
@@ -214,6 +212,7 @@ void ReassemblerPostProcess::filterErrorRead()
                 }
             }
         }
+		// other case is one read(pacbio/nanopore) connect one contig
         else if( !m_params.isThird ) continue;
         
         // use two reads to determine if two contigs are connected
@@ -223,149 +222,35 @@ void ReassemblerPostProcess::filterErrorRead()
             if( pbIterator->second.size()==1 )
             {
 				std::vector<OverlapSeedVecInfo>::iterator contigIter = pbIterator->second.begin();
-				combineEveryCheckFunction(*contigIter,*contigIter,pbIterator->first,2);
-				//if( pbIterator->first == 15369)
-				//{
-				//	std::cout<< "seed vec size : " << (*contigIter).SeedInfoVec.size() << "\n";
-				//	for(std::vector<SeedSequenceInfo>::iterator iter = (*contigIter).SeedInfoVec.begin(); iter != (*contigIter).SeedInfoVec.end() ; iter++)
-				//		std::cout << (*iter).contigStartPos << "\t" << (*iter).readLocation << "\t" << (*iter).frequency << "\n";
-				//}
-				/*
-				twoPB.totalCount++;
-                ReadScanAndOverlapPosition singleOverlap;
-                
-                // each contig have three or more seeds on this read
-                if((*contigIter).SeedInfoVec.size()<3){ twoPB.seedsThreshold++;        continue; }
-                // filter read if it concurrently exist different strand seed and all seeds length are rather than 19
-                if(checkContigSeed(*contigIter,19))    { twoPB.seedDifferentStrand++;   continue; }
-                // check repeat by contig index.
-                if(checkRepeatByContig(*contigIter))   { twoPB.repeatSeeds++;           continue; }
-                // check seeds orientations concordant or discordant 
-                if(checkSeedsOrientations(*contigIter)){ twoPB.seedOrderDiscordant++;   continue; }
-                // check distance between to seeds
-                if(checkSeedsDistance(*contigIter))    { twoPB.abnormalDistance++;      continue; }
-                // check overlap length 
-                if(checkOverlapLength(*contigIter))    { twoPB.abnormalOverlapLength++; continue; }
-                // check nonOverlap length
-                if(checkNonOverlapPartialLength(*contigIter,singleOverlap)){twoPB.insufficientLength++; continue; }
-
-                twoPB.passCount++;
-                
-                insertSingleRelationHash(*contigIter,singleOverlap);
-				*/
+				std::string nothing;
+				
+				combineEveryCheckFunction(*contigIter,*contigIter,nothing,nothing,pbIterator->first,2);
             }
             else
             {
-                combineEveryCheckFunction(*firstContigIter,*firstContigIter,pbIterator->first,2);
-				combineEveryCheckFunction(*secondContigIter,*secondContigIter,pbIterator->first,2);
-				/*
-				twoPB.totalCount = twoPB.totalCount + 2;
-                
-                ReadScanAndOverlapPosition singleOverlap1;
-                ReadScanAndOverlapPosition singleOverlap2;
-
-                // each contig have three or more seeds on this read
-                if((*firstContigIter).SeedInfoVec.size()<3){ twoPB.seedsThreshold++; }
-                // filter read if it concurrently exist different strand seed and all seeds length are rather than 19
-                else if(checkContigSeed(*firstContigIter,19))    { twoPB.seedDifferentStrand++; }
-                // check repeat by contig index.
-                else if(checkRepeatByContig(*firstContigIter))   { twoPB.repeatSeeds++; }
-                // check seeds orientations concordant or discordant 
-                else if(checkSeedsOrientations(*firstContigIter)){ twoPB.seedOrderDiscordant++; }
-                // check distance between to seeds
-                else if(checkSeedsDistance(*firstContigIter))    { twoPB.abnormalDistance++; }
-                // check overlap length 
-                else if(checkOverlapLength(*firstContigIter))    { twoPB.abnormalOverlapLength++; }
-                // check nonOverlap length
-                else if(checkNonOverlapPartialLength(*firstContigIter,singleOverlap1)){twoPB.insufficientLength++; }
-                else 
-                {
-                    twoPB.passCount++;
-                    insertSingleRelationHash(*firstContigIter,singleOverlap1);
-                }
-                
-                // each contig have three or more seeds on this read
-                if((*secondContigIter).SeedInfoVec.size()<3){ twoPB.seedsThreshold++; }
-                // filter read if it concurrently exist different strand seed and all seeds length are rather than 19
-                else if(checkContigSeed(*secondContigIter,19))    { twoPB.seedDifferentStrand++; }
-                // check repeat by contig index.
-                else if(checkRepeatByContig(*secondContigIter))   { twoPB.repeatSeeds++; }
-                // check seeds orientations concordant or discordant 
-                else if(checkSeedsOrientations(*secondContigIter)){ twoPB.seedOrderDiscordant++; }
-                // check distance between to seeds
-                else if(checkSeedsDistance(*secondContigIter))    { twoPB.abnormalDistance++; }
-                // check overlap length 
-                else if(checkOverlapLength(*secondContigIter))    { twoPB.abnormalOverlapLength++; }
-                // check nonOverlap length
-                else if(checkNonOverlapPartialLength(*secondContigIter,singleOverlap2)){twoPB.insufficientLength++; }
-                else 
-                {
-                    twoPB.passCount++;
-                    insertSingleRelationHash(*secondContigIter,singleOverlap2);
-                }
-				*/
+                std::string nothing;
+				
+				combineEveryCheckFunction(*firstContigIter,*firstContigIter,nothing,nothing,pbIterator->first,2);
+				combineEveryCheckFunction(*secondContigIter,*secondContigIter,nothing,nothing,pbIterator->first,2);
             }
         }
-        
         // use a read to determine if two contigs are connected
         if( m_params.isFirst || m_params.isSecond )
         {
-            
 			OverlapSeedVecInfo firstResultVec;
             OverlapSeedVecInfo secondResultVec;
             
             filterErrorStrand((*firstContigIter),firstResultVec,mostSeedStrand((*firstContigIter)));
             filterErrorStrand((*secondContigIter),secondResultVec,mostSeedStrand((*secondContigIter)));
 			
-			combineEveryCheckFunction(firstResultVec,secondResultVec,pbIterator->first,1);
-			
-			/*
-            std::string firstContig  = (*firstContigIter).contig;
-            std::string secondContig = (*secondContigIter).contig;
-            bool firstStrand         = firstResultVec.SeedInfoVec[0].strand;
-            bool secondStrand        = secondResultVec.SeedInfoVec[0].strand;
-            bool firstContigSide     = firstResultVec.SeedInfoVec[0].contigSide;
-            bool secondContigSide    = secondResultVec.SeedInfoVec[0].contigSide;
-            int firstContigLength    = firstResultVec.SeedInfoVec[0].contigLength;
-            int secondContigLength   = secondResultVec.SeedInfoVec[0].contigLength;
-            
-            std::string originRead  = backtrackRead( m_params.indices, pbIterator->first );
-            
-            //each contig have three or more seeds on this read
-            if(firstResultVec.SeedInfoVec.size()>=3 && secondResultVec.SeedInfoVec.size()>=3)
-            {  
-                // filter palindrome reads
-                if(checkPalindrome(originRead)) { onePB.palindrome++; continue; }
-                // prevent large repeat, filter read if it concurrently exist same/different side and strand
-                if(checkContigRelation(firstContigSide,firstStrand,secondContigSide,secondStrand))   { onePB.repeatStatus++;          continue; }
-                // check repeat by read index, old version. It can't detect every repeat seed.
-                //if(checkRepeatByRead((*firstContigIter),false) || checkRepeatByRead((*secondContigIter),false))continue;
-                // check repeat by contig index
-                if(checkRepeatByContig(firstResultVec) || checkRepeatByContig(secondResultVec))      { onePB.repeatSeeds++;           continue; }
-                // filter read if it concurrently exist different strand seed and all seeds length are rather than 19
-                if(checkContigSeed(firstResultVec,19) || checkContigSeed(secondResultVec,19))        { onePB.seedDifferentStrand++;   continue; }
-                //check seeds orientations and seeds distance between contig and read 
-                if(checkSeedsOrientations(firstResultVec) || checkSeedsOrientations(secondResultVec)){ onePB.seedOrderDiscordant++;   continue; }
-                //check distance between to seeds
-                if(checkSeedsDistance(firstResultVec) || checkSeedsDistance(secondResultVec))        { onePB.abnormalDistance++;      continue; }
-                //check overlap length 
-                if(checkOverlapLength(firstResultVec) || checkOverlapLength(secondResultVec))        { onePB.abnormalOverlapLength++; continue; }
-                
-                onePB.passCount++;
-                
-                std::vector<OverlapSeedVecInfo> tmp;
-    
-                tmp.push_back(firstResultVec);
-                tmp.push_back(secondResultVec);
-                    
-                // build relation hash, use to check how many contig are connect the other contig
-                insertContigRelationHash(firstContig,firstContigSide,firstStrand,secondContig,secondContigSide,secondStrand,firstContigLength,secondContigLength,tmp);
-                insertContigRelationHash(secondContig,secondContigSide,secondStrand,firstContig,firstContigSide,firstStrand,secondContigLength,firstContigLength,tmp);
-            }
-            else onePB.seedsThreshold++;
-			*/
+			std::string firContig = (*firstContigIter).contig;
+            std::string secContig = (*secondContigIter).contig;
+	
+			combineEveryCheckFunction(firstResultVec,secondResultVec,firContig,secContig,pbIterator->first,1);
         }
     }
+	
+	showDetailInformation();
 }
 
 void ReassemblerPostProcess::buildGraphByOneRead()
@@ -375,7 +260,6 @@ void ReassemblerPostProcess::buildGraphByOneRead()
     
     for(ContigRelationHashMap::iterator contigSideIter = connectContigHashMap.begin() ; contigSideIter!=connectContigHashMap.end() ; ++contigSideIter )
     {
-        // contigA have most read to contigB, so and contigB
         std::vector<OverlapRelation>::iterator iter ;
         std::string endContig = mostConnectContig(contigSideIter->second);
 
@@ -387,25 +271,25 @@ void ReassemblerPostProcess::buildGraphByOneRead()
 
             int ec_same = 0;
             int ec_rev  = 0;
-            bool ec_vote = true;
-            
+			bool ec_vote = true;  // default direct is ec_same
+			
+            // find most connect direct
             for(std::vector<OverlapRelation>::iterator tmpIter = contigSideIter->second.begin(); tmpIter != contigSideIter->second.end(); ++tmpIter )
-            {
                 if((*tmpIter).secondContig == endContig)
-                {
-                    if((*tmpIter).isSameStrand) ec_same++;
-                    else ec_rev++;
-                }
-            }
-            
+                    (*tmpIter).isSameStrand ? ec_same++ : ec_rev++;
+			
+			// it can't determine ec_same or ec_rev
             if(ec_same == ec_rev) continue;
-            if(ec_same < ec_rev) ec_vote = false;
-            
+            // change direct to ec_rev
+			if(ec_same < ec_rev) ec_vote = false;
+            // contigA have most read to contigB, so and contigB
             for(std::vector<OverlapRelation>::iterator tmpIter = contigSideIter->second.begin(); tmpIter != contigSideIter->second.end(); ++tmpIter )
             {
-                if( (*tmpIter).secondContig == endContig )
+				// check this contig is the most connected target
+				if( (*tmpIter).secondContig == endContig )
                 {    
-                    if((*tmpIter).isSameStrand != ec_vote) continue;
+                    // check the direction of the contig connection belongs to the direction of the many contigs connected
+					if((*tmpIter).isSameStrand != ec_vote) continue;
                     
                     if( ((*tmpIter).overlapLength > tmpOverlapLength) && ((*tmpIter).firstContig == startContig || tmpOverlapLength == -1) )
                     {
@@ -482,13 +366,24 @@ void ReassemblerPostProcess::buildGraphByOneRead()
 
 void ReassemblerPostProcess::buildGraphByTwoRead()
 {
+	clock_t p1,p2,p3,p4;
+	p1 = clock();
+	
+			
 	collectSeeds();
 	
-	std::cout<< "\nvector size :" << AllReadKmerVec.size() << "\n"
-             << "filter palindrome : " << twoPB.palindrome << "\n";
+	p2 = clock();
+	std::cout<<  (p2 - p1) / CLOCKS_PER_SEC <<" sec\n";
+	
+	std::cout<< "vector size :" << AllReadKmerVec.size() << "\n";
 	
 	filterErrorConnect();
+	p3 = clock();
+	std::cout<<  (p3 - p2) / CLOCKS_PER_SEC <<" sec\n";
+	
 	layoutGraph();
+	p4 = clock();
+	std::cout<<  (p4 - p3) / CLOCKS_PER_SEC <<" sec\n";
 	
 	std::cout<<"\n";
     std::cout<< "pass read number         : "                    << twoPB.passCount                 << "\n"
@@ -502,7 +397,7 @@ void ReassemblerPostProcess::buildGraphByTwoRead()
              << "case 7. abnormal distance between two seeds : " << twoPB.readAbnormalDistance      << "\n"		
 			 << "case 8. chimeric read : "                       << twoPB.chimera                   << "\n"
 			 << "reassemble number     : "                       << twoPB.sucsess                   << "\n";
-
+	std::cout<<"\n";
 }
 
 void ReassemblerPostProcess::collectSeeds()
@@ -533,7 +428,6 @@ void ReassemblerPostProcess::collectSeeds()
         int endPos   = readIter->second[0].singleOverlap.scanReadStart > readIter->second[0].singleOverlap.scanReadEnd ? readIter->second[0].singleOverlap.scanReadStart : readIter->second[0].singleOverlap.scanReadEnd;
         
         // collect seeds on read
-        //std::vector<ReassemblerSeedFeature> readSeedVec = seedingByDynamicKmer(originRead);
         //std::vector<ReassemblerSeedFeature> readSeedVec = seedingByDynamicKmer(originRead, startPos, endPos);
         std::vector<ReassemblerSeedFeature> readSeedVec = collectKmer(originRead, startPos, endPos);
         // filter repeat seed and forward and backward one each
@@ -795,7 +689,7 @@ void ReassemblerPostProcess::layoutGraph()
 
         ///******** filter error read function **********///
 
-void ReassemblerPostProcess::combineEveryCheckFunction(OverlapSeedVecInfo firVec, OverlapSeedVecInfo secVec, int readIndex, int section)
+void ReassemblerPostProcess::combineEveryCheckFunction(OverlapSeedVecInfo firVec, OverlapSeedVecInfo secVec, std::string firContig, std::string secContig, int readIndex, int section)
 {
 	std::string originRead  = backtrackRead( m_params.indices, readIndex );
 	
@@ -817,8 +711,6 @@ void ReassemblerPostProcess::combineEveryCheckFunction(OverlapSeedVecInfo firVec
 	// different section and each unique check function
 	else if( section == 1 )
 	{
-		std::string firstContig  = firVec.contig;
-        std::string secondContig = secVec.contig;
         bool firstStrand         = firVec.SeedInfoVec[0].strand;
         bool secondStrand        = secVec.SeedInfoVec[0].strand;
         bool firstContigSide     = firVec.SeedInfoVec[0].contigSide;
@@ -829,14 +721,27 @@ void ReassemblerPostProcess::combineEveryCheckFunction(OverlapSeedVecInfo firVec
 		if(checkContigRelation(firstContigSide,firstStrand,secondContigSide,secondStrand)) onePB.repeatStatus++; 
 		else
 		{
+			/*
+			std::cout<< readIndex << "\t"
+					 << firContig << "\t"
+					 << firstContigSide << "\t"
+					 << firstContigLength << "\t"
+					 << firVec.SeedInfoVec.size() << "\t"
+					 << secContig << "\t"
+					 << secondContigSide << "\t"
+					 << secondContigLength << "\t"
+					 << secVec.SeedInfoVec.size() << "\n";
+			*/
 			onePB.passCount++;
             
             std::vector<OverlapSeedVecInfo> tmp;
             tmp.push_back(firVec);
             tmp.push_back(secVec);
             // build relation hash, use to check how many contig are connect the other contig
-            insertContigRelationHash(firstContig,firstContigSide,firstStrand,secondContig,secondContigSide,secondStrand,firstContigLength,secondContigLength,tmp);
-            insertContigRelationHash(secondContig,secondContigSide,secondStrand,firstContig,firstContigSide,firstStrand,secondContigLength,firstContigLength,tmp);
+            insertContigRelationHash(firContig,firstContigSide,firstStrand,secContig,secondContigSide,secondStrand,firstContigLength,secondContigLength,tmp);
+            insertContigRelationHash(secContig,secondContigSide,secondStrand,firContig,firstContigSide,firstStrand,secondContigLength,firstContigLength,tmp);
+		
+			//std::cout << connectContigHashMap.size() << "\n";
 		}
                 
 	}
@@ -876,42 +781,16 @@ bool ReassemblerPostProcess::checkContigSeed(OverlapSeedVecInfo input, int lengt
     int shortSeedCount = 0;
     int reverseSeed = 0;
     bool allSmall = true;
-    
+    // check every seeds are same strand
     for(SeedSequenceInfoVec::iterator iter = input.SeedInfoVec.begin(); iter!=input.SeedInfoVec.end() ; ++iter)
     {    
-        /*
-        size_t fwdKmerFreqsUsingRead = BWTAlgorithms::countSequenceOccurrencesSingleStrand((*iter).seedString, m_params.indices);
-        size_t rvcKmerFreqsUsingRead = BWTAlgorithms::countSequenceOccurrencesSingleStrand(reverseComplement((*iter).seedString), m_params.indices);
-        size_t kmerFreqsUsingRead = fwdKmerFreqsUsingRead + rvcKmerFreqsUsingRead;
-        
-        std::cout << "( " << (*iter).contigSide << " , " << (*iter).strand    << " , ";
-                  
-        BWTInterval interval  = BWTAlgorithms::findInterval(m_params.indices,(*iter).seedString) ;
-        BWTInterval rinterval = BWTAlgorithms::findInterval(m_params.indices,reverseComplement((*iter).seedString));
-
-        for(size_t j = interval.lower ; j <= (size_t)interval.upper ; j++)
-        {
-            std::pair<size_t, size_t> currentSeed = BacktrackReadIdx(m_params.indices,j);
-            std::cout << currentSeed.first << " ";
-        }
-            
-        for(size_t j = rinterval.lower ; j <= (size_t)rinterval.upper ; j++)
-        {
-            std::pair<size_t, size_t> currentSeed = BacktrackReadIdx(m_params.indices,j);
-            std::cout << currentSeed.first << " ";
-        }
-                  
-        std::cout << " , " <<(*iter).readIndex  << " )";
-        */
         if((*iter).seedLength<=lengthThreshold)shortSeedCount++;
         else allSmall = false;
         
         if((*iter).contigSide!=input.SeedInfoVec[0].contigSide || (*iter).strand != input.SeedInfoVec[0].strand)
             reverseSeed++;
     }
-
     if(allSmall || reverseSeed >0)return true;
-
     return false;
 }
 
@@ -963,32 +842,13 @@ bool ReassemblerPostProcess::checkRepeatByRead(OverlapSeedVecInfo input, bool sh
 	if(show)
 	{
 		for(SeedSequenceInfoVec::iterator iter = input.SeedInfoVec.begin(); iter!=input.SeedInfoVec.end() ; ++iter)
-		{
 			for( int i = 0 ; i< (int)((*iter).seedString.length()) - slideWindow + 1 ; i++ )
-			{
-				std::string kmer = (*iter).seedString.substr(i, slideWindow);
-
-				size_t fwdKmerFreqs = BWTAlgorithms::countSequenceOccurrencesSingleStrand(kmer, m_params.indices);
-				size_t rvcKmerFreqs = BWTAlgorithms::countSequenceOccurrencesSingleStrand(reverseComplement(kmer), m_params.indices);
-				size_t kmerFreqs = fwdKmerFreqs+rvcKmerFreqs;
-
-			    std::cout<< kmerFreqs << " ";
-			}
-		}
+			    std::cout<< getFrequency(m_params.indices,(*iter).seedString.substr(i, slideWindow)) << " ";
 		std::cout<<  "\n";
+		
 		for(SeedSequenceInfoVec::iterator iter = input.SeedInfoVec.begin(); iter!=input.SeedInfoVec.end() ; ++iter)
-		{
 			for( int i = 0 ; i< (int)((*iter).seedString.length()) - slideWindow + 1 ; i++ )
-			{
-				std::string kmer = (*iter).seedString.substr(i, slideWindow);
-
-				size_t fwdKmerFreqs = BWTAlgorithms::countSequenceOccurrencesSingleStrand(kmer, m_params.contigIndices);
-				size_t rvcKmerFreqs = BWTAlgorithms::countSequenceOccurrencesSingleStrand(reverseComplement(kmer), m_params.contigIndices);
-				size_t kmerFreqs = fwdKmerFreqs+rvcKmerFreqs;
-
-			    std::cout<< kmerFreqs << " ";
-			}
-		}
+			    std::cout<< getFrequency(m_params.indices,(*iter).seedString.substr(i, slideWindow)) << " ";
 		std::cout<<  "\n";
 	}
 	
@@ -1001,16 +861,11 @@ bool ReassemblerPostProcess::checkRepeatByRead(OverlapSeedVecInfo input, bool sh
         {
             if( totalKmerNumber >= 10 ) break;
 			
+			totalKmerNumber++;
+			
 			std::string kmer = (*iter).seedString.substr(i, slideWindow);
+            size_t kmerFreqs = getFrequency(m_params.indices,kmer);
 
-            size_t fwdKmerFreqs = BWTAlgorithms::countSequenceOccurrencesSingleStrand(kmer, m_params.indices);
-            size_t rvcKmerFreqs = BWTAlgorithms::countSequenceOccurrencesSingleStrand(reverseComplement(kmer), m_params.indices);
-            size_t kmerFreqs = fwdKmerFreqs+rvcKmerFreqs;
-            
-            totalKmerNumber++;
-           
-            if(show)std::cout<< kmerFreqs << " ";
-           
             // repeat kmer
             if((int)kmerFreqs>=kmerSizeFreqByRead_15[seedCount_15/10*9])headCount++;
         }
@@ -1029,16 +884,11 @@ bool ReassemblerPostProcess::checkRepeatByRead(OverlapSeedVecInfo input, bool sh
         {
             if( totalKmerNumber >= 10 ) break;
 			
+			totalKmerNumber++;
+			
 			std::string kmer = (*iter).seedString.substr(i, slideWindow);
-
-            size_t fwdKmerFreqs = BWTAlgorithms::countSequenceOccurrencesSingleStrand(kmer, m_params.indices);
-            size_t rvcKmerFreqs = BWTAlgorithms::countSequenceOccurrencesSingleStrand(reverseComplement(kmer), m_params.indices);
-            size_t kmerFreqs = fwdKmerFreqs+rvcKmerFreqs;
-            
-            totalKmerNumber++;
-           
-            if(show)std::cout<< kmerFreqs << " ";
-           
+            size_t kmerFreqs = getFrequency(m_params.indices,kmer);
+ 
             // repeat kmer
             if((int)kmerFreqs>=kmerSizeFreqByRead_15[seedCount_15/10*9])tailCount++;
         }
@@ -1066,22 +916,18 @@ bool ReassemblerPostProcess::checkRepeatByContig(OverlapSeedVecInfo input)
     
     for(SeedSequenceInfoVec::iterator iter = input.SeedInfoVec.begin(); iter!=input.SeedInfoVec.end() ; ++iter)
     {
-        std::string kmer = (*iter).seedString;
-
-        size_t fwdKmerFreqs = BWTAlgorithms::countSequenceOccurrencesSingleStrand(kmer, m_params.contigIndices);
-        size_t rvcKmerFreqs = BWTAlgorithms::countSequenceOccurrencesSingleStrand(reverseComplement(kmer), m_params.contigIndices);
-        size_t kmerFreqs = fwdKmerFreqs+rvcKmerFreqs;
+		size_t kmerFreqs = getFrequency(m_params.contigIndices,(*iter).seedString);
             
-        //    contig1 ----------*-----------*--------*--------
-        //                          --------*--------*-------------*-------contig2
-        //        pacibo        -------------------------------------
-        // contig index freq    1           2        2             1 
+        //    contig1   ----------*-----------*--------*--------
+        //                            --------*--------*-------------*------- contig2
+        //    pacibo               -------------------------------------
+        // freq by contig index   1           2        2             1 
         
         if(kmerFreqs<=2)uniqueOrOverlap++;
         
-        //    contig1 ----------*--*---*--           ----*----*--*-------contig2
-        //        pacibo      -------------------------------------
-        //    freq              1  1   1                 1    1  1 
+        //    contig1   ----------*--*---*--           ----*----*--*------- contig2
+        //        pacibo        -------------------------------------
+        // freq by contig index   1  1   1                 1    1  1 
         
         if(kmerFreqs==1)unique++;
         total++;
@@ -1119,16 +965,12 @@ bool ReassemblerPostProcess::checkPalindrome(std::string readSeq)
     
     for(size_t i = 0 ; i+kmerSize <= (size_t)readSeq.length() ; i++)
     {
-        std::string forwardkmer = readSeq.substr(i, kmerSize);
-        std::string reverseKmer = reverseComplement(forwardkmer);
-        
-        size_t fwdKmerFreqs = BWTAlgorithms::countSequenceOccurrencesSingleStrand(forwardkmer, m_params.indices);
-        size_t rvcKmerFreqs = BWTAlgorithms::countSequenceOccurrencesSingleStrand(reverseKmer, m_params.indices);
-        size_t kmerFreqs = fwdKmerFreqs+rvcKmerFreqs;
+        std::string kmer = readSeq.substr(i, kmerSize);
+		size_t kmerFreqs = getFrequency(m_params.indices,kmer);
         
         if( ((int)kmerFreqs > kmerSizeFreqByRead_11[seedCount_11/10*7])) continue;
         
-        SparseHashMap<std::string, KmerInfo, StringHasher>::iterator findKmerIter = readKmerHashMap.find(forwardkmer);
+        SparseHashMap<std::string, KmerInfo, StringHasher>::iterator findKmerIter = readKmerHashMap.find(reverseComplement(kmer));
         
         if( findKmerIter == readKmerHashMap.end() ) 
         {
@@ -1136,14 +978,14 @@ bool ReassemblerPostProcess::checkPalindrome(std::string readSeq)
             tmpKmer.position = (int)i;
             tmpKmer.secondPosition = 0;
             tmpKmer.isRepeat = false;
-            readKmerHashMap.insert(std::make_pair(forwardkmer,tmpKmer));
+            readKmerHashMap.insert(std::make_pair(reverseComplement(kmer),tmpKmer));
         }
         else
         {
             findKmerIter->second.isRepeat = true;
         }
         
-        findKmerIter = readKmerHashMap.find(reverseKmer);
+        findKmerIter = readKmerHashMap.find(reverseComplement(kmer));
         
         if( findKmerIter!=readKmerHashMap.end() )
         {
@@ -1209,15 +1051,11 @@ bool ReassemblerPostProcess::checkChimera(size_t queryIndex)
 	// collect all kmer and backtrack each interval
     for(size_t i = 0 ; i+kmerSize <= (size_t)querySeq.length() ; i++)
     {
-		std::string forwardkmer = querySeq.substr(i, kmerSize);
-        std::string reverseKmer = reverseComplement(forwardkmer);
-        
-		BWTInterval interval  = BWTAlgorithms::findInterval(m_params.indices,forwardkmer) ;
-        BWTInterval rinterval = BWTAlgorithms::findInterval(m_params.indices,reverseKmer) ;
-        
-		size_t fwdKmerFreqs = BWTAlgorithms::countSequenceOccurrencesSingleStrand(forwardkmer, m_params.indices);
-        size_t rvcKmerFreqs = BWTAlgorithms::countSequenceOccurrencesSingleStrand(reverseKmer, m_params.indices);
-        size_t kmerFreqs = fwdKmerFreqs+rvcKmerFreqs;
+		std::string kmer = querySeq.substr(i, kmerSize);
+        size_t kmerFreqs = getFrequency(m_params.indices,kmer);
+		
+		BWTInterval interval  = BWTAlgorithms::findInterval(m_params.indices,kmer) ;
+        BWTInterval rinterval = BWTAlgorithms::findInterval(m_params.indices,reverseComplement(kmer)) ;
 		
 		// in order to speed up the time, so filtered repeat kmer
 		if( kmerFreqs >= (size_t)kmerSizeFreqByRead_15[seedCount_15/10*9] ) continue;
@@ -1227,7 +1065,7 @@ bool ReassemblerPostProcess::checkChimera(size_t queryIndex)
             // filter self index
 			if(interval.lower + 1 == interval.upper )continue;
 			
-			std::pair<size_t, size_t> currentSeed = BacktrackReadIdx(m_params.indices,j);
+			std::pair<size_t, size_t> currentSeed = BacktrackReadIdx(m_params.indices,j,true);
 			// filter self index
 			if( queryIndex == currentSeed.first )continue;
 			
@@ -1255,7 +1093,7 @@ bool ReassemblerPostProcess::checkChimera(size_t queryIndex)
         {
             if(interval.lower + 1 == interval.upper )continue;
 			
-			std::pair<size_t, size_t> currentSeed = BacktrackReadIdx(m_params.indices,j);
+			std::pair<size_t, size_t> currentSeed = BacktrackReadIdx(m_params.indices,j,true);
             
 			if( queryIndex == currentSeed.first )continue;
 			
@@ -1615,7 +1453,8 @@ void ReassemblerPostProcess::showDetailInformation()
                  << "case 3. seeds order discordant  : "             << twoPB.seedOrderDiscordant   << "\n"
                  << "case 4. abnormal overlap length : "             << twoPB.abnormalOverlapLength << "\n"
                  << "case 5. abnormal distance between two seeds : " << twoPB.abnormalDistance      << "\n"
-                 << "case 6. insufficient non overlap length     : " << twoPB.insufficientLength    << "\n";
+                 << "case 6. insufficient non overlap length     : " << twoPB.insufficientLength    << "\n"
+				 << "case 7. palindrome reads : "                    << twoPB.palindrome            << "\n";
     }    
     if( m_params.isFirst || m_params.isSecond )
     {
@@ -2231,16 +2070,8 @@ std::vector<ReassemblerSeedFeature> ReassemblerPostProcess::filterRepeatSeed(std
     {
         if(repeatCount>0){repeatCount--;continue;}
         
-        size_t fwdSeedFreqByRead = BWTAlgorithms::countSequenceOccurrencesSingleStrand((*iter).seedStr, m_params.indices);
-        size_t rvcSeedFreqByRead = BWTAlgorithms::countSequenceOccurrencesSingleStrand(reverseComplement((*iter).seedStr), m_params.indices);
-        size_t SeedFreqByRead = fwdSeedFreqByRead + rvcSeedFreqByRead;
-        
-        size_t fwdSeedFreqByContig = BWTAlgorithms::countSequenceOccurrencesSingleStrand((*iter).seedStr, m_params.contigIndices);
-        size_t rvcSeedFreqByContig = BWTAlgorithms::countSequenceOccurrencesSingleStrand(reverseComplement((*iter).seedStr), m_params.contigIndices);
-        size_t SeedFreqByContig = fwdSeedFreqByContig + rvcSeedFreqByContig;
-        
-        //if((int)SeedFreqByRead ==2)std::cout<<". ";
-        //else std::cout<<SeedFreqByRead<<" ";
+        size_t SeedFreqByRead = getFrequency(m_params.indices,(*iter).seedStr);
+        size_t SeedFreqByContig = getFrequency(m_params.contigIndices,(*iter).seedStr);
         
         // filter repeat using read index and contig index
         if( ((int)SeedFreqByRead > kmerSizeFreqByRead_15[seedCount_15/10*5] ) || ((int)SeedFreqByContig > 2) ) 
@@ -2258,10 +2089,8 @@ std::vector<ReassemblerSeedFeature> ReassemblerPostProcess::filterRepeatSeed(std
             reCount = 0;
             continue;
         }
-        
         reCount++;
         seedVec.push_back((*iter));    
-        
     }
     return seedVec;
 }
@@ -2412,14 +2241,8 @@ void ReassemblerPostProcess::countTotalSeedFreq(std::string seed)
     for( int i = 0 ; i < (int)seed.length() - slideWindow + 1 ; i++ )
     {
         std::string kmer = seed.substr(i, slideWindow);
-
-        size_t fwdKmerFreqsUsingRead = BWTAlgorithms::countSequenceOccurrencesSingleStrand(kmer, m_params.indices);
-        size_t rvcKmerFreqsUsingRead = BWTAlgorithms::countSequenceOccurrencesSingleStrand(reverseComplement(kmer), m_params.indices);
-        size_t kmerFreqsUsingRead = fwdKmerFreqsUsingRead + rvcKmerFreqsUsingRead;
-        
-        size_t fwdKmerFreqsUsingContig = BWTAlgorithms::countSequenceOccurrencesSingleStrand(kmer, m_params.contigIndices);
-        size_t rvcKmerFreqsUsingContig = BWTAlgorithms::countSequenceOccurrencesSingleStrand(reverseComplement(kmer), m_params.contigIndices);
-        size_t kmerFreqsUsingContig = fwdKmerFreqsUsingContig + rvcKmerFreqsUsingContig;
+		size_t kmerFreqsUsingRead   = getFrequency(m_params.indices,kmer);
+        size_t kmerFreqsUsingContig = getFrequency(m_params.contigIndices,kmer);
         
         if(seedCount_15>=100000)break;
        
@@ -2433,10 +2256,7 @@ void ReassemblerPostProcess::countTotalSeedFreq(std::string seed)
     for( int i = 0 ; i < (int)seed.length() - slideWindow + 1 ; i++ )
     {
         std::string kmer = seed.substr(i, slideWindow);
-
-        size_t fwdKmerFreqsUsingRead = BWTAlgorithms::countSequenceOccurrencesSingleStrand(kmer, m_params.indices);
-        size_t rvcKmerFreqsUsingRead = BWTAlgorithms::countSequenceOccurrencesSingleStrand(reverseComplement(kmer), m_params.indices);
-        size_t kmerFreqsUsingRead = fwdKmerFreqsUsingRead + rvcKmerFreqsUsingRead;
+		size_t kmerFreqsUsingRead = getFrequency(m_params.indices,kmer);
         
         if(seedCount_11>=100000)break;
        
@@ -2529,11 +2349,10 @@ std::vector<ReassemblerSeedFeature> ReadReassemblerBasicElements::seedingByDynam
     for(size_t i = scanStart ; i+dynamicKmerSize <= scanEnd ; i++)
     {
         std::string kmer = readSeq.substr(i, dynamicKmerSize);
-
-        size_t fwdKmerFreqs = BWTAlgorithms::countSequenceOccurrencesSingleStrand(kmer, m_params.indices);
-        size_t rvcKmerFreqs = BWTAlgorithms::countSequenceOccurrencesSingleStrand(reverseComplement(kmer), m_params.indices);
-        size_t kmerFreqs = fwdKmerFreqs+rvcKmerFreqs;
-        
+		size_t fwdKmerFreqs = BWTAlgorithms::countSequenceOccurrencesSingleStrand(kmer, m_params.indices);
+		size_t rvcKmerFreqs = BWTAlgorithms::countSequenceOccurrencesSingleStrand(reverseComplement(kmer), m_params.indices);
+		size_t kmerFreqs = fwdKmerFreqs + rvcKmerFreqs;
+		
          //std::cout << i << ": " << kmer << "\t" << kmerFreqs <<":" << fwdKmerFreqs << ":" << rvcKmerFreqs << "\n";
         
         if(kmerFreqs >= kmerThreshold && fwdKmerFreqs>=1 && rvcKmerFreqs>=1)
@@ -2561,10 +2380,8 @@ std::vector<ReassemblerSeedFeature> ReadReassemblerBasicElements::seedingByDynam
 
                 maxKmerFreq = std::max(maxKmerFreq,kmerFreqs);
 
-                if( kmerFreqs >= (size_t) kmerThreshold && fwdKmerFreqs>=1 && rvcKmerFreqs>=1)
-                    seedLen++;
-                else 
-                    break;
+                if( kmerFreqs >= (size_t) kmerThreshold && fwdKmerFreqs>=1 && rvcKmerFreqs>=1) seedLen++;
+                else break;
             }
 
             size_t seedEndPos = seedStartPos+seedLen+dynamicKmerSize-1;
@@ -2579,21 +2396,15 @@ std::vector<ReassemblerSeedFeature> ReadReassemblerBasicElements::seedingByDynam
             {
                 // push concatenated seeds into seed vector
                 ReassemblerSeedFeature newSeed(seedStartPos, readSeq.substr(seedStartPos, seedEndPos-seedStartPos+1), true, dynamicKmerSize, kmerThreshold+10);
-                // newSeed.setBestKmerSize(dynamicKmerSize);
-                //newSeed.estimateBestKmerSize(m_params.indices.pBWT);
                 seedVec.push_back(newSeed);
             }
             else
             {
                 // push concatenated seeds into seed vector
                 ReassemblerSeedFeature newSeed(seedStartPos, readSeq.substr(seedStartPos, seedEndPos-seedStartPos+1), false, dynamicKmerSize, kmerThreshold+10);
-                //newSeed.setBestKmerSize(dynamicKmerSize);
-                //newSeed.estimateBestKmerSize(m_params.indices.pBWT);
                 seedVec.push_back(newSeed);
             }
             
-            // std::cout << "Seed:\t " << seedVec.back().seedLength << "\t" << seedVec.back().seedStr << "\n";
-
             // jump to the index after new seed
             i = i + dynamicKmerSize - 2;
             
@@ -2616,17 +2427,14 @@ std::vector<ReassemblerSeedFeature> ReadReassemblerBasicElements::seedingByDynam
                 kmerThreshold = 10;
                 i = prevSeedEndPos;
             }
-    
             // previous seed is a correct repeat seed
             if( dynamicKmerSize > 17 && !seedVec.empty() && !seedVec.back().isRepeat)
             {
                 dynamicKmerSize = 17;
                 i = prevSeedEndPos;
             }
-        }
-            
+        }    
     }// end of for
-    
     return seedVec;
 }
 
@@ -2638,12 +2446,11 @@ std::vector<ReassemblerSeedFeature> ReadReassemblerBasicElements::collectKmer(co
     for(size_t i = scanStart ; i+kmerSize <= (size_t)scanEnd ; i++)
     {
         std::string kmer = readSeq.substr(i, kmerSize);
-        std::string reverseKmer = reverseComplement(kmer);
-        
+        size_t KmerFreqsUsingRead = getFrequency(m_params.indices,kmer);
+		
         size_t fwdKmerFreqsUsingRead = BWTAlgorithms::countSequenceOccurrencesSingleStrand(kmer, m_params.indices);
-        size_t rvcKmerFreqsUsingRead = BWTAlgorithms::countSequenceOccurrencesSingleStrand(reverseKmer, m_params.indices);
-        size_t KmerFreqsUsingRead = fwdKmerFreqsUsingRead + rvcKmerFreqsUsingRead;
-        
+        size_t rvcKmerFreqsUsingRead = BWTAlgorithms::countSequenceOccurrencesSingleStrand(reverseComplement(kmer), m_params.indices);
+
 		if( fwdKmerFreqsUsingRead == 0 || rvcKmerFreqsUsingRead == 0 )continue;
 		
         if(KmerFreqsUsingRead<2)continue;
@@ -2769,7 +2576,7 @@ bool ReadReassemblerBasicElements::isLowComplexity (std::string seq, float thres
 
 }
 
-std::pair<size_t, size_t> ReadReassemblerBasicElements::BacktrackReadIdx(const BWTIndexSet indices, size_t InputIdx)
+std::pair<size_t, size_t> ReadReassemblerBasicElements::BacktrackReadIdx(const BWTIndexSet indices, size_t InputIdx, bool activeHash)
 {
     size_t backtrackLength = 0;
     size_t idx = InputIdx;
@@ -2778,10 +2585,41 @@ std::pair<size_t, size_t> ReadReassemblerBasicElements::BacktrackReadIdx(const B
     {
         char b = indices.pBWT->getChar(idx);
         size_t new_idx = indices.pBWT->getPC(b) + indices.pBWT->getOcc(b, idx - 1);
-        if(b == '$')
+        
+		if(activeHash)
+		{		
+			SparseHashMap<size_t, sizetPair, SizetHasher>::iterator findIter = recordBacktrackIndex.find(new_idx);
+			if( findIter != recordBacktrackIndex.end() )
+			{
+				//std::cout <<"insert : " << InputIdx << " find : " << findIter->second.first << " $ is : " << findIter->first << " length : " << backtrackLength << "\n";
+
+				SparseHashMap<size_t, sizetPair, SizetHasher>::iterator insertIter = recordBacktrackIndex.find(InputIdx);
+				
+				if( insertIter == recordBacktrackIndex.end() )
+				{
+					sizetPair tmp = std::make_pair(findIter->first,backtrackLength+findIter->second.second);
+					recordBacktrackIndex.insert(std::make_pair(InputIdx,tmp));
+					return tmp;
+				}
+				return std::make_pair(findIter->second.first,findIter->second.second);
+			}
+		}
+		
+		if(b == '$')
         {
             idx = indices.pSSA->lookupLexoRank(new_idx);
-            return std::make_pair(idx,backtrackLength);
+			sizetPair tmp = std::make_pair(idx,backtrackLength);
+			
+			if(activeHash)
+			{
+				SparseHashMap<size_t, sizetPair, SizetHasher>::iterator insertIter = recordBacktrackIndex.find(InputIdx);
+				
+				if( insertIter == recordBacktrackIndex.end() )
+					recordBacktrackIndex.insert(std::make_pair(InputIdx,tmp));
+				
+				//std::cout <<"insert : " << InputIdx << " $ is : " << idx << " length : " << backtrackLength << "\n";
+			}
+			return tmp;
         }
         else idx = new_idx;
         
@@ -2808,4 +2646,11 @@ std::string ReadReassemblerBasicElements::backtrackRead(const BWTIndexSet indice
         backtrackRead += b ;
     }
     return backtrackRead;
+}
+
+size_t ReadReassemblerBasicElements::getFrequency(const BWTIndexSet indices, std::string query)
+{
+	size_t fwdKmerFreqs = BWTAlgorithms::countSequenceOccurrencesSingleStrand(query, indices);
+	size_t rvcKmerFreqs = BWTAlgorithms::countSequenceOccurrencesSingleStrand(reverseComplement(query), indices);
+	return fwdKmerFreqs+rvcKmerFreqs;
 }

@@ -214,6 +214,7 @@ int ReassemblerMain(int argc, char** argv)
     Timer* pTimer = new Timer(PROGRAM_IDENT);
 
     ecParams.kmerLength = opt::kmerLength;
+	ecParams.numThreads = opt::numThreads;
     ecParams.seedKmerThreshold = opt::seedKmerThreshold;
     ecParams.FMWKmerThreshold  = opt::kmerThreshold;
     ecParams.collectedSeeds    = opt::collect;
