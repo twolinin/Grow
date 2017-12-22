@@ -299,8 +299,8 @@ class ReassemblerPostProcess : public ReadReassemblerBasicElements
     protected:
 		
 		void collectSeeds();
-		void filterErrorConnect();
-		void layoutGraph();
+		void filterErrorConnect(ReadKmerVec &inputReadVec, ContigRelationHashMap &inputContigPair, bool isKmer);
+		void layoutGraph(ContigRelationHashMap &inputContigPair);
 		
 		///************************************************///
         ///******** filter error read function **********///
@@ -338,7 +338,7 @@ class ReassemblerPostProcess : public ReadReassemblerBasicElements
 		// first and second step reassembler, store two contigs connect relation
         void insertContigRelationHash(std::string firstContig, bool firstSide, bool firstStrand, std::string secondContig, bool secondSide, bool secondStrand, int firstContigLength, int secondContigLength, std::vector<OverlapSeedVecInfo> contigInfoVec);
 		//
-		void insertContigRelationHash(ReadKmerPair readVecIter, OverlapSeedVecInfo resultSeedVec);
+		void insertContigRelationHash(ReadKmerPair readVecIter, OverlapSeedVecInfo resultSeedVec, ContigRelationHashMap &inputContigPair);
 		// third step reassembler, store a read overlap on contig information 
         void insertSingleRelationHash(OverlapSeedVecInfo input, ReadScanAndOverlapPosition scanRange);
         // found first and last seed position on contig, so and read 
@@ -360,13 +360,11 @@ class ReassemblerPostProcess : public ReadReassemblerBasicElements
 		// check two contigs side are not connect, store this pair in hash if not connect
         bool checkConnect(std::string firstID, bool firstSide,std::string secondID, bool secondSide);
         //
-		std::vector<ReassemblerSeedFeature> filterRepeatSeed(std::vector<ReassemblerSeedFeature> inputSeedVec);
-		//
 		void filterErrorStrand(OverlapSeedVecInfo input, OverlapSeedVecInfo &result, bool mostStrand);
 		// 
 		void filterErrorSeeds(OverlapSeedVecInfo input, OverlapSeedVecInfo &result, int mostRead);
 		// third step reassembler, construct kmer hash map and read seeds vector
-		void buildKmerHashAndReadKmerVec( std::string readConnectContig, bool connectContigSide, int connectContigLength, int readIndex, std::vector<ReassemblerSeedFeature> inputSeedVec);
+		void buildKmerHashAndReadKmerVec( std::string readConnectContig, bool connectContigSide, int connectContigLength, int readIndex, std::vector<ReassemblerSeedFeature> inputSeedVec, KmerHashMap &allKmerHash, ReadKmerVec &readVec);
 		//
 		bool checkSameStrand(int startReadIndex, int targetReadIndex, SeedSequenceInfoVec brigdeSeedVec);
 		// return overlap length
@@ -389,11 +387,25 @@ class ReassemblerPostProcess : public ReadReassemblerBasicElements
         ReadConnectContigHashMap singleContigHashMap;
         // check this contig pair connect 
         SparseHashMap<std::string,bool,StringHasher> connectStatus;
-        // third step reassemble, all kmer appear on the read information
-        KmerHashMap collectAllKmerHashMap;
-        // third step reassemble,	read index and it's seeds vector	
+        
+		///*** kmer ***///
+		
+		// third step reassemble, all kmer appear on the read information
+		KmerHashMap collectAllKmerHashMap;
+		// third step reassemble, read index and it's seeds vector	
 		ReadKmerVec AllReadKmerVec;
- 
+		// use to know how many contig connect target contig, include side infomation
+        ContigRelationHashMap contigPairByKmer;
+		
+		///*** gkmer ***///
+		
+		// third step reassemble, all gkmer appear on the read information
+        KmerHashMap collectAllGKmerHashMap;
+		// third step reassemble, read index and it's seeds vector	
+		ReadKmerVec AllReadGKmerVec;
+		// use to know how many contig connect target contig, include side infomation
+        ContigRelationHashMap contigPairByGKmer;
+        
 		///************************************************///
         ///********* construct kmer distribution **********///
         ///************************************************/// 
