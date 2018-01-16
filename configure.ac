@@ -113,6 +113,7 @@ AC_CONFIG_FILES([Makefile
 		PacBio/Makefile
 		Thirdparty/Makefile
 		StriDe/Makefile
-		Reassembler/Makefile])
+		Reassembler/Makefile
+		Frequency/Makefile])
 
 AC_OUTPUT

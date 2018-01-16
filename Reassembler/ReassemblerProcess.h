@@ -167,6 +167,15 @@ struct OverlapRelation
 
 struct KmerInfo
 {
+	/*
+	KmerInfo(int ):kmerStr(""),kmerStrand(false),isRepeat(false),readConnectContigID(""),
+	readConnectContigLength(0),readConnectContigSide(false),readIndex(0),position(0),secondPosition(0),
+	sbjctPos(0)
+	{
+		queryPos
+		pairNumber
+	}
+	*/
 	std::string kmerStr;
 	
 	bool kmerStrand;
@@ -180,8 +189,8 @@ struct KmerInfo
 	int position;
 	int secondPosition;
 	
-	size_t queryPos;
-	size_t sbjctPos;
+	int queryPos;
+	int sbjctPos;
 	int pairNumber;
 };
 
@@ -258,6 +267,8 @@ class ReadReassemblerBasicElements
 		std::string backtrackRead(const BWTIndexSet indices, int64_t inputIdx);
 		// return string frequency
 		size_t getFrequency(const BWTIndexSet indices, std::string query);
+		
+		void showReadFrequency(size_t queryIndex, int kmerSize);
 		
 	protected:
 		
@@ -414,7 +425,6 @@ class ReassemblerPostProcess : public ReadReassemblerBasicElements
 		int seedCount_11;
         int kmerSizeFreqByRead_15[100000];
 		int kmerSizeFreqByRead_11[100000];
-		int kmerFreqByContig_15[100000];
         void countTotalSeedFreq(std::string seed);
 		
 		///************************************************///

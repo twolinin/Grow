@@ -11,7 +11,7 @@
 #include "ContigVertex.h"
 #include "ContigEdge.h"
 
-bool showProcess = false;
+bool showReassemblerProcess = false;
 
         ///************************************************///
         ///*********** Read Reassembler Process ************///
@@ -157,25 +157,40 @@ void ReassemblerPostProcess::process(const SequenceWorkItem& item, /*const*/ Rea
         }
         // sample kmer freqs
         for(SeedSequenceInfoVec::iterator iter = currentPbIdx->second[0].SeedInfoVec.begin(); iter !=currentPbIdx->second[0].SeedInfoVec.end() ; ++iter)
-            if( seedCount_15<100000 && seedCount_11<100000) countTotalSeedFreq((*iter).seedString);
-    }
+        {
+			std::string read = backtrackRead( m_params.indices, currentPbIdx->first );
+			//if( readNum < 100 )countTotalSeedFreq(read);
+			if( seedCount_15<100000 && seedCount_11<100000) countTotalSeedFreq(read);
+			//if( seedCount_15<100000 && seedCount_11<100000) countTotalSeedFreq((*iter).seedString);
+		}
+	}
 }
 
 void ReassemblerPostProcess::filterErrorRead()
 {
     std::cout<< "\n------------filter error connect between contig and read------------\n";
 
+	clock_t p1,p2;
+	p1 = clock();
+	
     // 15mer distribution using read
-    std::sort(kmerSizeFreqByRead_11,kmerSizeFreqByRead_11+seedCount_11);
+
+	std::sort(kmerSizeFreqByRead_11,kmerSizeFreqByRead_11+seedCount_11);
     std::sort(kmerSizeFreqByRead_15,kmerSizeFreqByRead_15+seedCount_15);
-    std::sort(kmerFreqByContig_15,kmerFreqByContig_15+seedCount_15);
-    // show process number 
+    
+	
+	//for(int i = 0 ; i < seedCount_15; i += seedCount_15/1000) std::cout << kmerSizeFreqByRead_15[i] << "\n";
+	//showDetailInformation();
+	
+	// show process number 
     int tmp = 0;
     // check the seeds in the read to determine if the read overlaps with contig
     for(SeedByReadHashMap::iterator pbIterator = collectSeedHashMap.begin() ; pbIterator!=collectSeedHashMap.end() ; ++pbIterator )
     {    
-        if(showProcess)std::cout<< std::flush << '\r' << "total overlap between contig and read : (" << ++tmp << "/" << collectSeedHashMap.size() << ")";
+        if(showReassemblerProcess)std::cout<< std::flush << '\r' << "total overlap between contig and read : (" << ++tmp << "/" << collectSeedHashMap.size() << ")";
         
+		//showReadFrequency(pbIterator->first,15);
+		
         std::vector<OverlapSeedVecInfo>::iterator firstContigIter  ;
         std::vector<OverlapSeedVecInfo>::iterator secondContigIter ;
         
@@ -251,6 +266,9 @@ void ReassemblerPostProcess::filterErrorRead()
     }
     
     showDetailInformation();
+	
+	p2 = clock();
+    std::cout<<  (p2 - p1) / CLOCKS_PER_SEC <<" sec\n";
 }
 
 void ReassemblerPostProcess::buildGraphByOneRead()
@@ -379,7 +397,9 @@ void ReassemblerPostProcess::buildGraphByTwoRead()
     p3 = clock();
     std::cout<<  (p3 - p2) / CLOCKS_PER_SEC <<" sec\n";
     
+	std::cout<<"\nusing gkmer\n";
     layoutGraph(contigPairByGKmer);
+	std::cout<<"\nusing fixed-size kmer\n";
 	layoutGraph(contigPairByKmer);
     p4 = clock();
     std::cout<<  (p4 - p3) / CLOCKS_PER_SEC <<" sec\n";
@@ -408,7 +428,7 @@ void ReassemblerPostProcess::collectSeeds()
     // collect all seeds on read fragment
     for(ReadConnectContigHashMap::iterator readIter = singleContigHashMap.begin() ; readIter!=singleContigHashMap.end() ; ++readIter )
     {
-        if(showProcess)std::cout<< std::flush << '\r' << "collect seeds on read fragment : (" << ++tmp << "/" << singleContigHashMap.size() << ")";
+        if(showReassemblerProcess)std::cout<< std::flush << '\r' << "collect seeds on read fragment : (" << ++tmp << "/" << singleContigHashMap.size() << ")";
         std::string originRead  = backtrackRead( m_params.indices, readIter->first );
         std::string connectContig = readIter->second[0].firstContig;
         bool connectContigSide    = readIter->second[0].firstSide;
@@ -493,6 +513,8 @@ void ReassemblerPostProcess::filterErrorConnect(ReadKmerVec &inputReadVec, Conti
         // check repeat by read index, old version. It can't detect every repeat seed.
         if(checkRepeatByRead(resultSeedVec,false))  { twoPB.readRepeatSeeds++;           continue; }
         
+		checkRepeatByRead(resultSeedVec,true);
+		
         std::cout << "kkmm\t"
                   << selfReadIter->second[0].firstContig   << "\t"
                   << selfReadIter->second[0].firstSide << "\t"
@@ -512,7 +534,7 @@ void ReassemblerPostProcess::filterErrorConnect(ReadKmerVec &inputReadVec, Conti
 
 void ReassemblerPostProcess::layoutGraph(ContigRelationHashMap &inputContigPair)
 {
-    std::cout << "\n---------build graph by two read---------\n\n";
+    std::cout << "---------build graph by two read---------\n\n";
     std::cout<< "contig side number:\t" << inputContigPair.size() << "\n";
     
     SparseHashMap<int, bool, Int64Hasher> chimeraRecord;
@@ -625,6 +647,7 @@ void ReassemblerPostProcess::layoutGraph(ContigRelationHashMap &inputContigPair)
             }
         }
         
+		
         twoPB.sucsess++;
         
             std::cout<<"rree" <<"\t"
@@ -823,11 +846,12 @@ bool ReassemblerPostProcess::checkRepeatByRead(OverlapSeedVecInfo input, bool sh
             for( int i = 0 ; i< (int)((*iter).seedString.length()) - slideWindow + 1 ; i++ )
                 std::cout<< getFrequency(m_params.indices,(*iter).seedString.substr(i, slideWindow)) << " ";
         std::cout<<  "\n";
-        
+        /*
         for(SeedSequenceInfoVec::iterator iter = input.SeedInfoVec.begin(); iter!=input.SeedInfoVec.end() ; ++iter)
             for( int i = 0 ; i< (int)((*iter).seedString.length()) - slideWindow + 1 ; i++ )
                 std::cout<< getFrequency(m_params.indices,(*iter).seedString.substr(i, slideWindow)) << " ";
         std::cout<<  "\n";
+		*/
     }
     
     for(SeedSequenceInfoVec::iterator iter = input.SeedInfoVec.begin(); iter!=input.SeedInfoVec.end() ; ++iter)
@@ -1016,7 +1040,8 @@ bool ReassemblerPostProcess::checkPalindrome(std::string readSeq)
 
 int Cmp2(const void *lhs, const void *rhs)
 {
-    return (int)((KmerInfo*)lhs)->queryPos - (int)((KmerInfo*)rhs)->queryPos;
+    //std::cout<< "(" <<((KmerInfo*)lhs)->queryPos << "," << ((KmerInfo*)rhs)->queryPos << ")";
+	return ((KmerInfo*)lhs)->queryPos - ((KmerInfo*)rhs)->queryPos;
 }
 
 bool ReassemblerPostProcess::checkChimera(size_t queryIndex)
@@ -1027,7 +1052,7 @@ bool ReassemblerPostProcess::checkChimera(size_t queryIndex)
     // used to record the coordinates of the query and the corresponding sequence
     SparseHashMap<int, std::vector<KmerInfo>, Int64Hasher> readKmerHashMap;
     
-    // collect all kmer and backtrack each interval
+	// collect all kmer and backtrack each interval
     for(size_t i = 0 ; i+kmerSize <= (size_t)querySeq.length() ; i++)
     {
         std::string kmer = querySeq.substr(i, kmerSize);
@@ -1037,8 +1062,10 @@ bool ReassemblerPostProcess::checkChimera(size_t queryIndex)
         BWTInterval rinterval = BWTAlgorithms::findInterval(m_params.indices,reverseComplement(kmer)) ;
         
         // in order to speed up the time, so filtered repeat kmer
-        if( kmerFreqs >= (size_t)kmerSizeFreqByRead_15[seedCount_15/10*9] ) continue;
-        
+        //if( kmerFreqs >= (size_t)kmerSizeFreqByRead_15[seedCount_15/10*9] ) continue;
+        // in order to speed up the time, so filtered repeat kmer
+        if( kmerFreqs >= 50 ) continue;
+		
         for(size_t j = interval.lower ; j <= (size_t)interval.upper ; j++)
         {
             // filter self index
@@ -1096,9 +1123,11 @@ bool ReassemblerPostProcess::checkChimera(size_t queryIndex)
     
     //std::cout<< queryIndex << "checkChimera\n";
     //std::cout<< "query length   : " << querySeq.length() << "\n";
-    
-    std::vector<KmerInfo> querysbjctPosPairVec;
-    std::vector<ReadScanAndOverlapPosition> sbjctStartEndPosPairVec ;
+    // sbjct correspond to the query position, check chimeric read by line cover problem
+	std::vector<KmerInfo> querysbjctPosPairVec;
+    // if all sbjct fragment can't cover query, check each sbjct prominent length (unaligned length)
+	std::vector<ReadScanAndOverlapPosition> sbjctStartEndPosPairVec ;
+	
     int pairCount = -1;
     
     // check each overlap read by number of kmer and distance between two kmer
@@ -1158,12 +1187,13 @@ bool ReassemblerPostProcess::checkChimera(size_t queryIndex)
         
         KmerInfo tmp1,tmp2;
         pairCount++;
+		
         tmp1.pairNumber = pairCount;
         tmp2.pairNumber = pairCount;
         
         tmp1.queryPos = (*beginIter).queryPos;
         tmp2.queryPos = (*endIter).queryPos;
-        
+		
         querysbjctPosPairVec.push_back(tmp1);
         querysbjctPosPairVec.push_back(tmp2);
         
@@ -1176,9 +1206,28 @@ bool ReassemblerPostProcess::checkChimera(size_t queryIndex)
         tmp3.readLength        = sbjct.length();
         
         sbjctStartEndPosPairVec.push_back(tmp3);
+		
     }
-    
-    qsort(querysbjctPosPairVec.data(), querysbjctPosPairVec.size(),sizeof(KmerInfo),Cmp2);
+
+	for(std::vector<KmerInfo>::iterator iter_i = querysbjctPosPairVec.begin(); iter_i != querysbjctPosPairVec.end() ; iter_i++ )
+	{
+		for(std::vector<KmerInfo>::iterator iter_j = iter_i; iter_j != querysbjctPosPairVec.end() ; iter_j++ )
+		{
+			if( (*iter_i).queryPos > (*iter_j).queryPos )
+			{
+				int tmpPos  = (*iter_i).queryPos;
+				int tmpPair = (*iter_i).pairNumber;
+				
+				(*iter_i).queryPos   = (*iter_j).queryPos;
+				(*iter_i).pairNumber = (*iter_j).pairNumber;
+				
+				(*iter_j).queryPos   = tmpPos;
+				(*iter_j).pairNumber = tmpPair;
+			}
+		}
+	}
+
+    //qsort(querysbjctPosPairVec.data(), querysbjctPosPairVec.size(),sizeof(KmerInfo),Cmp2);
     
     std::map<int,int> pairMap; 
     int startAnchor,searchAnchor;
@@ -1222,47 +1271,53 @@ bool ReassemblerPostProcess::checkChimera(size_t queryIndex)
         float overlappingRatio = (float)( fragmentEnd - fragmentStart ) / (float)querySeq.length();
         // prevent the query is too short
         int nonOverlapLength = querySeq.length() - fragmentEnd + fragmentStart - 1;
-        if( overlappingRatio >= 0.9 || nonOverlapLength <= 1000 ) return false;
+        if( !(overlappingRatio >= 0.9 || nonOverlapLength <= 1000) ) fragment = 2;
     }
 
     float chimericRead = 0;
     float normalRead = 0;
     
-    for( std::vector<ReadScanAndOverlapPosition>::iterator iter = sbjctStartEndPosPairVec.begin() ; iter != sbjctStartEndPosPairVec.end() ; iter++ )
-    {
-        int leftProminentLength  = -1;
-        int rightProminentLength = -1;
-        
-        // left prominent length             |----|
-        // query                             ----------------------------
-        //                                        ||||||||
-        // sbjct                         ----------------------
-        // right prominent length                        |-----|
-        
-        // sbjct direction  --->
-        if( (*iter).readFragmentStart < (*iter).readFragmentEnd )
-        {
-            leftProminentLength  = std::min( (*iter).scanReadStart , (*iter).readFragmentStart );
-            rightProminentLength = std::min( (int)querySeq.length() - (*iter).scanReadEnd , (*iter).readLength - (*iter).readFragmentEnd );
-        }
-        // sbjct direction  <---
-        else
-        {
-            leftProminentLength  = std::min( (*iter).scanReadStart , (*iter).readLength - (*iter).readFragmentStart );
-            rightProminentLength = std::min( (int)querySeq.length() - (*iter).scanReadEnd , (*iter).readFragmentEnd );
-        }
-        
-        assert( leftProminentLength != -1 && rightProminentLength != -1 );
-        
-        if( leftProminentLength > 1500 ) chimericRead++;
-        else normalRead++;
-        
-        if( rightProminentLength > 1500 ) chimericRead++;
-        else normalRead++;
-    }
-    
-    if( chimericRead / ( normalRead + normalRead ) >= 0.3 ) return true;
+	if( fragment != 1 )
+	{
+		for( std::vector<ReadScanAndOverlapPosition>::iterator iter = sbjctStartEndPosPairVec.begin() ; iter != sbjctStartEndPosPairVec.end() ; iter++ )
+		{
+			int leftProminentLength  = -1;
+			int rightProminentLength = -1;
+			
+			// left prominent length             |----|
+			// query                             ----------------------------
+			//                                        ||||||||
+			// sbjct                         ----------------------
+			// right prominent length                        |-----|
+			
+			// sbjct direction  --->
+			if( (*iter).readFragmentStart < (*iter).readFragmentEnd )
+			{
+				leftProminentLength  = std::min( (*iter).scanReadStart , (*iter).readFragmentStart );
+				rightProminentLength = std::min( (int)querySeq.length() - (*iter).scanReadEnd , (*iter).readLength - (*iter).readFragmentEnd );
+			}
+			// sbjct direction  <---
+			else
+			{
+				leftProminentLength  = std::min( (*iter).scanReadStart , (*iter).readLength - (*iter).readFragmentStart );
+				rightProminentLength = std::min( (int)querySeq.length() - (*iter).scanReadEnd , (*iter).readFragmentEnd );
+			}
+			
+			assert( leftProminentLength != -1 && rightProminentLength != -1 );
+			
+			if( leftProminentLength > 1500 ) chimericRead++;
+			else normalRead++;
+			
+			if( rightProminentLength > 1500 ) chimericRead++;
+			else normalRead++;
+		}
+	}
 
+    if( chimericRead / ( normalRead + normalRead ) >= 0.3 )
+	{
+		std::cout<< "chimera : " << queryIndex << "\n";
+		return true;
+	}
     return false;
 }
 
@@ -1391,13 +1446,6 @@ void ReassemblerPostProcess::showDetailInformation()
               << kmerSizeFreqByRead_15[seedCount_15/10*7] << "\t" << kmerSizeFreqByRead_15[seedCount_15/10*8] << "\t"
               << kmerSizeFreqByRead_15[seedCount_15/10*9] << "\t" << kmerSizeFreqByRead_15[seedCount_15-1]    << "\n";
                                         
-    std::cout << "read's 15mer freq by contig indices :\n" 
-              << kmerFreqByContig_15[seedCount_15/10*1] << "\t" << kmerFreqByContig_15[seedCount_15/10*2] << "\t"
-              << kmerFreqByContig_15[seedCount_15/10*3] << "\t" << kmerFreqByContig_15[seedCount_15/10*4] << "\t"
-              << kmerFreqByContig_15[seedCount_15/10*5] << "\t" << kmerFreqByContig_15[seedCount_15/10*6] << "\t"
-              << kmerFreqByContig_15[seedCount_15/10*7] << "\t" << kmerFreqByContig_15[seedCount_15/10*8] << "\t"
-              << kmerFreqByContig_15[seedCount_15/10*9] << "\t" << kmerFreqByContig_15[seedCount_15-1]    << "\n";
-
     std::cout<<"\n";
     
     if( m_params.isThird )
@@ -2162,12 +2210,10 @@ void ReassemblerPostProcess::countTotalSeedFreq(std::string seed)
     {
         std::string kmer = seed.substr(i, slideWindow);
         size_t kmerFreqsUsingRead   = getFrequency(m_params.indices,kmer);
-        size_t kmerFreqsUsingContig = getFrequency(m_params.contigIndices,kmer);
-        
+
         if(seedCount_15>=100000)break;
-       
         kmerSizeFreqByRead_15[seedCount_15] = kmerFreqsUsingRead;
-        kmerFreqByContig_15[seedCount_15] = kmerFreqsUsingContig;
+		
         seedCount_15++;
     }
     
@@ -2177,10 +2223,10 @@ void ReassemblerPostProcess::countTotalSeedFreq(std::string seed)
     {
         std::string kmer = seed.substr(i, slideWindow);
         size_t kmerFreqsUsingRead = getFrequency(m_params.indices,kmer);
-        
+		
         if(seedCount_11>=100000)break;
-       
         kmerSizeFreqByRead_11[seedCount_11] = kmerFreqsUsingRead;
+		
         seedCount_11++;
     }
 }
@@ -2574,3 +2620,16 @@ size_t ReadReassemblerBasicElements::getFrequency(const BWTIndexSet indices, std
     size_t rvcKmerFreqs = BWTAlgorithms::countSequenceOccurrencesSingleStrand(reverseComplement(query), indices);
     return fwdKmerFreqs+rvcKmerFreqs;
 }
+
+void ReadReassemblerBasicElements::showReadFrequency(size_t queryIndex, int kmerSize)
+{
+    std::string readSeq  = backtrackRead( m_params.indices, queryIndex );
+	
+	for( int i = 0 ; i < (int)readSeq.length() - kmerSize + 1 ; i++ )
+    {
+        std::string kmer = readSeq.substr(i, kmerSize);
+        std::cout<< getFrequency(m_params.indices,kmer) << " ";
+    }
+	std::cout<<"\n";
+}
+

@@ -109,7 +109,8 @@ am_stride_OBJECTS = stride-StriDe.$(OBJEXT) stride-strideall.$(OBJEXT) \
 	stride-kmerfreq.$(OBJEXT) stride-grep.$(OBJEXT) \
 	stride-FMIndexWalk.$(OBJEXT) stride-PacBioCorrection.$(OBJEXT) \
 	stride-PacBioHybridCorrection.$(OBJEXT) \
-	stride-asmlong.$(OBJEXT) stride-Reassembler.$(OBJEXT)
+	stride-asmlong.$(OBJEXT) stride-Reassembler.$(OBJEXT) \
+	stride-Frequency.$(OBJEXT)
 stride_OBJECTS = $(am_stride_OBJECTS)
 stride_DEPENDENCIES = $(top_builddir)/StringGraph/libstringgraph.a \
 	$(top_builddir)/Concurrency/libconcurrency.a \
@@ -120,7 +121,8 @@ stride_DEPENDENCIES = $(top_builddir)/StringGraph/libstringgraph.a \
 	$(top_builddir)/FMIndexWalk/libfmindexwalk.a \
 	$(top_builddir)/PacBio/libpacbio.a \
 	$(top_builddir)/Thirdparty/libthirdparty.a \
-	$(top_builddir)/Reassembler/libreassembler.a
+	$(top_builddir)/Reassembler/libreassembler.a \
+	$(top_builddir)/Frequency/libfrequency.a
 stride_LINK = $(CXXLD) $(AM_CXXFLAGS) $(CXXFLAGS) $(stride_LDFLAGS) \
 	$(LDFLAGS) -o $@
 AM_V_P = $(am__v_P_$(V))
@@ -300,7 +302,8 @@ stride_CPPFLAGS = \
 	-I$(top_srcdir)/FMIndexWalk \
 	-I$(top_srcdir)/PacBio \
 	-I$(top_srcdir)/Thirdparty \
-	-I$(top_srcdir)/Reassembler
+	-I$(top_srcdir)/Reassembler \
+	-I$(top_srcdir)/Frequency
 
 stride_LDADD = \
 	$(top_builddir)/StringGraph/libstringgraph.a \
@@ -313,7 +316,8 @@ stride_LDADD = \
 	$(top_builddir)/FMIndexWalk/libfmindexwalk.a \
 	$(top_builddir)/PacBio/libpacbio.a \
 	$(top_builddir)/Thirdparty/libthirdparty.a \
-	$(top_builddir)/Reassembler/libreassembler.a	
+	$(top_builddir)/Reassembler/libreassembler.a \
+	$(top_builddir)/Frequency/libfrequency.a	
 
 stride_LDFLAGS = -pthread
 stride_SOURCES = StriDe.cpp \
@@ -335,7 +339,8 @@ stride_SOURCES = StriDe.cpp \
 		PacBioHybridCorrection.h PacBioHybridCorrection.cpp \
 		asmlong.h asmlong.cpp \
 		Reassembler.h Reassembler.cpp \
-              SGACommon.h 
+		Frequency.h Frequency.cpp \
+		SGACommon.h 
 
 all: all-am
 
@@ -424,6 +429,7 @@ distclean-compile:
 	-rm -f *.tab.c
 
 include ./$(DEPDIR)/stride-FMIndexWalk.Po
+include ./$(DEPDIR)/stride-Frequency.Po
 include ./$(DEPDIR)/stride-OverlapCommon.Po
 include ./$(DEPDIR)/stride-PacBioCorrection.Po
 include ./$(DEPDIR)/stride-PacBioHybridCorrection.Po
@@ -722,6 +728,20 @@ stride-Reassembler.obj: Reassembler.cpp
 #	$(AM_V_CXX)source='Reassembler.cpp' object='stride-Reassembler.obj' libtool=no \
 #	DEPDIR=$(DEPDIR) $(CXXDEPMODE) $(depcomp) \
 #	$(AM_V_CXX_no)$(CXX) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(stride_CPPFLAGS) $(CPPFLAGS) $(AM_CXXFLAGS) $(CXXFLAGS) -c -o stride-Reassembler.obj `if test -f 'Reassembler.cpp'; then $(CYGPATH_W) 'Reassembler.cpp'; else $(CYGPATH_W) '$(srcdir)/Reassembler.cpp'; fi`
+
+stride-Frequency.o: Frequency.cpp
+	$(AM_V_CXX)$(CXX) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(stride_CPPFLAGS) $(CPPFLAGS) $(AM_CXXFLAGS) $(CXXFLAGS) -MT stride-Frequency.o -MD -MP -MF $(DEPDIR)/stride-Frequency.Tpo -c -o stride-Frequency.o `test -f 'Frequency.cpp' || echo '$(srcdir)/'`Frequency.cpp
+	$(AM_V_at)$(am__mv) $(DEPDIR)/stride-Frequency.Tpo $(DEPDIR)/stride-Frequency.Po
+#	$(AM_V_CXX)source='Frequency.cpp' object='stride-Frequency.o' libtool=no \
+#	DEPDIR=$(DEPDIR) $(CXXDEPMODE) $(depcomp) \
+#	$(AM_V_CXX_no)$(CXX) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(stride_CPPFLAGS) $(CPPFLAGS) $(AM_CXXFLAGS) $(CXXFLAGS) -c -o stride-Frequency.o `test -f 'Frequency.cpp' || echo '$(srcdir)/'`Frequency.cpp
+
+stride-Frequency.obj: Frequency.cpp
+	$(AM_V_CXX)$(CXX) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(stride_CPPFLAGS) $(CPPFLAGS) $(AM_CXXFLAGS) $(CXXFLAGS) -MT stride-Frequency.obj -MD -MP -MF $(DEPDIR)/stride-Frequency.Tpo -c -o stride-Frequency.obj `if test -f 'Frequency.cpp'; then $(CYGPATH_W) 'Frequency.cpp'; else $(CYGPATH_W) '$(srcdir)/Frequency.cpp'; fi`
+	$(AM_V_at)$(am__mv) $(DEPDIR)/stride-Frequency.Tpo $(DEPDIR)/stride-Frequency.Po
+#	$(AM_V_CXX)source='Frequency.cpp' object='stride-Frequency.obj' libtool=no \
+#	DEPDIR=$(DEPDIR) $(CXXDEPMODE) $(depcomp) \
+#	$(AM_V_CXX_no)$(CXX) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(stride_CPPFLAGS) $(CPPFLAGS) $(AM_CXXFLAGS) $(CXXFLAGS) -c -o stride-Frequency.obj `if test -f 'Frequency.cpp'; then $(CYGPATH_W) 'Frequency.cpp'; else $(CYGPATH_W) '$(srcdir)/Frequency.cpp'; fi`
 
 ID: $(am__tagged_files)
 	$(am__define_uniq_tagged_files); mkid -fID $$unique

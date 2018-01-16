@@ -25,6 +25,7 @@
 #include "strideall.h"
 #include "asmlong.h"
 #include "Reassembler.h" // by JH L
+#include "Frequency.h"   // by JH L
 
 #define PROGRAM_BIN "stride"
 #define AUTHOR "Yao-Ting Huang"
@@ -54,6 +55,7 @@ static const char *STRIDE_USAGE_MESSAGE =
 "      assemble    generate contigs from an assembly graph\n"
 "      asmlong     generate contigs from an assembly graph for long reads\n"
 "      reassembler  \n"
+"      freq  \n"
 "\nOther Commands:\n"
 "      merge	merge multiple BWT/FM-index files into a single index\n"
 "\nReport bugs to " PACKAGE_BUGREPORT "\n\n";
@@ -111,9 +113,11 @@ int main(int argc, char** argv)
             FMindexWalkMain(argc - 1, argv + 1);
         else if(command == "asmlong")
             asmlongMain(argc - 1, argv + 1);
-	else if(command == "reassembler")
-	    ReassemblerMain(argc - 1, argv + 1);
-
+		else if(command == "reassembler")
+			ReassemblerMain(argc - 1, argv + 1);
+		else if(command == "freq")
+			FrequencyMain(argc - 1, argv + 1);
+			
         else
         {
             std::cerr << "Unrecognized command: " << command << "\n";

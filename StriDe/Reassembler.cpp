@@ -33,14 +33,14 @@ SUBPROGRAM " Version " PACKAGE_VERSION "\n"
 
 static const char *CORRECT_USAGE_MESSAGE =
 "Usage: " PACKAGE_NAME " " SUBPROGRAM " [OPTION] ... READSFILE\n"
-"Correct PacBio reads via FM-index walk\n"
+//"Correct PacBio reads via FM-index walk\n"
 "\n"
 "      --help                           display this help and exit\n"
 "      -v, --verbose                    display verbose output\n"
 "      -p, --prefix=PREFIX              use PREFIX for the names of the index files (default: prefix of the input file)\n"
 "      -o, --outfile=FILE               write the corrected reads to FILE (default: READSFILE.ec.fa)\n"
 "      -t, --threads=NUM                use NUM threads for the computation (default: 1)\n"
-"\nPacBio Scaffold parameters:\n"
+"\nPacBio Reassembler parameters:\n"
 "      -k, --kmer-size=N                The length of the kmer to use. (default: 31, recommend: 31 (PacBioH), 17 (PacBioS).)\n"
 "      -x, --kmer-threshold=N           Attempt to correct kmers that are seen less than N times. (default: 3)\n"
 "      -y, --seed-kmer-threshold=N      Attempt to find kmers of seed that are seen large than N times. (default: 10)\n"
@@ -243,10 +243,9 @@ int ReassemblerMain(int argc, char** argv)
         // Serial mode
         ReassemblerProcess processor(ecParams);
         
-        SequenceProcessFramework::processSequencesSerial<SequenceWorkItem,
-                                                         ReassemblerResult,
-                                                         ReassemblerProcess,
-                                                         ReassemblerPostProcess>(opt::readsFile, &processor, &postProcessor);
+        SequenceProcessFramework::processSequencesSerial
+		<SequenceWorkItem, ReassemblerResult, ReassemblerProcess, ReassemblerPostProcess>
+		(opt::readsFile, &processor, &postProcessor);
     }
     else
     {
@@ -258,10 +257,9 @@ int ReassemblerMain(int argc, char** argv)
             processorVector.push_back(pProcessor);
         }
 
-        SequenceProcessFramework::processSequencesParallel<SequenceWorkItem,
-														   ReassemblerResult,
-														   ReassemblerProcess,
-														   ReassemblerPostProcess>(opt::readsFile, processorVector, &postProcessor);
+        SequenceProcessFramework::processSequencesParallel
+		<SequenceWorkItem, ReassemblerResult, ReassemblerProcess, ReassemblerPostProcess>
+		(opt::readsFile, processorVector, &postProcessor);
 
         for(int i = 0; i < opt::numThreads; ++i)
             delete processorVector[i];

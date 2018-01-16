@@ -11,7 +11,8 @@ stride_CPPFLAGS = \
 	-I$(top_srcdir)/FMIndexWalk \
 	-I$(top_srcdir)/PacBio \
 	-I$(top_srcdir)/Thirdparty \
-	-I$(top_srcdir)/Reassembler
+	-I$(top_srcdir)/Reassembler \
+	-I$(top_srcdir)/Frequency
 
 stride_LDADD = \
 	$(top_builddir)/StringGraph/libstringgraph.a \
@@ -24,7 +25,8 @@ stride_LDADD = \
 	$(top_builddir)/FMIndexWalk/libfmindexwalk.a \
 	$(top_builddir)/PacBio/libpacbio.a \
 	$(top_builddir)/Thirdparty/libthirdparty.a \
-	$(top_builddir)/Reassembler/libreassembler.a	
+	$(top_builddir)/Reassembler/libreassembler.a \
+	$(top_builddir)/Frequency/libfrequency.a	
 
 stride_LDFLAGS = -pthread
 
@@ -47,4 +49,5 @@ stride_SOURCES = StriDe.cpp \
 		PacBioHybridCorrection.h PacBioHybridCorrection.cpp \
 		asmlong.h asmlong.cpp \
 		Reassembler.h Reassembler.cpp \
-              SGACommon.h 
+		Frequency.h Frequency.cpp \
+		SGACommon.h 
