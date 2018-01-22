@@ -27,7 +27,9 @@ ReassemblerProcess::~ReassemblerProcess()
 
 ReassemblerResult ReassemblerProcess::PBReassembler(const SequenceWorkItem& workItem)
 {    
-    ReassemblerResult result;
+    // using growing kmer find out the overlap between contig and long read
+	
+	ReassemblerResult result;
     SeedSequenceInfoVec seedVec;
     
     std::vector<ReassemblerSeedFeature> headSeedVec,tailSeedVec;
@@ -140,7 +142,10 @@ ReassemblerPostProcess::~ReassemblerPostProcess()
         
 void ReassemblerPostProcess::process(const SequenceWorkItem& item, /*const*/ ReassemblerResult& result)
 {    
-    for(SeedByReadHashMap::iterator currentPbIdx = result.seedHash.begin() ; currentPbIdx != result.seedHash.end() ; ++currentPbIdx)
+    // because ReassemblerProcess may use multiple thread
+	// so, this process is collected all overlaps between contig and long read
+	
+	for(SeedByReadHashMap::iterator currentPbIdx = result.seedHash.begin() ; currentPbIdx != result.seedHash.end() ; ++currentPbIdx)
     {
         SeedByReadHashMap::iterator pbIterator = collectSeedHashMap.find( currentPbIdx->first );
         
@@ -168,17 +173,17 @@ void ReassemblerPostProcess::process(const SequenceWorkItem& item, /*const*/ Rea
 
 void ReassemblerPostProcess::filterErrorRead()
 {
-    std::cout<< "\n------------filter error connect between contig and read------------\n";
+    // confirm the overlap between contig and long read
+	
+	std::cout<< "\n------------filter error connect between contig and read------------\n";
 
 	clock_t p1,p2;
 	p1 = clock();
 	
     // 15mer distribution using read
-
 	std::sort(kmerSizeFreqByRead_11,kmerSizeFreqByRead_11+seedCount_11);
     std::sort(kmerSizeFreqByRead_15,kmerSizeFreqByRead_15+seedCount_15);
     
-	
 	//for(int i = 0 ; i < seedCount_15; i += seedCount_15/1000) std::cout << kmerSizeFreqByRead_15[i] << "\n";
 	//showDetailInformation();
 	
@@ -273,7 +278,9 @@ void ReassemblerPostProcess::filterErrorRead()
 
 void ReassemblerPostProcess::buildGraphByOneRead()
 {
-    std::cout<< "\n---------build graph by one read---------\n";
+    // a long read across two contigs
+	
+	std::cout<< "\n---------build graph by one read---------\n";
     std::cout<< "contig side number:\t" << connectContigHashMap.size() << "\n";
     
     for(ContigRelationHashMap::iterator contigSideIter = connectContigHashMap.begin() ; contigSideIter!=connectContigHashMap.end() ; ++contigSideIter )
@@ -384,7 +391,10 @@ void ReassemblerPostProcess::buildGraphByOneRead()
 
 void ReassemblerPostProcess::buildGraphByTwoRead()
 {
-    clock_t p1,p2,p3,p4;
+    // each long read overlaps with a single contig,
+	// so this step is to check the overlap between the two long reads
+	
+	clock_t p1,p2,p3,p4;
     
 	p1 = clock(); 
     collectSeeds();
@@ -421,7 +431,9 @@ void ReassemblerPostProcess::buildGraphByTwoRead()
 
 void ReassemblerPostProcess::collectSeeds()
 {
-    std::cout << "\n---------collect seeds on read---------\n";
+	// find overlap between two read
+	
+	std::cout << "\n---------collect seeds on read---------\n";
 
     ResultCount twoPB = ResultCount();
     int tmp = 0;

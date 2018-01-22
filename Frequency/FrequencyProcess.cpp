@@ -32,12 +32,11 @@ FrequencyResult FrequencyProcess::PBFrequency(const SequenceWorkItem& workItem)
     
 	std::cout << "sequence" << num++ << "\n";
 	
-    for( int i = 0 ; i < (int)originSequence.length() - m_params.kmerLength + 1 ; i++ )
-    {
-        std::string kmer = originSequence.substr(i, m_params.kmerLength);
-        std::cout<< getFrequency(m_params.indices,kmer) << " ";
-    }
-	std::cout<< "\n";
+    showReadFrequency(originSequence,13);
+	showReadFrequency(originSequence,15);
+	showReadFrequency(originSequence,17);
+	showReadFrequency(originSequence,19);
+	
 	
     return result;
 }
@@ -118,6 +117,16 @@ void ReadFrequencyBasicElements::showReadFrequency(size_t queryIndex, int kmerSi
 	for( int i = 0 ; i < (int)readSeq.length() - kmerSize + 1 ; i++ )
     {
         std::string kmer = readSeq.substr(i, kmerSize);
+        std::cout<< getFrequency(m_params.indices,kmer) << " ";
+    }
+	std::cout<<"\n";
+}
+
+void ReadFrequencyBasicElements::showReadFrequency(std::string sequence, int kmerSize)
+{
+    for( int i = 0 ; i < (int)sequence.length() - kmerSize + 1 ; i++ )
+    {
+        std::string kmer = sequence.substr(i, kmerSize);
         std::cout<< getFrequency(m_params.indices,kmer) << " ";
     }
 	std::cout<<"\n";

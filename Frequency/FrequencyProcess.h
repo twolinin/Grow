@@ -44,6 +44,7 @@ class ReadFrequencyBasicElements
 		size_t getFrequency(const BWTIndexSet indices, std::string query);
 		
 		void showReadFrequency(size_t queryIndex, int kmerSize);
+		void showReadFrequency(std::string sequence, int kmerSize);
 		
 	protected:
 		
