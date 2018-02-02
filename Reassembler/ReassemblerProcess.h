@@ -122,13 +122,25 @@ struct OverlapSeedVecInfo
 
 struct ReadScanAndOverlapPosition
 {
-	int scanReadStart;
-	int scanReadEnd;
-	int readFragmentStart;
-	int readFragmentEnd;
+	int scanQueryStart;
+	int scanQueryEnd;
+	int scanSbjctStart;
+	int scanSbjctEnd;
 	int cutContigToEndPointLength;
 	int kmerCount;
-	int readLength;
+	int sbjctLength;
+};
+
+struct contigReadPosition
+{
+    int64_t firstContigStartPos;
+    int64_t lastContigStartPos;
+    int64_t firstReadStartPos;
+    int64_t lastReadStartPos;
+    int64_t minReadPos;
+    int64_t maxReadPos;
+    int64_t contigEndPointOnReadPos;
+    int64_t offsetOverlapLength;
 };
 
 struct OverlapRelation
@@ -167,15 +179,6 @@ struct OverlapRelation
 
 struct KmerInfo
 {
-	/*
-	KmerInfo(int ):kmerStr(""),kmerStrand(false),isRepeat(false),readConnectContigID(""),
-	readConnectContigLength(0),readConnectContigSide(false),readIndex(0),position(0),secondPosition(0),
-	sbjctPos(0)
-	{
-		queryPos
-		pairNumber
-	}
-	*/
 	std::string kmerStr;
 	
 	bool kmerStrand;
@@ -192,18 +195,6 @@ struct KmerInfo
 	int queryPos;
 	int sbjctPos;
 	int pairNumber;
-};
-
-struct contigReadPosition
-{
-    int64_t firstContigStartPos;
-    int64_t lastContigStartPos;
-    int64_t firstReadStartPos;
-    int64_t lastReadStartPos;
-    int64_t minReadPos;
-    int64_t maxReadPos;
-    int64_t contigEndPointOnReadPos;
-    int64_t offsetOverlapLength;
 };
 
 // Parameter object for the reassembler
@@ -267,6 +258,8 @@ class ReadReassemblerBasicElements
 		std::string backtrackRead(const BWTIndexSet indices, int64_t inputIdx);
 		// return string frequency
 		size_t getFrequency(const BWTIndexSet indices, std::string query);
+		// if read is origin read, this function will return index
+		size_t getSeqIdx(const BWTIndexSet indices, std::string query);
 		
 		void showReadFrequency(size_t queryIndex, int kmerSize);
 		
@@ -335,6 +328,7 @@ class ReassemblerPostProcess : public ReadReassemblerBasicElements
 		bool checkPalindrome(std::string readSeq);
 		//
 		bool checkChimera(size_t readIndex);
+		bool checkChimera(std::string querySeq);
         // the distance between first and last seed
         bool checkOverlapLength(OverlapSeedVecInfo input);
 		// using in two read connect partial. record non overlap position in pair structure
@@ -344,6 +338,8 @@ class ReassemblerPostProcess : public ReadReassemblerBasicElements
         ///**************** tool function *****************///
         ///************************************************///
 		
+		
+		void repeatThresholdCaculate();
 		// show kmer distribution, each filter count
 		void showDetailInformation();
 		// first and second step reassembler, store two contigs connect relation
@@ -421,11 +417,20 @@ class ReassemblerPostProcess : public ReadReassemblerBasicElements
         ///********* construct kmer distribution **********///
         ///************************************************/// 
  
+		int seedCount_19;
         int seedCount_15;
 		int seedCount_11;
+		int kmerSizeFreqByRead_19[100000];
         int kmerSizeFreqByRead_15[100000];
 		int kmerSizeFreqByRead_11[100000];
         void countTotalSeedFreq(std::string seed);
+		
+		int differenceCount_19;
+        int differenceCount_15;
+		int differenceCount_11;
+		int differenceValue_19[100000];
+        int differenceValue_15[100000];
+		int differenceValue_11[100000];
 		
 		///************************************************///
         ///********* result statistics **********///

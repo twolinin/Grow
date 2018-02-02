@@ -197,7 +197,42 @@ libfrequency_a-FrequencyProcess.o: FrequencyProcess.cpp \
  /usr/local/include/c++/5.2.0/bits/stl_queue.h \
  ../SuffixTools/BWTIndexSet.h ../StringGraph/SGVisitors.h \
  ../StringGraph/SGAlgorithms.h ../StringGraph/SGUtil.h ../SQG/ASQG.h \
- ../SQG/SQG.h
+ ../SQG/SQG.h /usr/include/boost/bind.hpp \
+ /usr/include/boost/bind/bind.hpp /usr/include/boost/config.hpp \
+ /usr/include/boost/config/user.hpp \
+ /usr/include/boost/config/select_compiler_config.hpp \
+ /usr/include/boost/config/compiler/gcc.hpp \
+ /usr/include/boost/config/select_stdlib_config.hpp \
+ /usr/include/boost/config/no_tr1/utility.hpp \
+ /usr/include/boost/config/stdlib/libstdcpp3.hpp \
+ /usr/include/boost/config/select_platform_config.hpp \
+ /usr/include/boost/config/platform/linux.hpp \
+ /usr/include/boost/config/posix_features.hpp \
+ /usr/include/boost/config/suffix.hpp /usr/include/boost/ref.hpp \
+ /usr/include/boost/utility/addressof.hpp \
+ /usr/include/boost/detail/workaround.hpp /usr/include/boost/mpl/bool.hpp \
+ /usr/include/boost/mpl/bool_fwd.hpp \
+ /usr/include/boost/mpl/aux_/adl_barrier.hpp \
+ /usr/include/boost/mpl/aux_/config/adl.hpp \
+ /usr/include/boost/mpl/aux_/config/msvc.hpp \
+ /usr/include/boost/mpl/aux_/config/intel.hpp \
+ /usr/include/boost/mpl/aux_/config/gcc.hpp \
+ /usr/include/boost/mpl/aux_/config/workaround.hpp \
+ /usr/include/boost/mpl/integral_c_tag.hpp \
+ /usr/include/boost/mpl/aux_/config/static_constant.hpp \
+ /usr/include/boost/mem_fn.hpp /usr/include/boost/bind/mem_fn.hpp \
+ /usr/include/boost/get_pointer.hpp \
+ /usr/include/boost/config/no_tr1/memory.hpp \
+ /usr/include/boost/bind/mem_fn_template.hpp \
+ /usr/include/boost/bind/mem_fn_cc.hpp /usr/include/boost/type.hpp \
+ /usr/include/boost/is_placeholder.hpp /usr/include/boost/bind/arg.hpp \
+ /usr/include/boost/static_assert.hpp /usr/include/boost/visit_each.hpp \
+ /usr/include/boost/bind/storage.hpp \
+ /usr/include/boost/bind/bind_template.hpp \
+ /usr/include/boost/bind/bind_cc.hpp \
+ /usr/include/boost/bind/bind_mf_cc.hpp \
+ /usr/include/boost/bind/bind_mf2_cc.hpp \
+ /usr/include/boost/bind/placeholders.hpp
 
 /usr/include/stdc-predef.h:
 
@@ -754,3 +789,89 @@ FrequencyProcess.h:
 ../SQG/ASQG.h:
 
 ../SQG/SQG.h:
+
+/usr/include/boost/bind.hpp:
+
+/usr/include/boost/bind/bind.hpp:
+
+/usr/include/boost/config.hpp:
+
+/usr/include/boost/config/user.hpp:
+
+/usr/include/boost/config/select_compiler_config.hpp:
+
+/usr/include/boost/config/compiler/gcc.hpp:
+
+/usr/include/boost/config/select_stdlib_config.hpp:
+
+/usr/include/boost/config/no_tr1/utility.hpp:
+
+/usr/include/boost/config/stdlib/libstdcpp3.hpp:
+
+/usr/include/boost/config/select_platform_config.hpp:
+
+/usr/include/boost/config/platform/linux.hpp:
+
+/usr/include/boost/config/posix_features.hpp:
+
+/usr/include/boost/config/suffix.hpp:
+
+/usr/include/boost/ref.hpp:
+
+/usr/include/boost/utility/addressof.hpp:
+
+/usr/include/boost/detail/workaround.hpp:
+
+/usr/include/boost/mpl/bool.hpp:
+
+/usr/include/boost/mpl/bool_fwd.hpp:
+
+/usr/include/boost/mpl/aux_/adl_barrier.hpp:
+
+/usr/include/boost/mpl/aux_/config/adl.hpp:
+
+/usr/include/boost/mpl/aux_/config/msvc.hpp:
+
+/usr/include/boost/mpl/aux_/config/intel.hpp:
+
+/usr/include/boost/mpl/aux_/config/gcc.hpp:
+
+/usr/include/boost/mpl/aux_/config/workaround.hpp:
+
+/usr/include/boost/mpl/integral_c_tag.hpp:
+
+/usr/include/boost/mpl/aux_/config/static_constant.hpp:
+
+/usr/include/boost/mem_fn.hpp:
+
+/usr/include/boost/bind/mem_fn.hpp:
+
+/usr/include/boost/get_pointer.hpp:
+
+/usr/include/boost/config/no_tr1/memory.hpp:
+
+/usr/include/boost/bind/mem_fn_template.hpp:
+
+/usr/include/boost/bind/mem_fn_cc.hpp:
+
+/usr/include/boost/type.hpp:
+
+/usr/include/boost/is_placeholder.hpp:
+
+/usr/include/boost/bind/arg.hpp:
+
+/usr/include/boost/static_assert.hpp:
+
+/usr/include/boost/visit_each.hpp:
+
+/usr/include/boost/bind/storage.hpp:
+
+/usr/include/boost/bind/bind_template.hpp:
+
+/usr/include/boost/bind/bind_cc.hpp:
+
+/usr/include/boost/bind/bind_mf_cc.hpp:
+
+/usr/include/boost/bind/bind_mf2_cc.hpp:
+
+/usr/include/boost/bind/placeholders.hpp:

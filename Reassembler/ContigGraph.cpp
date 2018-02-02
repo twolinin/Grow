@@ -174,14 +174,18 @@ void ContigGraph::mergePacbio(Vertex* pV1, Edge* pEdge)
 		
 		//std::cout<< pTransEdge->getStart()->getID() << "\t" << pTransEdge->getEnd()->getID() << "\n";
 
-		// pacbio direction 
+		// pacbio direction
+		// Dir  : sense is connect using tail of sequence, anti is using head
+		// Comp : same, two sequences are same strand
 		if(pEdge->getDir() == ED_SENSE && pEdge->getComp() == EC_REVERSE)
 		{   // reverse
 			((ContigEdge*)pTransEdge)->setV1Strand( !((ContigEdge*)pTransEdge)->getV1PacbioStrand() );
 		}
 		else if(pEdge->getDir() == ED_ANTISENSE && pEdge->getComp() == EC_REVERSE)
 		{
-			//std::cout<<"debug case.\n";
+			// it's need to fix some bug.
+			continue;
+			std::cout<<"debug case.\n";
 		}
 
 		
@@ -192,6 +196,12 @@ void ContigGraph::mergePacbio(Vertex* pV1, Edge* pEdge)
 		// This updates the starting point of pTransEdge to be V1
 		// This calls Edge::extend on the twin edge
 		pTransEdge->join(pEdge);
+		
+		if(pTransEdge->getDir() != pEdge->getDir())
+		{
+			std::cout << "Merging " << pV1->getID() << " with " << pV2->getID() << "\n";
+			std::cout<< pTransEdge->getStart()->getID() << "\t" << pTransEdge->getEnd()->getID() << "\n";
+		}
 		
 		assert(pTransEdge->getDir() == pEdge->getDir());
 		
