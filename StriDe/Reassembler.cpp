@@ -195,6 +195,8 @@ int ReassemblerMain(int argc, char** argv)
          readReadNumber++;
     }
     opt::readAvgLen = readTotalBase/readReadNumber;
+	
+	
     
     BWTIndexSet indexSet;
     indexSet.pBWT = pBWT;
@@ -219,9 +221,10 @@ int ReassemblerMain(int argc, char** argv)
     ecParams.FMWKmerThreshold  = opt::kmerThreshold;
     ecParams.collectedSeeds    = opt::collect;
     ecParams.maxSeedInterval   = 500;
-    ecParams.readAvgLen      = opt::readAvgLen*1.5;
-	ecParams.searchRange    = opt::searchRange;
-    ecParams.isFirst  = opt::isFirst;
+    ecParams.readAvgLen  = opt::readAvgLen*1.5;
+    ecParams.searchRange = ( ecParams.readAvgLen > opt::searchRange ? ecParams.readAvgLen : opt::searchRange );
+	
+	ecParams.isFirst  = opt::isFirst;
     ecParams.isSecond = opt::isSecond;
     ecParams.isThird  = opt::isThird;
 	

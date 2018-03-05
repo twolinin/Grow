@@ -18,8 +18,7 @@
 
 typedef std::tr1::hash<int> Int64Hasher;
 typedef std::tr1::hash<size_t> SizetHasher;
-
-// collect all first step seeds. store seeds, read and contig information 
+// collect all first step seeds. the struct which store read and contig information 
 struct SeedSequenceInfo;
 typedef std::vector<SeedSequenceInfo> SeedSequenceInfoVec ;
 // collect all thread result. used in filter error reads
@@ -417,19 +416,15 @@ class ReassemblerPostProcess : public ReadReassemblerBasicElements
         ///********* construct kmer distribution **********///
         ///************************************************/// 
  
-		int seedCount_19;
-        int seedCount_15;
+		int seedCount_15;
 		int seedCount_11;
-		int kmerSizeFreqByRead_19[100000];
-        int kmerSizeFreqByRead_15[100000];
+		int kmerSizeFreqByRead_15[100000];
 		int kmerSizeFreqByRead_11[100000];
         void countTotalSeedFreq(std::string seed);
 		
-		int differenceCount_19;
-        int differenceCount_15;
+		int differenceCount_15;
 		int differenceCount_11;
-		int differenceValue_19[100000];
-        int differenceValue_15[100000];
+		int differenceValue_15[100000];
 		int differenceValue_11[100000];
 		
 		///************************************************///

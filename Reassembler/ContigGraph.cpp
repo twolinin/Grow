@@ -5,16 +5,19 @@
 
 //*
 // Simplify the graph by compacting singular edges
+
 void ContigGraph::Simplify()
 {
 	assert(!hasContainment());
 	size_t mergeCount = 0 ;
 	
 	VertexPtrMapIter iter = m_vertices.begin();
-
+	// check each sequence has links to other sequences
 	while(iter != m_vertices.end())
 	{
+		// check if the tail of this sequence has other sequences
 		mergeCount += Simplify(iter->second, ED_SENSE);
+		// check if the head of this sequence has other sequences
 		mergeCount += Simplify(iter->second, ED_ANTISENSE);
 		++iter;
 	}
@@ -24,12 +27,12 @@ void ContigGraph::Simplify()
 
 }
 
-size_t ContigGraph::Simplify(Vertex* pV, EdgeDir dir)
+size_t ContigGraph::Simplify(Vertex* sourceVertex, EdgeDir dir)
 {
 	size_t mergeCount = 0 ;
 	
 	// Get the edges for this direction
-	EdgePtrVec edges = pV->getEdges(dir);
+	EdgePtrVec edges = sourceVertex->getEdges(dir);
 	
 	while(edges.size() == 1)
 	{
@@ -37,20 +40,20 @@ size_t ContigGraph::Simplify(Vertex* pV, EdgeDir dir)
 		Edge* pSingle = edges.front();
 		
 		Edge* pTwin = pSingle->getTwin();
-		Vertex* pW = pSingle->getEnd();
+		Vertex* targetVertex = pSingle->getEnd();
 		
-		// Check that the twin edge dir of pW is simple as well
-		if(pW->countEdges(pTwin->getDir()) == 1)
+		// Check that the twin edge dir of targetVertex is simple as well
+		if(targetVertex->countEdges(pTwin->getDir()) == 1)
 		{
-			//merge pW seq into pV and move its transitive edges to pV
+			//merge targetVertex seq into sourceVertex and move its transitive edges to sourceVertex
 			
-			//mergePacbio(pV, pSingle);
-			merge(pV, pSingle);
+			//mergePacbio(sourceVertex, pSingle);
+			merge(sourceVertex, pSingle);
 			
 			mergeCount++ ;
 			
 			//remove self edges produced by V->W->V=V<->V
-			edges = pV->getEdges(dir);
+			edges = sourceVertex->getEdges(dir);
 			size_t selfEdgeCount = 0 ;
 			for(EdgePtrVecIter edge_iter = edges.begin(); edge_iter != edges.end(); ++edge_iter)
 			{
@@ -58,18 +61,18 @@ size_t ContigGraph::Simplify(Vertex* pV, EdgeDir dir)
 				//self edge found
 				if (pEdge->isSelf())
 				{
-					pV->deleteEdge(pEdge->getTwin());
-					pV->deleteEdge(pEdge);
+					sourceVertex->deleteEdge(pEdge->getTwin());
+					sourceVertex->deleteEdge(pEdge);
 					selfEdgeCount++;
 				}
 			}
 			//retrieve edges again if updated by selfedges
 			if(selfEdgeCount >0)
-				edges = pV->getEdges(dir);
-		}//end of if pW single edge
+				edges = sourceVertex->getEdges(dir);
+		}//end of if targetVertex single edge
 		else
 			break;
-	}//end of if pV single edge
+	}//end of if sourceVertex single edge
 
 	
 	return mergeCount ;
@@ -81,10 +84,12 @@ void ContigGraph::pacbioSimplify()
 	size_t mergeCount = 0 ;
 	
 	VertexPtrMapIter iter = m_vertices.begin();
-
+	// check each sequence has links to other sequences
 	while(iter != m_vertices.end())
 	{
+		// check if the tail of this sequence has other sequences
 		mergeCount += pacbioSimplify(iter->second, ED_SENSE);
+		// check if the head of this sequence has other sequences
 		mergeCount += pacbioSimplify(iter->second, ED_ANTISENSE);
 		++iter;
 	}
@@ -94,138 +99,139 @@ void ContigGraph::pacbioSimplify()
 
 }
 
-// merge unipaths from pV to pW in EdgeDir
-size_t ContigGraph::pacbioSimplify(Vertex* pV, EdgeDir dir)
+// merge unipaths from sourceVertex to targetVertex in EdgeDir
+size_t ContigGraph::pacbioSimplify(Vertex* sourceVertex, EdgeDir dir)
 {
 	size_t mergeCount = 0 ;
 	
 	// Get the edges for this direction
-	EdgePtrVec edges = pV->getEdges(dir);
+	EdgePtrVec sourceEdges = sourceVertex->getEdges(dir);
 
-	while(edges.size() == 1)
+	while(sourceEdges.size() == 1)
 	{
-		assert(!edges.front()->isSelf());
-		Edge* pSingle = edges.front();
+		assert(!sourceEdges.front()->isSelf());
+		Edge* sourceToTargetEdge = sourceEdges.front();
 		
-		Edge* pTwin = pSingle->getTwin();
-		Vertex* pW = pSingle->getEnd();
+		Edge* pTwin = sourceToTargetEdge->getTwin();
+		Vertex* targetVertex = sourceToTargetEdge->getEnd();
 		
-		// Check that the twin edge dir of pW is simple as well
-		if(pW->countEdges(pTwin->getDir()) == 1)
+		// Check that the twin edge dir of targetVertex is simple as well
+		if(targetVertex->countEdges(pTwin->getDir()) == 1)
 		{
-			//merge pW seq into pV and move its transitive edges to pV
+			//merge targetVertex seq into sourceVertex and move its transitive edges to sourceVertex
 			
-			mergePacbio(pV, pSingle);
+			mergePacbio(sourceVertex, sourceToTargetEdge);
 
 			mergeCount++ ;
 			
-			//remove self edges produced by V->W->V=V<->V
-			edges = pV->getEdges(dir);
+			//remove self edges produced by source -> target ->source = source <-> source
+			sourceEdges = sourceVertex->getEdges(dir);
 			size_t selfEdgeCount = 0 ;
-			for(EdgePtrVecIter edge_iter = edges.begin(); edge_iter != edges.end(); ++edge_iter)
+			for(EdgePtrVecIter edge_iter = sourceEdges.begin(); edge_iter != sourceEdges.end(); ++edge_iter)
 			{
 				Edge* pEdge = *edge_iter;
 				//self edge found
 				if (pEdge->isSelf())
 				{
-					pV->deleteEdge(pEdge->getTwin());
-					pV->deleteEdge(pEdge);
+					sourceVertex->deleteEdge(pEdge->getTwin());
+					sourceVertex->deleteEdge(pEdge);
 					selfEdgeCount++;
 				}
 			}
 			//retrieve edges again if updated by selfedges
 			if(selfEdgeCount >0)
-				edges = pV->getEdges(dir);
-		}//end of if pW single edge
+				sourceEdges = sourceVertex->getEdges(dir);
+		}//end of if targetVertex single edge
 		else
 			break;
-	}//end of if pV single edge
+	}//end of if sourceVertex single edge
 
 	
 	return mergeCount ;
 } 
 
-void ContigGraph::mergePacbio(Vertex* pV1, Edge* pEdge)
+void ContigGraph::mergePacbio(Vertex* sourceVertex, Edge* sourceToTargetEdge)
 {
-	Vertex* pV2 = pEdge->getEnd();
-	//std::cout << "Merging " << pV1->getID() << " with " << pV2->getID() << "\n";
+	Vertex* targetVertex = sourceToTargetEdge->getEnd();
+	//std::cout << "Merging " << sourceVertex->getID() << " with " << targetVertex->getID() << "\n";
 	
 	// Merge the data
-	((ContigVertex*)pV1)->mergePacbio(pEdge);
+	((ContigVertex*)sourceVertex)->mergePacbio(sourceToTargetEdge);
 
-	// Get the twin edge (the edge in v2 that points to v1)
-	Edge* pTwin = pEdge->getTwin();
+	// Get the twin edge (the edge in targetVertex that points to sourceVertex)
+	Edge* pTwin = sourceToTargetEdge->getTwin();
 
-	// Ensure v2 has the twin edge
-	assert(pV2->hasEdge(pTwin));
+	// Ensure targetVertex has the twin edge
+	assert(targetVertex->hasEdge(pTwin));
 
 	//
-	assert(pV1->hasEdge(pEdge));
-	size_t transLength = pV2->getOriginLength(!pTwin->getDir());
-	pV1->setOriginLength(transLength,pEdge->getDir());
+	assert(sourceVertex->hasEdge(sourceToTargetEdge));
+	size_t transLength = targetVertex->getOriginLength(!pTwin->getDir());
+	sourceVertex->setOriginLength(transLength,sourceToTargetEdge->getDir());
 
-	// Get the edge set opposite of the twin edge (which will be the new edges in this direction for V1)
-	EdgePtrVec transEdges = pV2->getEdges(!pTwin->getDir());
+	// Get the edge set opposite of the twin edge (which will be the new edges in this direction for sourceVertex)
+	EdgePtrVec transEdges = targetVertex->getEdges(!pTwin->getDir());
 	
-	// Move the edges from pV2 to pV1
+	// Move the edges from targetVertex to sourceVertex
 	for(EdgePtrVecIter iter = transEdges.begin(); iter != transEdges.end(); ++iter)
 	{
 		Edge* pTransEdge = *iter;
 		
+		//std::cout<< "trans edge\n";
 		//std::cout<< pTransEdge->getStart()->getID() << "\t" << pTransEdge->getEnd()->getID() << "\n";
 
 		// pacbio direction
 		// Dir  : sense is connect using tail of sequence, anti is using head
 		// Comp : same, two sequences are same strand
-		if(pEdge->getDir() == ED_SENSE && pEdge->getComp() == EC_REVERSE)
+		if(sourceToTargetEdge->getDir() == ED_SENSE && sourceToTargetEdge->getComp() == EC_REVERSE)
 		{   // reverse
 			((ContigEdge*)pTransEdge)->setV1Strand( !((ContigEdge*)pTransEdge)->getV1PacbioStrand() );
 		}
-		else if(pEdge->getDir() == ED_ANTISENSE && pEdge->getComp() == EC_REVERSE)
+		else if(sourceToTargetEdge->getDir() == ED_ANTISENSE && sourceToTargetEdge->getComp() == EC_REVERSE)
 		{
 			// it's need to fix some bug.
-			continue;
-			std::cout<<"debug case.\n";
+			//std::cout<<"debug case.\n";
 		}
 
 		
-		// Remove the edge from V2, this does not destroy the edge
-		pV2->removeEdge(pTransEdge);
+		// Remove the edge from targetVertex, this does not destroy the edge
+		targetVertex->removeEdge(pTransEdge);
 
-		// Join pEdge to the start of transEdge
-		// This updates the starting point of pTransEdge to be V1
+		// Join sourceToTargetEdge to the start of transEdge
+		// This updates the starting point of pTransEdge to be sourceVertex
 		// This calls Edge::extend on the twin edge
-		pTransEdge->join(pEdge);
+		pTransEdge->join(sourceToTargetEdge);
 		
-		if(pTransEdge->getDir() != pEdge->getDir())
+		/*if(pTransEdge->getDir() != sourceToTargetEdge->getDir())
 		{
-			std::cout << "Merging " << pV1->getID() << " with " << pV2->getID() << "\n";
+			std::cout << "Merging " << sourceVertex->getID() << " with " << targetVertex->getID() << "\n";
 			std::cout<< pTransEdge->getStart()->getID() << "\t" << pTransEdge->getEnd()->getID() << "\n";
-		}
+		}*/
 		
-		assert(pTransEdge->getDir() == pEdge->getDir());
+		// unclear assert meaning 
+		//assert(pTransEdge->getDir() == sourceToTargetEdge->getDir());
 		
 		
-		pV1->addEdge(pTransEdge); // add to V1
+		sourceVertex->addEdge(pTransEdge); // add to sourceVertex
 
 		// Notify the edges they have been updated
 		pTransEdge->update();
 		pTransEdge->getTwin()->update();
 	}
 
-	// Remove the edge from pV1 to pV2
-	pV1->removeEdge(pEdge);
-	delete pEdge;
-	pEdge = 0;
+	// Remove the edge from sourceVertex to targetVertex
+	sourceVertex->removeEdge(sourceToTargetEdge);
+	delete sourceToTargetEdge;
+	sourceToTargetEdge = 0;
 
-	// Remove the edge from pV2 to pV1
-	pV2->removeEdge(pTwin);
+	// Remove the edge from targetVertex to sourceVertex
+	targetVertex->removeEdge(pTwin);
 	delete pTwin;
-	pEdge = 0;
+	sourceToTargetEdge = 0;
 
 	// Remove V2
 	// It is guarenteed to not be connected
-	removeIslandVertex(pV2);
+	removeIslandVertex(targetVertex);
 	//validate();
 }
 
@@ -239,8 +245,8 @@ ContigGraph* CGUtil::loadFASTA(const std::string& filename)
 
 	while(reader.get(record))
 	{
-		Vertex* pVertex = new(pGraph->getVertexAllocator()) Vertex(record.id, record.seq.toString());
-		pGraph->addVertex(pVertex);
+		Vertex* sourceVertexertex = new(pGraph->getVertexAllocator()) Vertex(record.id, record.seq.toString());
+		pGraph->addVertex(sourceVertexertex);
 	}
 	return pGraph;
 }

@@ -4,66 +4,85 @@
 #include "ContigEdge.h"
 
 
-void ContigVertex::mergePacbio(Edge* pEdge)
+void ContigVertex::mergePacbio(Edge* sourceToTargetEdge)
 {
-	std::string PacBioString = ((ContigEdge*)pEdge)->m_pbFragment;
+	std::string PacBioString = ((ContigEdge*)sourceToTargetEdge)->m_pbFragment;
 	
 	// Merge the sequence
 	// if label->getComp() == EC_REVERSE, this seq will reverseComplement.
-	// label is v2 sequence
-    DNAEncodedString label = pEdge->getLabel();
+	// label is target sequence
+    DNAEncodedString targetSequence = sourceToTargetEdge->getLabel();
 	
-    size_t label_len = label.length();
+    size_t label_len = targetSequence.length();
 	
-	pEdge->updateSeqLen(m_seq.length() + label_len + PacBioString.length());
+	sourceToTargetEdge->updateSeqLen(m_seq.length() + label_len + PacBioString.length());
 	
+	Edge* targetToSourceEdge = sourceToTargetEdge->getTwin();
 	/*
-    std::cout<< pEdge->getStart()->getID()  << "\t" 
-	         << (pEdge->getDir() ? "ED_ANTISENSE" : "ED_SENSE") << "\t"
-			 << (pEdge->getComp() ? "EC_SAME" : "EC_REVERSE")   << "\t"
-			 << (((ContigEdge*)pEdge)->getV1PacbioStrand() ? "NonRC" : "RC") <<"\t"
-			 << (((ContigEdge*)pEdge)->getV2PacbioStrand() ? "NonRC" : "RC") <<"\n";
+    std::cout<<  sourceToTargetEdge->getStart()->getID()  << "\t" 
+	         << (sourceToTargetEdge->getDir() ? "head" : "tail") << "\t"
+			 <<  targetToSourceEdge->getStart()->getID()  << "\t"
+			 << (targetToSourceEdge->getDir() ? "head" : "tail") << "\t"
+			 << (sourceToTargetEdge->getComp() ? "same" : "reverse")   << "\t"
+			 << (((ContigEdge*)sourceToTargetEdge)->getV1PacbioStrand() ? "forwardPB" : "reversePB") <<"\t"
+			 << (((ContigEdge*)sourceToTargetEdge)->getV2PacbioStrand() ? "forwardPB" : "reversePB") <<"\n";
     */
-	if(pEdge->getComp() == EC_REVERSE)
+	if(sourceToTargetEdge->getComp() == EC_REVERSE)
 	{
-		((ContigEdge*)pEdge)->setV2Strand( !((ContigEdge*)pEdge)->getV2PacbioStrand() );
+		//std::cout<<"reverse pacbio direct\n";
+		
+		((ContigEdge*)sourceToTargetEdge)->setV2Strand( !((ContigEdge*)sourceToTargetEdge)->getV2PacbioStrand() );
 		/*
-		std::cout<< pEdge->getStart()->getID()  << "\t" 
-	         << (pEdge->getDir() ? "ANTISENSE" : "SENSE") << "\t\t"
-			 << (((ContigEdge*)pEdge)->getV1PacbioStrand() ? "NonRC" : "RC") <<"\t"
-			 << (((ContigEdge*)pEdge)->getV2PacbioStrand() ? "NonRC" : "RC") <<"\n";
+		std::cout<< sourceToTargetEdge->getStart()->getID()  << "\t" 
+		         << (sourceToTargetEdge->getDir() ? "head" : "tail") << "\t"
+			     <<  targetToSourceEdge->getStart()->getID()  << "\t"
+			     << (targetToSourceEdge->getDir() ? "head" : "tail") << "\t"
+			     << (sourceToTargetEdge->getComp() ? "same" : "reverse")   << "\t"
+			     << (((ContigEdge*)sourceToTargetEdge)->getV1PacbioStrand() ? "forwardPB" : "reversePB") <<"\t"
+			     << (((ContigEdge*)sourceToTargetEdge)->getV2PacbioStrand() ? "forwardPB" : "reversePB") <<"\n";
 		*/
 	}
+	else
+	{
+		//std::cout<<"keep pacbio direct\n";
+	}
 	
-	
-    if(pEdge->getDir() == ED_SENSE)
+    if(sourceToTargetEdge->getDir() == ED_SENSE)
     {   //tail , v1 contig append v2 contig
-		
-		if(!((ContigEdge*)pEdge)->getV1PacbioStrand())
-		{   // pacbio antisense mapping v1 contig, RC
-			//std::cout<<"rvPB1\n";
+		//std::cout<< "source + ";
+		if(!((ContigEdge*)sourceToTargetEdge)->getV1PacbioStrand())
+		{   // pacbio antisense mapping v1 contig, reversePB
+			//std::cout<<"reversePB + ";
 			PacBioString = reverseComplement(PacBioString);
 		}
+		//else std::cout<<"forwardPB + ";
+			
+		//std::cout<< "target\n";
 		
 		m_seq.append(PacBioString);
-		m_seq.append(label);
+		m_seq.append(targetSequence);
     }
     else
     {   //head , v2 contig append v1 contig
-
-		if(!((ContigEdge*)pEdge)->getV2PacbioStrand())
-		{   // pacbio antisense mapping v2 contig, RC
-		    //std::cout<<"rvPB2\n";
+		//std::cout<< "target + ";
+		if(!((ContigEdge*)sourceToTargetEdge)->getV2PacbioStrand())
+		{   // pacbio antisense mapping v2 contig, reversePB
+		    //std::cout<<"reversePB + ";
 			PacBioString = reverseComplement(PacBioString);
 		}
+		//else std::cout<<"forwardPB + ";
+			
+		//std::cout<< "source\n";
 		
-		label.append(PacBioString);
-		label.append(m_seq);
-        std::swap(m_seq, label);
+		targetSequence.append(PacBioString);
+		targetSequence.append(m_seq);
+        std::swap(m_seq, targetSequence);
     }
 
+	//std::cout<<"\n";
+	
     // Update the coverage value of the vertex
-    m_coverage += pEdge->getEnd()->getCoverage();
+    m_coverage += sourceToTargetEdge->getEnd()->getCoverage();
 
 #ifdef VALIDATE
     VALIDATION_WARNING("Vertex::merge")

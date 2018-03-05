@@ -427,9 +427,10 @@ int FrequencyProcess::repeatThreshold(int kmerSize)
 			  boost::bind(&std::pair<size_t, size_t>::first, _1) <
 			  boost::bind(&std::pair<size_t, size_t>::first, _2));
 	
-	//for(sizetVec::iterator iter_i = freqVec.begin(); iter_i != freqVec.end() ; iter_i++ )
-	//	std::cout<<( *iter_i).first << "\t" << (*iter_i).second << "\n";
+	for(sizetVec::iterator iter_i = freqVec.begin(); iter_i != freqVec.end() ; iter_i++ )
+		std::cout<<( *iter_i).first << "\t" << (*iter_i).second << "\n";
 	
+	/*
 	std::cout<< "total " << totalSampleKmerCount << "\n";
 	std::cout<< "total*0.9 " << (int)(totalSampleKmerCount*0.9) << "\n";
 	for(sizetVec::iterator iter_i = freqVec.begin(); iter_i != freqVec.end() ; iter_i++ )
@@ -443,6 +444,7 @@ int FrequencyProcess::repeatThreshold(int kmerSize)
 			break;
 		}
 	}
+	*/
 	assert(false);
 	return -1;
 }
