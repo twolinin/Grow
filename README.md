@@ -23,3 +23,6 @@ Example of a Step-by-step script. The Contigs are assembled by raw reads, and th
 	stride reassembler --first  -t 10 -p RawRead -P Contig Contig.fasta
 	stride reassembler --second -t 10 -p RawRead -P Contig Reassembler_first_Overlap.fa
 	stride reassembler --third  -t 10 -p RawRead -P Contig Reassembler_second_NonOverlap.fa
+
+[1]: https://github.com/jts/sga
+[2]: https://github.com/lh3/ropebwt2
