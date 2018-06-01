@@ -18,3 +18,4 @@ rm */Makefile.in
 rm */Makefile
 rm -r */.deps/
 rm StriDe/grow
+rm -r autom4te.cache

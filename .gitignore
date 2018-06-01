@@ -16,5 +16,6 @@ config.h.in
 */*.a
 */Makefile
 */Makefile.in
-*/.deps/
+*/.deps
 StriDe/grow
+autom4te.cache
