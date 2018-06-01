@@ -1,25 +1,17 @@
-libreassembler_a-ReassemblerProcess.o: ReassemblerProcess.cpp \
- /usr/include/stdc-predef.h ReassemblerProcess.h \
- ../Concurrency/SequenceWorkItem.h ../Util/SeqReader.h \
- /usr/local/include/c++/5.2.0/fstream \
- /usr/local/include/c++/5.2.0/istream /usr/local/include/c++/5.2.0/ios \
- /usr/local/include/c++/5.2.0/iosfwd \
+grow-asmlong.o: asmlong.cpp /usr/include/stdc-predef.h asmlong.h \
+ /usr/include/getopt.h /usr/include/ctype.h /usr/include/features.h \
+ /usr/include/sys/cdefs.h /usr/include/bits/wordsize.h \
+ /usr/include/gnu/stubs.h /usr/include/gnu/stubs-64.h \
+ /usr/include/bits/types.h /usr/include/bits/typesizes.h \
+ /usr/include/endian.h /usr/include/bits/endian.h \
+ /usr/include/bits/byteswap.h /usr/include/bits/byteswap-16.h \
+ /usr/include/xlocale.h ../config.h ../Bigraph/Bigraph.h \
+ /usr/local/include/c++/5.2.0/string \
  /usr/local/include/c++/5.2.0/x86_64-unknown-linux-gnu/bits/c++config.h \
  /usr/local/include/c++/5.2.0/x86_64-unknown-linux-gnu/bits/os_defines.h \
- /usr/include/features.h /usr/include/sys/cdefs.h \
- /usr/include/bits/wordsize.h /usr/include/gnu/stubs.h \
- /usr/include/gnu/stubs-64.h \
  /usr/local/include/c++/5.2.0/x86_64-unknown-linux-gnu/bits/cpu_defines.h \
  /usr/local/include/c++/5.2.0/bits/stringfwd.h \
  /usr/local/include/c++/5.2.0/bits/memoryfwd.h \
- /usr/local/include/c++/5.2.0/bits/postypes.h \
- /usr/local/include/c++/5.2.0/cwchar /usr/include/wchar.h \
- /usr/include/stdio.h \
- /usr/local/lib/gcc/x86_64-unknown-linux-gnu/5.2.0/include/stdarg.h \
- /usr/include/bits/wchar.h \
- /usr/local/lib/gcc/x86_64-unknown-linux-gnu/5.2.0/include/stddef.h \
- /usr/include/xlocale.h /usr/local/include/c++/5.2.0/exception \
- /usr/local/include/c++/5.2.0/bits/atomic_lockfree_defines.h \
  /usr/local/include/c++/5.2.0/bits/char_traits.h \
  /usr/local/include/c++/5.2.0/bits/stl_algobase.h \
  /usr/local/include/c++/5.2.0/bits/functexcept.h \
@@ -36,15 +28,28 @@ libreassembler_a-ReassemblerProcess.o: ReassemblerProcess.cpp \
  /usr/local/include/c++/5.2.0/bits/stl_iterator.h \
  /usr/local/include/c++/5.2.0/bits/ptr_traits.h \
  /usr/local/include/c++/5.2.0/bits/predefined_ops.h \
+ /usr/local/include/c++/5.2.0/bits/postypes.h \
+ /usr/local/include/c++/5.2.0/cwchar /usr/include/wchar.h \
+ /usr/include/stdio.h \
+ /usr/local/lib/gcc/x86_64-unknown-linux-gnu/5.2.0/include/stdarg.h \
+ /usr/include/bits/wchar.h \
+ /usr/local/lib/gcc/x86_64-unknown-linux-gnu/5.2.0/include/stddef.h \
+ /usr/local/include/c++/5.2.0/bits/allocator.h \
+ /usr/local/include/c++/5.2.0/x86_64-unknown-linux-gnu/bits/c++allocator.h \
+ /usr/local/include/c++/5.2.0/ext/new_allocator.h \
+ /usr/local/include/c++/5.2.0/new /usr/local/include/c++/5.2.0/exception \
+ /usr/local/include/c++/5.2.0/bits/atomic_lockfree_defines.h \
  /usr/local/include/c++/5.2.0/bits/localefwd.h \
  /usr/local/include/c++/5.2.0/x86_64-unknown-linux-gnu/bits/c++locale.h \
  /usr/local/include/c++/5.2.0/clocale /usr/include/locale.h \
- /usr/include/bits/locale.h /usr/local/include/c++/5.2.0/cctype \
- /usr/include/ctype.h /usr/include/bits/types.h \
- /usr/include/bits/typesizes.h /usr/include/endian.h \
- /usr/include/bits/endian.h /usr/include/bits/byteswap.h \
- /usr/include/bits/byteswap-16.h \
- /usr/local/include/c++/5.2.0/bits/ios_base.h \
+ /usr/include/bits/locale.h /usr/local/include/c++/5.2.0/iosfwd \
+ /usr/local/include/c++/5.2.0/cctype \
+ /usr/local/include/c++/5.2.0/bits/ostream_insert.h \
+ /usr/local/include/c++/5.2.0/bits/cxxabi_forced.h \
+ /usr/local/include/c++/5.2.0/bits/stl_function.h \
+ /usr/local/include/c++/5.2.0/backward/binders.h \
+ /usr/local/include/c++/5.2.0/bits/range_access.h \
+ /usr/local/include/c++/5.2.0/bits/basic_string.h \
  /usr/local/include/c++/5.2.0/ext/atomicity.h \
  /usr/local/include/c++/5.2.0/x86_64-unknown-linux-gnu/bits/gthr.h \
  /usr/local/include/c++/5.2.0/x86_64-unknown-linux-gnu/bits/gthr-default.h \
@@ -53,20 +58,27 @@ libreassembler_a-ReassemblerProcess.o: ReassemblerProcess.cpp \
  /usr/include/bits/timex.h /usr/include/bits/pthreadtypes.h \
  /usr/include/bits/setjmp.h \
  /usr/local/include/c++/5.2.0/x86_64-unknown-linux-gnu/bits/atomic_word.h \
- /usr/local/include/c++/5.2.0/bits/locale_classes.h \
- /usr/local/include/c++/5.2.0/string \
- /usr/local/include/c++/5.2.0/bits/allocator.h \
- /usr/local/include/c++/5.2.0/x86_64-unknown-linux-gnu/bits/c++allocator.h \
- /usr/local/include/c++/5.2.0/ext/new_allocator.h \
- /usr/local/include/c++/5.2.0/new \
- /usr/local/include/c++/5.2.0/bits/ostream_insert.h \
- /usr/local/include/c++/5.2.0/bits/cxxabi_forced.h \
- /usr/local/include/c++/5.2.0/bits/stl_function.h \
- /usr/local/include/c++/5.2.0/backward/binders.h \
- /usr/local/include/c++/5.2.0/bits/range_access.h \
- /usr/local/include/c++/5.2.0/bits/basic_string.h \
  /usr/local/include/c++/5.2.0/ext/alloc_traits.h \
- /usr/local/include/c++/5.2.0/bits/basic_string.tcc \
+ /usr/local/include/c++/5.2.0/bits/basic_string.tcc /usr/include/libio.h \
+ /usr/include/_G_config.h /usr/include/bits/stdio_lim.h \
+ /usr/include/bits/sys_errlist.h /usr/include/bits/stdio.h \
+ /usr/local/include/c++/5.2.0/vector \
+ /usr/local/include/c++/5.2.0/bits/stl_construct.h \
+ /usr/local/include/c++/5.2.0/bits/stl_uninitialized.h \
+ /usr/local/include/c++/5.2.0/bits/stl_vector.h \
+ /usr/local/include/c++/5.2.0/bits/stl_bvector.h \
+ /usr/local/include/c++/5.2.0/bits/vector.tcc \
+ /usr/local/include/c++/5.2.0/map \
+ /usr/local/include/c++/5.2.0/bits/stl_tree.h \
+ /usr/local/include/c++/5.2.0/bits/stl_map.h \
+ /usr/local/include/c++/5.2.0/bits/stl_multimap.h \
+ ../Bigraph/GraphCommon.h ../Util/Util.h \
+ /usr/local/include/c++/5.2.0/list \
+ /usr/local/include/c++/5.2.0/bits/stl_list.h \
+ /usr/local/include/c++/5.2.0/bits/list.tcc \
+ /usr/local/include/c++/5.2.0/istream /usr/local/include/c++/5.2.0/ios \
+ /usr/local/include/c++/5.2.0/bits/ios_base.h \
+ /usr/local/include/c++/5.2.0/bits/locale_classes.h \
  /usr/local/include/c++/5.2.0/bits/locale_classes.tcc \
  /usr/local/include/c++/5.2.0/stdexcept \
  /usr/local/include/c++/5.2.0/streambuf \
@@ -82,22 +94,12 @@ libreassembler_a-ReassemblerProcess.o: ReassemblerProcess.cpp \
  /usr/local/include/c++/5.2.0/ostream \
  /usr/local/include/c++/5.2.0/bits/ostream.tcc \
  /usr/local/include/c++/5.2.0/bits/istream.tcc \
+ /usr/local/include/c++/5.2.0/fstream \
  /usr/local/include/c++/5.2.0/bits/codecvt.h \
- /usr/local/include/c++/5.2.0/cstdio /usr/include/libio.h \
- /usr/include/_G_config.h /usr/include/bits/stdio_lim.h \
- /usr/include/bits/sys_errlist.h /usr/include/bits/stdio.h \
+ /usr/local/include/c++/5.2.0/cstdio \
  /usr/local/include/c++/5.2.0/x86_64-unknown-linux-gnu/bits/basic_file.h \
  /usr/local/include/c++/5.2.0/x86_64-unknown-linux-gnu/bits/c++io.h \
- /usr/local/include/c++/5.2.0/bits/fstream.tcc ../Util/Util.h \
- /usr/local/include/c++/5.2.0/vector \
- /usr/local/include/c++/5.2.0/bits/stl_construct.h \
- /usr/local/include/c++/5.2.0/bits/stl_uninitialized.h \
- /usr/local/include/c++/5.2.0/bits/stl_vector.h \
- /usr/local/include/c++/5.2.0/bits/stl_bvector.h \
- /usr/local/include/c++/5.2.0/bits/vector.tcc \
- /usr/local/include/c++/5.2.0/list \
- /usr/local/include/c++/5.2.0/bits/stl_list.h \
- /usr/local/include/c++/5.2.0/bits/list.tcc \
+ /usr/local/include/c++/5.2.0/bits/fstream.tcc \
  /usr/local/include/c++/5.2.0/cassert /usr/include/assert.h \
  /usr/local/include/c++/5.2.0/sstream \
  /usr/local/include/c++/5.2.0/bits/sstream.tcc \
@@ -119,45 +121,32 @@ libreassembler_a-ReassemblerProcess.o: ReassemblerProcess.cpp \
  /usr/include/bits/posix2_lim.h /usr/include/bits/xopen_lim.h \
  /usr/include/unistd.h /usr/include/bits/posix_opt.h \
  /usr/include/bits/environments.h /usr/include/bits/confname.h \
- /usr/include/getopt.h ../Util/Quality.h /usr/include/inttypes.h \
- /usr/include/math.h /usr/include/bits/huge_val.h \
- /usr/include/bits/huge_valf.h /usr/include/bits/huge_vall.h \
- /usr/include/bits/inf.h /usr/include/bits/nan.h \
- /usr/include/bits/mathdef.h /usr/include/bits/mathcalls.h \
- /usr/include/bits/mathinline.h \
+ ../Util/Quality.h /usr/include/inttypes.h /usr/include/math.h \
+ /usr/include/bits/huge_val.h /usr/include/bits/huge_valf.h \
+ /usr/include/bits/huge_vall.h /usr/include/bits/inf.h \
+ /usr/include/bits/nan.h /usr/include/bits/mathdef.h \
+ /usr/include/bits/mathcalls.h /usr/include/bits/mathinline.h \
  /usr/local/lib/gcc/x86_64-unknown-linux-gnu/5.2.0/include/omp.h \
- ../SuffixTools/BWTAlgorithms.h ../SuffixTools/STCommon.h \
- ../SuffixTools/STGlobals.h /usr/local/include/c++/5.2.0/algorithm \
+ ../Bigraph/Vertex.h /usr/local/include/c++/5.2.0/set \
+ /usr/local/include/c++/5.2.0/bits/stl_set.h \
+ /usr/local/include/c++/5.2.0/bits/stl_multiset.h \
+ /usr/local/include/c++/5.2.0/iterator \
+ /usr/local/include/c++/5.2.0/bits/stream_iterator.h \
+ ../Util/QualityVector.h ../Util/Alphabet.h \
  /usr/local/include/c++/5.2.0/utility \
  /usr/local/include/c++/5.2.0/bits/stl_relops.h \
+ /usr/local/include/c++/5.2.0/limits \
+ /usr/local/include/c++/5.2.0/algorithm \
  /usr/local/include/c++/5.2.0/bits/stl_algo.h \
  /usr/local/include/c++/5.2.0/bits/algorithmfwd.h \
  /usr/local/include/c++/5.2.0/bits/stl_heap.h \
- /usr/local/include/c++/5.2.0/bits/stl_tempbuf.h \
- /usr/local/include/c++/5.2.0/map \
- /usr/local/include/c++/5.2.0/bits/stl_tree.h \
- /usr/local/include/c++/5.2.0/bits/stl_map.h \
- /usr/local/include/c++/5.2.0/bits/stl_multimap.h \
- /usr/local/include/c++/5.2.0/set \
- /usr/local/include/c++/5.2.0/bits/stl_set.h \
- /usr/local/include/c++/5.2.0/bits/stl_multiset.h ../Util/Alphabet.h \
- /usr/local/include/c++/5.2.0/limits \
- /usr/local/include/c++/5.2.0/iterator \
- /usr/local/include/c++/5.2.0/bits/stream_iterator.h ../Util/Util.h \
- ../SuffixTools/BWTIndexSet.h ../SuffixTools/BWT.h ../SuffixTools/RLBWT.h \
- ../SuffixTools/Occurrence.h ../Util/EncodedString.h ../Util/DNACodec.h \
- ../Util/Alphabet.h ../Util/BWTCodec.h ../Util/BWT4Codec.h \
- ../Util/NoCodec.h ../SuffixTools/SuffixArray.h ../Util/ReadTable.h \
- ../Util/SeqReader.h ../Util/Match.h ../Util/SeqCoord.h \
- ../Util/Interval.h ../Util/QualityVector.h ../Util/DNADouble.h \
- ../SuffixTools/HitData.h ../Util/BitChar.h ../SuffixTools/BWTReader.h \
- ../SuffixTools/FMMarkers.h ../SuffixTools/RLUnit.h \
- ../SuffixTools/BWTIntervalCache.h ../SuffixTools/BWTInterval.h \
- ../SuffixTools/SampledSuffixArray.h ../Util/ReadInfoTable.h \
- ../Bigraph/Bigraph.h ../Bigraph/GraphCommon.h ../Bigraph/Vertex.h \
- ../Util/QualityVector.h ../Util/SimpleAllocator.h ../Util/SimplePool.h \
- ../Bigraph/EdgeDesc.h ../Util/MultiOverlap.h ../Util/Match.h \
- ../Util/Pileup.h ../Bigraph/Edge.h ../Util/HashMap.h ../config.h \
+ /usr/local/include/c++/5.2.0/bits/stl_tempbuf.h ../Util/Util.h \
+ ../Util/DNADouble.h ../Util/EncodedString.h ../Util/DNACodec.h \
+ ../Util/BWTCodec.h ../Util/BWT4Codec.h ../Util/NoCodec.h \
+ ../Util/SimpleAllocator.h ../Util/SimplePool.h ../Bigraph/EdgeDesc.h \
+ ../Util/MultiOverlap.h ../Util/Match.h ../Util/SeqCoord.h \
+ ../Util/Interval.h ../Util/QualityVector.h ../Util/Pileup.h \
+ ../Bigraph/Edge.h ../Util/Match.h ../Util/BitChar.h ../Util/HashMap.h \
  /usr/local/include/c++/5.2.0/tr1/unordered_map \
  /usr/local/include/c++/5.2.0/tr1/type_traits \
  /usr/local/include/c++/5.2.0/tr1/functional_hash.h \
@@ -188,37 +177,37 @@ libreassembler_a-ReassemblerProcess.o: ReassemblerProcess.cpp \
  /usr/local/include/google/sparse_hash_set \
  /usr/local/include/sparsehash/sparse_hash_set \
  /usr/local/include/google/dense_hash_set \
- /usr/local/include/sparsehash/dense_hash_set ../Util/QualityTable.h \
- ../Util/QualityCodec.h ../Bigraph/GraphCommon.h \
- ../Util/KmerDistribution.h /usr/local/include/c++/5.2.0/cstddef \
- /usr/local/include/c++/5.2.0/queue /usr/local/include/c++/5.2.0/deque \
+ /usr/local/include/sparsehash/dense_hash_set ../StringGraph/SGVisitors.h \
+ ../StringGraph/SGAlgorithms.h ../StringGraph/SGUtil.h ../SQG/ASQG.h \
+ ../SQG/SQG.h /usr/local/include/c++/5.2.0/queue \
+ /usr/local/include/c++/5.2.0/deque \
  /usr/local/include/c++/5.2.0/bits/stl_deque.h \
  /usr/local/include/c++/5.2.0/bits/deque.tcc \
  /usr/local/include/c++/5.2.0/bits/stl_queue.h \
- ../SuffixTools/BWTIndexSet.h ../StringGraph/SGVisitors.h \
- ../StringGraph/SGAlgorithms.h ../StringGraph/SGUtil.h ../SQG/ASQG.h \
- ../SQG/SQG.h ContigGraph.h ContigEdge.h ../Bigraph/Edge.h ContigVertex.h \
- ../Bigraph/Vertex.h
+ ../SuffixTools/BWTIndexSet.h ../SuffixTools/BWT.h ../SuffixTools/RLBWT.h \
+ ../SuffixTools/STCommon.h ../SuffixTools/STGlobals.h ../Util/Alphabet.h \
+ ../SuffixTools/Occurrence.h ../SuffixTools/SuffixArray.h \
+ ../Util/ReadTable.h ../Util/SeqReader.h ../SuffixTools/HitData.h \
+ ../SuffixTools/BWTReader.h ../SuffixTools/FMMarkers.h \
+ ../SuffixTools/RLUnit.h ../SuffixTools/BWTIntervalCache.h \
+ ../SuffixTools/BWTInterval.h ../SuffixTools/SampledSuffixArray.h \
+ ../Util/ReadInfoTable.h ../Util/QualityTable.h ../Util/QualityCodec.h \
+ ../SuffixTools/BWTAlgorithms.h ../SuffixTools/BWTIndexSet.h \
+ ../Bigraph/GraphCommon.h ../Util/KmerDistribution.h \
+ /usr/local/include/c++/5.2.0/cstddef assemble.h \
+ /usr/local/include/c++/5.2.0/iomanip ../StringGraph/SGUtil.h \
+ ../StringGraph/SGAlgorithms.h ../Util/Timer.h /usr/include/sys/time.h \
+ ../SuffixTools/SuffixArray.h ../SuffixTools/BWT.h SGACommon.h \
+ ../SuffixTools/BWTIntervalCache.h ../StringGraph/SGSearch.h \
+ ../StringGraph/SGWalk.h ../StringGraph/GraphSearchTree.h
 
 /usr/include/stdc-predef.h:
 
-ReassemblerProcess.h:
+asmlong.h:
 
-../Concurrency/SequenceWorkItem.h:
+/usr/include/getopt.h:
 
-../Util/SeqReader.h:
-
-/usr/local/include/c++/5.2.0/fstream:
-
-/usr/local/include/c++/5.2.0/istream:
-
-/usr/local/include/c++/5.2.0/ios:
-
-/usr/local/include/c++/5.2.0/iosfwd:
-
-/usr/local/include/c++/5.2.0/x86_64-unknown-linux-gnu/bits/c++config.h:
-
-/usr/local/include/c++/5.2.0/x86_64-unknown-linux-gnu/bits/os_defines.h:
+/usr/include/ctype.h:
 
 /usr/include/features.h:
 
@@ -230,31 +219,35 @@ ReassemblerProcess.h:
 
 /usr/include/gnu/stubs-64.h:
 
+/usr/include/bits/types.h:
+
+/usr/include/bits/typesizes.h:
+
+/usr/include/endian.h:
+
+/usr/include/bits/endian.h:
+
+/usr/include/bits/byteswap.h:
+
+/usr/include/bits/byteswap-16.h:
+
+/usr/include/xlocale.h:
+
+../config.h:
+
+../Bigraph/Bigraph.h:
+
+/usr/local/include/c++/5.2.0/string:
+
+/usr/local/include/c++/5.2.0/x86_64-unknown-linux-gnu/bits/c++config.h:
+
+/usr/local/include/c++/5.2.0/x86_64-unknown-linux-gnu/bits/os_defines.h:
+
 /usr/local/include/c++/5.2.0/x86_64-unknown-linux-gnu/bits/cpu_defines.h:
 
 /usr/local/include/c++/5.2.0/bits/stringfwd.h:
 
 /usr/local/include/c++/5.2.0/bits/memoryfwd.h:
-
-/usr/local/include/c++/5.2.0/bits/postypes.h:
-
-/usr/local/include/c++/5.2.0/cwchar:
-
-/usr/include/wchar.h:
-
-/usr/include/stdio.h:
-
-/usr/local/lib/gcc/x86_64-unknown-linux-gnu/5.2.0/include/stdarg.h:
-
-/usr/include/bits/wchar.h:
-
-/usr/local/lib/gcc/x86_64-unknown-linux-gnu/5.2.0/include/stddef.h:
-
-/usr/include/xlocale.h:
-
-/usr/local/include/c++/5.2.0/exception:
-
-/usr/local/include/c++/5.2.0/bits/atomic_lockfree_defines.h:
 
 /usr/local/include/c++/5.2.0/bits/char_traits.h:
 
@@ -288,6 +281,32 @@ ReassemblerProcess.h:
 
 /usr/local/include/c++/5.2.0/bits/predefined_ops.h:
 
+/usr/local/include/c++/5.2.0/bits/postypes.h:
+
+/usr/local/include/c++/5.2.0/cwchar:
+
+/usr/include/wchar.h:
+
+/usr/include/stdio.h:
+
+/usr/local/lib/gcc/x86_64-unknown-linux-gnu/5.2.0/include/stdarg.h:
+
+/usr/include/bits/wchar.h:
+
+/usr/local/lib/gcc/x86_64-unknown-linux-gnu/5.2.0/include/stddef.h:
+
+/usr/local/include/c++/5.2.0/bits/allocator.h:
+
+/usr/local/include/c++/5.2.0/x86_64-unknown-linux-gnu/bits/c++allocator.h:
+
+/usr/local/include/c++/5.2.0/ext/new_allocator.h:
+
+/usr/local/include/c++/5.2.0/new:
+
+/usr/local/include/c++/5.2.0/exception:
+
+/usr/local/include/c++/5.2.0/bits/atomic_lockfree_defines.h:
+
 /usr/local/include/c++/5.2.0/bits/localefwd.h:
 
 /usr/local/include/c++/5.2.0/x86_64-unknown-linux-gnu/bits/c++locale.h:
@@ -298,23 +317,21 @@ ReassemblerProcess.h:
 
 /usr/include/bits/locale.h:
 
+/usr/local/include/c++/5.2.0/iosfwd:
+
 /usr/local/include/c++/5.2.0/cctype:
 
-/usr/include/ctype.h:
+/usr/local/include/c++/5.2.0/bits/ostream_insert.h:
 
-/usr/include/bits/types.h:
+/usr/local/include/c++/5.2.0/bits/cxxabi_forced.h:
 
-/usr/include/bits/typesizes.h:
+/usr/local/include/c++/5.2.0/bits/stl_function.h:
 
-/usr/include/endian.h:
+/usr/local/include/c++/5.2.0/backward/binders.h:
 
-/usr/include/bits/endian.h:
+/usr/local/include/c++/5.2.0/bits/range_access.h:
 
-/usr/include/bits/byteswap.h:
-
-/usr/include/bits/byteswap-16.h:
-
-/usr/local/include/c++/5.2.0/bits/ios_base.h:
+/usr/local/include/c++/5.2.0/bits/basic_string.h:
 
 /usr/local/include/c++/5.2.0/ext/atomicity.h:
 
@@ -340,33 +357,57 @@ ReassemblerProcess.h:
 
 /usr/local/include/c++/5.2.0/x86_64-unknown-linux-gnu/bits/atomic_word.h:
 
-/usr/local/include/c++/5.2.0/bits/locale_classes.h:
-
-/usr/local/include/c++/5.2.0/string:
-
-/usr/local/include/c++/5.2.0/bits/allocator.h:
-
-/usr/local/include/c++/5.2.0/x86_64-unknown-linux-gnu/bits/c++allocator.h:
-
-/usr/local/include/c++/5.2.0/ext/new_allocator.h:
-
-/usr/local/include/c++/5.2.0/new:
-
-/usr/local/include/c++/5.2.0/bits/ostream_insert.h:
-
-/usr/local/include/c++/5.2.0/bits/cxxabi_forced.h:
-
-/usr/local/include/c++/5.2.0/bits/stl_function.h:
-
-/usr/local/include/c++/5.2.0/backward/binders.h:
-
-/usr/local/include/c++/5.2.0/bits/range_access.h:
-
-/usr/local/include/c++/5.2.0/bits/basic_string.h:
-
 /usr/local/include/c++/5.2.0/ext/alloc_traits.h:
 
 /usr/local/include/c++/5.2.0/bits/basic_string.tcc:
+
+/usr/include/libio.h:
+
+/usr/include/_G_config.h:
+
+/usr/include/bits/stdio_lim.h:
+
+/usr/include/bits/sys_errlist.h:
+
+/usr/include/bits/stdio.h:
+
+/usr/local/include/c++/5.2.0/vector:
+
+/usr/local/include/c++/5.2.0/bits/stl_construct.h:
+
+/usr/local/include/c++/5.2.0/bits/stl_uninitialized.h:
+
+/usr/local/include/c++/5.2.0/bits/stl_vector.h:
+
+/usr/local/include/c++/5.2.0/bits/stl_bvector.h:
+
+/usr/local/include/c++/5.2.0/bits/vector.tcc:
+
+/usr/local/include/c++/5.2.0/map:
+
+/usr/local/include/c++/5.2.0/bits/stl_tree.h:
+
+/usr/local/include/c++/5.2.0/bits/stl_map.h:
+
+/usr/local/include/c++/5.2.0/bits/stl_multimap.h:
+
+../Bigraph/GraphCommon.h:
+
+../Util/Util.h:
+
+/usr/local/include/c++/5.2.0/list:
+
+/usr/local/include/c++/5.2.0/bits/stl_list.h:
+
+/usr/local/include/c++/5.2.0/bits/list.tcc:
+
+/usr/local/include/c++/5.2.0/istream:
+
+/usr/local/include/c++/5.2.0/ios:
+
+/usr/local/include/c++/5.2.0/bits/ios_base.h:
+
+/usr/local/include/c++/5.2.0/bits/locale_classes.h:
 
 /usr/local/include/c++/5.2.0/bits/locale_classes.tcc:
 
@@ -400,45 +441,17 @@ ReassemblerProcess.h:
 
 /usr/local/include/c++/5.2.0/bits/istream.tcc:
 
+/usr/local/include/c++/5.2.0/fstream:
+
 /usr/local/include/c++/5.2.0/bits/codecvt.h:
 
 /usr/local/include/c++/5.2.0/cstdio:
-
-/usr/include/libio.h:
-
-/usr/include/_G_config.h:
-
-/usr/include/bits/stdio_lim.h:
-
-/usr/include/bits/sys_errlist.h:
-
-/usr/include/bits/stdio.h:
 
 /usr/local/include/c++/5.2.0/x86_64-unknown-linux-gnu/bits/basic_file.h:
 
 /usr/local/include/c++/5.2.0/x86_64-unknown-linux-gnu/bits/c++io.h:
 
 /usr/local/include/c++/5.2.0/bits/fstream.tcc:
-
-../Util/Util.h:
-
-/usr/local/include/c++/5.2.0/vector:
-
-/usr/local/include/c++/5.2.0/bits/stl_construct.h:
-
-/usr/local/include/c++/5.2.0/bits/stl_uninitialized.h:
-
-/usr/local/include/c++/5.2.0/bits/stl_vector.h:
-
-/usr/local/include/c++/5.2.0/bits/stl_bvector.h:
-
-/usr/local/include/c++/5.2.0/bits/vector.tcc:
-
-/usr/local/include/c++/5.2.0/list:
-
-/usr/local/include/c++/5.2.0/bits/stl_list.h:
-
-/usr/local/include/c++/5.2.0/bits/list.tcc:
 
 /usr/local/include/c++/5.2.0/cassert:
 
@@ -512,8 +525,6 @@ ReassemblerProcess.h:
 
 /usr/include/bits/confname.h:
 
-/usr/include/getopt.h:
-
 ../Util/Quality.h:
 
 /usr/include/inttypes.h:
@@ -538,17 +549,29 @@ ReassemblerProcess.h:
 
 /usr/local/lib/gcc/x86_64-unknown-linux-gnu/5.2.0/include/omp.h:
 
-../SuffixTools/BWTAlgorithms.h:
+../Bigraph/Vertex.h:
 
-../SuffixTools/STCommon.h:
+/usr/local/include/c++/5.2.0/set:
 
-../SuffixTools/STGlobals.h:
+/usr/local/include/c++/5.2.0/bits/stl_set.h:
 
-/usr/local/include/c++/5.2.0/algorithm:
+/usr/local/include/c++/5.2.0/bits/stl_multiset.h:
+
+/usr/local/include/c++/5.2.0/iterator:
+
+/usr/local/include/c++/5.2.0/bits/stream_iterator.h:
+
+../Util/QualityVector.h:
+
+../Util/Alphabet.h:
 
 /usr/local/include/c++/5.2.0/utility:
 
 /usr/local/include/c++/5.2.0/bits/stl_relops.h:
+
+/usr/local/include/c++/5.2.0/limits:
+
+/usr/local/include/c++/5.2.0/algorithm:
 
 /usr/local/include/c++/5.2.0/bits/stl_algo.h:
 
@@ -558,91 +581,19 @@ ReassemblerProcess.h:
 
 /usr/local/include/c++/5.2.0/bits/stl_tempbuf.h:
 
-/usr/local/include/c++/5.2.0/map:
-
-/usr/local/include/c++/5.2.0/bits/stl_tree.h:
-
-/usr/local/include/c++/5.2.0/bits/stl_map.h:
-
-/usr/local/include/c++/5.2.0/bits/stl_multimap.h:
-
-/usr/local/include/c++/5.2.0/set:
-
-/usr/local/include/c++/5.2.0/bits/stl_set.h:
-
-/usr/local/include/c++/5.2.0/bits/stl_multiset.h:
-
-../Util/Alphabet.h:
-
-/usr/local/include/c++/5.2.0/limits:
-
-/usr/local/include/c++/5.2.0/iterator:
-
-/usr/local/include/c++/5.2.0/bits/stream_iterator.h:
-
 ../Util/Util.h:
 
-../SuffixTools/BWTIndexSet.h:
-
-../SuffixTools/BWT.h:
-
-../SuffixTools/RLBWT.h:
-
-../SuffixTools/Occurrence.h:
+../Util/DNADouble.h:
 
 ../Util/EncodedString.h:
 
 ../Util/DNACodec.h:
-
-../Util/Alphabet.h:
 
 ../Util/BWTCodec.h:
 
 ../Util/BWT4Codec.h:
 
 ../Util/NoCodec.h:
-
-../SuffixTools/SuffixArray.h:
-
-../Util/ReadTable.h:
-
-../Util/SeqReader.h:
-
-../Util/Match.h:
-
-../Util/SeqCoord.h:
-
-../Util/Interval.h:
-
-../Util/QualityVector.h:
-
-../Util/DNADouble.h:
-
-../SuffixTools/HitData.h:
-
-../Util/BitChar.h:
-
-../SuffixTools/BWTReader.h:
-
-../SuffixTools/FMMarkers.h:
-
-../SuffixTools/RLUnit.h:
-
-../SuffixTools/BWTIntervalCache.h:
-
-../SuffixTools/BWTInterval.h:
-
-../SuffixTools/SampledSuffixArray.h:
-
-../Util/ReadInfoTable.h:
-
-../Bigraph/Bigraph.h:
-
-../Bigraph/GraphCommon.h:
-
-../Bigraph/Vertex.h:
-
-../Util/QualityVector.h:
 
 ../Util/SimpleAllocator.h:
 
@@ -654,13 +605,21 @@ ReassemblerProcess.h:
 
 ../Util/Match.h:
 
+../Util/SeqCoord.h:
+
+../Util/Interval.h:
+
+../Util/QualityVector.h:
+
 ../Util/Pileup.h:
 
 ../Bigraph/Edge.h:
 
-../Util/HashMap.h:
+../Util/Match.h:
 
-../config.h:
+../Util/BitChar.h:
+
+../Util/HashMap.h:
 
 /usr/local/include/c++/5.2.0/tr1/unordered_map:
 
@@ -724,15 +683,15 @@ ReassemblerProcess.h:
 
 /usr/local/include/sparsehash/dense_hash_set:
 
-../Util/QualityTable.h:
+../StringGraph/SGVisitors.h:
 
-../Util/QualityCodec.h:
+../StringGraph/SGAlgorithms.h:
 
-../Bigraph/GraphCommon.h:
+../StringGraph/SGUtil.h:
 
-../Util/KmerDistribution.h:
+../SQG/ASQG.h:
 
-/usr/local/include/c++/5.2.0/cstddef:
+../SQG/SQG.h:
 
 /usr/local/include/c++/5.2.0/queue:
 
@@ -746,22 +705,76 @@ ReassemblerProcess.h:
 
 ../SuffixTools/BWTIndexSet.h:
 
-../StringGraph/SGVisitors.h:
+../SuffixTools/BWT.h:
 
-../StringGraph/SGAlgorithms.h:
+../SuffixTools/RLBWT.h:
+
+../SuffixTools/STCommon.h:
+
+../SuffixTools/STGlobals.h:
+
+../Util/Alphabet.h:
+
+../SuffixTools/Occurrence.h:
+
+../SuffixTools/SuffixArray.h:
+
+../Util/ReadTable.h:
+
+../Util/SeqReader.h:
+
+../SuffixTools/HitData.h:
+
+../SuffixTools/BWTReader.h:
+
+../SuffixTools/FMMarkers.h:
+
+../SuffixTools/RLUnit.h:
+
+../SuffixTools/BWTIntervalCache.h:
+
+../SuffixTools/BWTInterval.h:
+
+../SuffixTools/SampledSuffixArray.h:
+
+../Util/ReadInfoTable.h:
+
+../Util/QualityTable.h:
+
+../Util/QualityCodec.h:
+
+../SuffixTools/BWTAlgorithms.h:
+
+../SuffixTools/BWTIndexSet.h:
+
+../Bigraph/GraphCommon.h:
+
+../Util/KmerDistribution.h:
+
+/usr/local/include/c++/5.2.0/cstddef:
+
+assemble.h:
+
+/usr/local/include/c++/5.2.0/iomanip:
 
 ../StringGraph/SGUtil.h:
 
-../SQG/ASQG.h:
+../StringGraph/SGAlgorithms.h:
 
-../SQG/SQG.h:
+../Util/Timer.h:
 
-ContigGraph.h:
+/usr/include/sys/time.h:
 
-ContigEdge.h:
+../SuffixTools/SuffixArray.h:
 
-../Bigraph/Edge.h:
+../SuffixTools/BWT.h:
 
-ContigVertex.h:
+SGACommon.h:
 
-../Bigraph/Vertex.h:
+../SuffixTools/BWTIntervalCache.h:
+
+../StringGraph/SGSearch.h:
+
+../StringGraph/SGWalk.h:
+
+../StringGraph/GraphSearchTree.h:

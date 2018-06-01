@@ -1,5 +1,6 @@
-stride-subgraph.o: subgraph.cpp /usr/include/stdc-predef.h \
- /usr/local/include/c++/5.2.0/iostream \
+grow-Reassembler.o: Reassembler.cpp /usr/include/stdc-predef.h \
+ Reassembler.h ../SuffixTools/SuffixArray.h ../SuffixTools/STCommon.h \
+ ../SuffixTools/STGlobals.h /usr/local/include/c++/5.2.0/iostream \
  /usr/local/include/c++/5.2.0/x86_64-unknown-linux-gnu/bits/c++config.h \
  /usr/local/include/c++/5.2.0/x86_64-unknown-linux-gnu/bits/os_defines.h \
  /usr/include/features.h /usr/include/sys/cdefs.h \
@@ -80,6 +81,44 @@ stride-subgraph.o: subgraph.cpp /usr/include/stdc-predef.h \
  /usr/local/include/c++/5.2.0/bits/ostream.tcc \
  /usr/local/include/c++/5.2.0/istream \
  /usr/local/include/c++/5.2.0/bits/istream.tcc \
+ /usr/local/include/c++/5.2.0/vector \
+ /usr/local/include/c++/5.2.0/bits/stl_construct.h \
+ /usr/local/include/c++/5.2.0/bits/stl_uninitialized.h \
+ /usr/local/include/c++/5.2.0/bits/stl_vector.h \
+ /usr/local/include/c++/5.2.0/bits/stl_bvector.h \
+ /usr/local/include/c++/5.2.0/bits/vector.tcc \
+ /usr/local/include/c++/5.2.0/algorithm \
+ /usr/local/include/c++/5.2.0/utility \
+ /usr/local/include/c++/5.2.0/bits/stl_relops.h \
+ /usr/local/include/c++/5.2.0/bits/stl_algo.h \
+ /usr/local/include/c++/5.2.0/cstdlib /usr/include/stdlib.h \
+ /usr/include/bits/waitflags.h /usr/include/bits/waitstatus.h \
+ /usr/include/sys/types.h /usr/include/sys/select.h \
+ /usr/include/bits/select.h /usr/include/bits/sigset.h \
+ /usr/include/sys/sysmacros.h /usr/include/alloca.h \
+ /usr/include/bits/stdlib-float.h \
+ /usr/local/include/c++/5.2.0/bits/algorithmfwd.h \
+ /usr/local/include/c++/5.2.0/bits/stl_heap.h \
+ /usr/local/include/c++/5.2.0/bits/stl_tempbuf.h \
+ /usr/local/include/c++/5.2.0/map \
+ /usr/local/include/c++/5.2.0/bits/stl_tree.h \
+ /usr/local/include/c++/5.2.0/bits/stl_map.h \
+ /usr/local/include/c++/5.2.0/bits/stl_multimap.h \
+ /usr/local/include/c++/5.2.0/set \
+ /usr/local/include/c++/5.2.0/bits/stl_set.h \
+ /usr/local/include/c++/5.2.0/bits/stl_multiset.h /usr/include/assert.h \
+ /usr/local/lib/gcc/x86_64-unknown-linux-gnu/5.2.0/include/stdint.h \
+ /usr/include/stdint.h ../Util/Alphabet.h \
+ /usr/local/include/c++/5.2.0/limits /usr/include/math.h \
+ /usr/include/bits/huge_val.h /usr/include/bits/huge_valf.h \
+ /usr/include/bits/huge_vall.h /usr/include/bits/inf.h \
+ /usr/include/bits/nan.h /usr/include/bits/mathdef.h \
+ /usr/include/bits/mathcalls.h /usr/include/bits/mathinline.h \
+ /usr/local/include/c++/5.2.0/iterator \
+ /usr/local/include/c++/5.2.0/bits/stream_iterator.h ../Util/Util.h \
+ /usr/local/include/c++/5.2.0/list \
+ /usr/local/include/c++/5.2.0/bits/stl_list.h \
+ /usr/local/include/c++/5.2.0/bits/list.tcc \
  /usr/local/include/c++/5.2.0/fstream \
  /usr/local/include/c++/5.2.0/bits/codecvt.h \
  /usr/local/include/c++/5.2.0/cstdio /usr/include/libio.h \
@@ -87,30 +126,13 @@ stride-subgraph.o: subgraph.cpp /usr/include/stdc-predef.h \
  /usr/include/bits/sys_errlist.h /usr/include/bits/stdio.h \
  /usr/local/include/c++/5.2.0/x86_64-unknown-linux-gnu/bits/basic_file.h \
  /usr/local/include/c++/5.2.0/x86_64-unknown-linux-gnu/bits/c++io.h \
- /usr/local/include/c++/5.2.0/bits/fstream.tcc subgraph.h \
- /usr/include/getopt.h ../config.h ../Util/Util.h \
- /usr/local/include/c++/5.2.0/vector \
- /usr/local/include/c++/5.2.0/bits/stl_construct.h \
- /usr/local/include/c++/5.2.0/bits/stl_uninitialized.h \
- /usr/local/include/c++/5.2.0/bits/stl_vector.h \
- /usr/local/include/c++/5.2.0/bits/stl_bvector.h \
- /usr/local/include/c++/5.2.0/bits/vector.tcc \
- /usr/local/include/c++/5.2.0/list \
- /usr/local/include/c++/5.2.0/bits/stl_list.h \
- /usr/local/include/c++/5.2.0/bits/list.tcc \
- /usr/local/include/c++/5.2.0/cassert /usr/include/assert.h \
+ /usr/local/include/c++/5.2.0/bits/fstream.tcc \
+ /usr/local/include/c++/5.2.0/cassert \
  /usr/local/include/c++/5.2.0/sstream \
  /usr/local/include/c++/5.2.0/bits/sstream.tcc \
  /usr/local/include/c++/5.2.0/cstring /usr/include/string.h \
- /usr/local/include/c++/5.2.0/cstdlib /usr/include/stdlib.h \
- /usr/include/bits/waitflags.h /usr/include/bits/waitstatus.h \
- /usr/include/sys/types.h /usr/include/sys/select.h \
- /usr/include/bits/select.h /usr/include/bits/sigset.h \
- /usr/include/sys/sysmacros.h /usr/include/alloca.h \
- /usr/include/bits/stdlib-float.h \
- /usr/local/lib/gcc/x86_64-unknown-linux-gnu/5.2.0/include/stdint.h \
- /usr/include/stdint.h ../Util/DNAString.h ../Thirdparty/gzstream.h \
- /usr/local/include/zlib.h /usr/local/include/zconf.h \
+ ../Util/DNAString.h ../Thirdparty/gzstream.h /usr/local/include/zlib.h \
+ /usr/local/include/zconf.h \
  /usr/local/lib/gcc/x86_64-unknown-linux-gnu/5.2.0/include-fixed/limits.h \
  /usr/local/lib/gcc/x86_64-unknown-linux-gnu/5.2.0/include-fixed/syslimits.h \
  /usr/include/limits.h /usr/include/bits/posix1_lim.h \
@@ -118,38 +140,24 @@ stride-subgraph.o: subgraph.cpp /usr/include/stdc-predef.h \
  /usr/include/bits/posix2_lim.h /usr/include/bits/xopen_lim.h \
  /usr/include/unistd.h /usr/include/bits/posix_opt.h \
  /usr/include/bits/environments.h /usr/include/bits/confname.h \
- ../Util/Quality.h /usr/include/inttypes.h /usr/include/math.h \
- /usr/include/bits/huge_val.h /usr/include/bits/huge_valf.h \
- /usr/include/bits/huge_vall.h /usr/include/bits/inf.h \
- /usr/include/bits/nan.h /usr/include/bits/mathdef.h \
- /usr/include/bits/mathcalls.h /usr/include/bits/mathinline.h \
+ /usr/include/getopt.h ../Util/Quality.h /usr/include/inttypes.h \
  /usr/local/lib/gcc/x86_64-unknown-linux-gnu/5.2.0/include/omp.h \
- ../StringGraph/SGUtil.h ../Bigraph/Bigraph.h \
- /usr/local/include/c++/5.2.0/map \
- /usr/local/include/c++/5.2.0/bits/stl_tree.h \
- /usr/local/include/c++/5.2.0/bits/stl_map.h \
- /usr/local/include/c++/5.2.0/bits/stl_multimap.h \
- ../Bigraph/GraphCommon.h ../Bigraph/Vertex.h \
- /usr/local/include/c++/5.2.0/set \
- /usr/local/include/c++/5.2.0/bits/stl_set.h \
- /usr/local/include/c++/5.2.0/bits/stl_multiset.h \
- /usr/local/include/c++/5.2.0/iterator \
- /usr/local/include/c++/5.2.0/bits/stream_iterator.h \
- ../Util/QualityVector.h ../Util/Alphabet.h \
- /usr/local/include/c++/5.2.0/utility \
- /usr/local/include/c++/5.2.0/bits/stl_relops.h \
- /usr/local/include/c++/5.2.0/limits \
- /usr/local/include/c++/5.2.0/algorithm \
- /usr/local/include/c++/5.2.0/bits/stl_algo.h \
- /usr/local/include/c++/5.2.0/bits/algorithmfwd.h \
- /usr/local/include/c++/5.2.0/bits/stl_heap.h \
- /usr/local/include/c++/5.2.0/bits/stl_tempbuf.h ../Util/Util.h \
- ../Util/DNADouble.h ../Util/EncodedString.h ../Util/DNACodec.h \
- ../Util/BWTCodec.h ../Util/BWT4Codec.h ../Util/NoCodec.h \
- ../Util/SimpleAllocator.h ../Util/SimplePool.h ../Bigraph/EdgeDesc.h \
- ../Util/MultiOverlap.h ../Util/Match.h ../Util/SeqCoord.h \
- ../Util/Interval.h ../Util/QualityVector.h ../Util/Pileup.h \
- ../Bigraph/Edge.h ../Util/Match.h ../Util/BitChar.h ../Util/HashMap.h \
+ ../Util/Util.h ../Util/ReadTable.h ../Util/SeqReader.h ../Util/Match.h \
+ ../Util/SeqCoord.h ../Util/Interval.h ../Util/QualityVector.h \
+ ../Util/Alphabet.h ../Util/DNADouble.h ../SuffixTools/BWT.h \
+ ../SuffixTools/RLBWT.h ../SuffixTools/Occurrence.h \
+ ../Util/EncodedString.h ../Util/DNACodec.h ../Util/BWTCodec.h \
+ ../Util/BWT4Codec.h ../Util/NoCodec.h ../SuffixTools/SuffixArray.h \
+ ../SuffixTools/HitData.h ../Util/BitChar.h ../SuffixTools/BWTReader.h \
+ ../SuffixTools/FMMarkers.h ../SuffixTools/RLUnit.h OverlapCommon.h \
+ overlap.h ../config.h ../SuffixTools/BWTAlgorithms.h \
+ ../SuffixTools/BWTIndexSet.h ../SuffixTools/BWT.h \
+ ../SuffixTools/BWTIntervalCache.h ../SuffixTools/BWTInterval.h \
+ ../SuffixTools/SampledSuffixArray.h ../Util/ReadInfoTable.h \
+ ../Bigraph/Bigraph.h ../Bigraph/GraphCommon.h ../Bigraph/Vertex.h \
+ ../Util/QualityVector.h ../Util/SimpleAllocator.h ../Util/SimplePool.h \
+ ../Bigraph/EdgeDesc.h ../Util/MultiOverlap.h ../Util/Match.h \
+ ../Util/Pileup.h ../Bigraph/Edge.h ../Util/HashMap.h \
  /usr/local/include/c++/5.2.0/tr1/unordered_map \
  /usr/local/include/c++/5.2.0/tr1/type_traits \
  /usr/local/include/c++/5.2.0/tr1/functional_hash.h \
@@ -180,27 +188,37 @@ stride-subgraph.o: subgraph.cpp /usr/include/stdc-predef.h \
  /usr/local/include/google/sparse_hash_set \
  /usr/local/include/sparsehash/sparse_hash_set \
  /usr/local/include/google/dense_hash_set \
- /usr/local/include/sparsehash/dense_hash_set ../SQG/ASQG.h ../SQG/SQG.h \
- ../StringGraph/SGAlgorithms.h ../StringGraph/SGUtil.h \
+ /usr/local/include/sparsehash/dense_hash_set ../Util/QualityTable.h \
+ ../Util/QualityCodec.h ../Bigraph/GraphCommon.h \
+ ../Util/KmerDistribution.h /usr/local/include/c++/5.2.0/cstddef \
  /usr/local/include/c++/5.2.0/queue /usr/local/include/c++/5.2.0/deque \
  /usr/local/include/c++/5.2.0/bits/stl_deque.h \
  /usr/local/include/c++/5.2.0/bits/deque.tcc \
  /usr/local/include/c++/5.2.0/bits/stl_queue.h \
- ../StringGraph/SGVisitors.h ../StringGraph/SGAlgorithms.h \
- ../SuffixTools/BWTIndexSet.h ../SuffixTools/BWT.h ../SuffixTools/RLBWT.h \
- ../SuffixTools/STCommon.h ../SuffixTools/STGlobals.h ../Util/Alphabet.h \
- ../SuffixTools/Occurrence.h ../SuffixTools/SuffixArray.h \
- ../Util/ReadTable.h ../Util/SeqReader.h ../SuffixTools/HitData.h \
- ../SuffixTools/BWTReader.h ../SuffixTools/FMMarkers.h \
- ../SuffixTools/RLUnit.h ../SuffixTools/BWTIntervalCache.h \
- ../SuffixTools/BWTInterval.h ../SuffixTools/SampledSuffixArray.h \
- ../Util/ReadInfoTable.h ../Util/QualityTable.h ../Util/QualityCodec.h \
- ../SuffixTools/BWTAlgorithms.h ../SuffixTools/BWTIndexSet.h \
- ../Bigraph/GraphCommon.h ../Util/KmerDistribution.h \
- /usr/local/include/c++/5.2.0/cstddef ../Util/Timer.h \
- /usr/include/sys/time.h
+ ../Algorithm/OverlapAlgorithm.h ../Algorithm/OverlapBlock.h \
+ ../SuffixTools/BWTInterval.h ../Algorithm/SearchHistory.h \
+ ../Algorithm/SearchSeed.h SGACommon.h ../Util/Timer.h \
+ /usr/include/sys/time.h ../SQG/ASQG.h ../SQG/SQG.h \
+ ../Concurrency/SequenceProcessFramework.h ../Concurrency/ThreadWorker.h \
+ /usr/include/semaphore.h /usr/include/bits/semaphore.h \
+ ../Concurrency/SequenceWorkItem.h ../Util/SeqReader.h \
+ ../Reassembler/ReassemblerProcess.h ../Concurrency/SequenceWorkItem.h \
+ ../SuffixTools/BWTIndexSet.h ../StringGraph/SGVisitors.h \
+ ../StringGraph/SGAlgorithms.h ../StringGraph/SGUtil.h \
+ ../Reassembler/ContigGraph.h ../Reassembler/ContigEdge.h \
+ ../Bigraph/Edge.h ../Reassembler/ContigVertex.h ../Bigraph/Vertex.h \
+ ../SuffixTools/BWTIntervalCache.h ../Reassembler/ContigGraph.h \
+ ../Reassembler/CGVisitors.h
 
 /usr/include/stdc-predef.h:
+
+Reassembler.h:
+
+../SuffixTools/SuffixArray.h:
+
+../SuffixTools/STCommon.h:
+
+../SuffixTools/STGlobals.h:
 
 /usr/local/include/c++/5.2.0/iostream:
 
@@ -394,36 +412,6 @@ stride-subgraph.o: subgraph.cpp /usr/include/stdc-predef.h \
 
 /usr/local/include/c++/5.2.0/bits/istream.tcc:
 
-/usr/local/include/c++/5.2.0/fstream:
-
-/usr/local/include/c++/5.2.0/bits/codecvt.h:
-
-/usr/local/include/c++/5.2.0/cstdio:
-
-/usr/include/libio.h:
-
-/usr/include/_G_config.h:
-
-/usr/include/bits/stdio_lim.h:
-
-/usr/include/bits/sys_errlist.h:
-
-/usr/include/bits/stdio.h:
-
-/usr/local/include/c++/5.2.0/x86_64-unknown-linux-gnu/bits/basic_file.h:
-
-/usr/local/include/c++/5.2.0/x86_64-unknown-linux-gnu/bits/c++io.h:
-
-/usr/local/include/c++/5.2.0/bits/fstream.tcc:
-
-subgraph.h:
-
-/usr/include/getopt.h:
-
-../config.h:
-
-../Util/Util.h:
-
 /usr/local/include/c++/5.2.0/vector:
 
 /usr/local/include/c++/5.2.0/bits/stl_construct.h:
@@ -436,23 +424,13 @@ subgraph.h:
 
 /usr/local/include/c++/5.2.0/bits/vector.tcc:
 
-/usr/local/include/c++/5.2.0/list:
+/usr/local/include/c++/5.2.0/algorithm:
 
-/usr/local/include/c++/5.2.0/bits/stl_list.h:
+/usr/local/include/c++/5.2.0/utility:
 
-/usr/local/include/c++/5.2.0/bits/list.tcc:
+/usr/local/include/c++/5.2.0/bits/stl_relops.h:
 
-/usr/local/include/c++/5.2.0/cassert:
-
-/usr/include/assert.h:
-
-/usr/local/include/c++/5.2.0/sstream:
-
-/usr/local/include/c++/5.2.0/bits/sstream.tcc:
-
-/usr/local/include/c++/5.2.0/cstring:
-
-/usr/include/string.h:
+/usr/local/include/c++/5.2.0/bits/stl_algo.h:
 
 /usr/local/include/c++/5.2.0/cstdlib:
 
@@ -476,9 +454,97 @@ subgraph.h:
 
 /usr/include/bits/stdlib-float.h:
 
+/usr/local/include/c++/5.2.0/bits/algorithmfwd.h:
+
+/usr/local/include/c++/5.2.0/bits/stl_heap.h:
+
+/usr/local/include/c++/5.2.0/bits/stl_tempbuf.h:
+
+/usr/local/include/c++/5.2.0/map:
+
+/usr/local/include/c++/5.2.0/bits/stl_tree.h:
+
+/usr/local/include/c++/5.2.0/bits/stl_map.h:
+
+/usr/local/include/c++/5.2.0/bits/stl_multimap.h:
+
+/usr/local/include/c++/5.2.0/set:
+
+/usr/local/include/c++/5.2.0/bits/stl_set.h:
+
+/usr/local/include/c++/5.2.0/bits/stl_multiset.h:
+
+/usr/include/assert.h:
+
 /usr/local/lib/gcc/x86_64-unknown-linux-gnu/5.2.0/include/stdint.h:
 
 /usr/include/stdint.h:
+
+../Util/Alphabet.h:
+
+/usr/local/include/c++/5.2.0/limits:
+
+/usr/include/math.h:
+
+/usr/include/bits/huge_val.h:
+
+/usr/include/bits/huge_valf.h:
+
+/usr/include/bits/huge_vall.h:
+
+/usr/include/bits/inf.h:
+
+/usr/include/bits/nan.h:
+
+/usr/include/bits/mathdef.h:
+
+/usr/include/bits/mathcalls.h:
+
+/usr/include/bits/mathinline.h:
+
+/usr/local/include/c++/5.2.0/iterator:
+
+/usr/local/include/c++/5.2.0/bits/stream_iterator.h:
+
+../Util/Util.h:
+
+/usr/local/include/c++/5.2.0/list:
+
+/usr/local/include/c++/5.2.0/bits/stl_list.h:
+
+/usr/local/include/c++/5.2.0/bits/list.tcc:
+
+/usr/local/include/c++/5.2.0/fstream:
+
+/usr/local/include/c++/5.2.0/bits/codecvt.h:
+
+/usr/local/include/c++/5.2.0/cstdio:
+
+/usr/include/libio.h:
+
+/usr/include/_G_config.h:
+
+/usr/include/bits/stdio_lim.h:
+
+/usr/include/bits/sys_errlist.h:
+
+/usr/include/bits/stdio.h:
+
+/usr/local/include/c++/5.2.0/x86_64-unknown-linux-gnu/bits/basic_file.h:
+
+/usr/local/include/c++/5.2.0/x86_64-unknown-linux-gnu/bits/c++io.h:
+
+/usr/local/include/c++/5.2.0/bits/fstream.tcc:
+
+/usr/local/include/c++/5.2.0/cassert:
+
+/usr/local/include/c++/5.2.0/sstream:
+
+/usr/local/include/c++/5.2.0/bits/sstream.tcc:
+
+/usr/local/include/c++/5.2.0/cstring:
+
+/usr/include/string.h:
 
 ../Util/DNAString.h:
 
@@ -512,79 +578,37 @@ subgraph.h:
 
 /usr/include/bits/confname.h:
 
+/usr/include/getopt.h:
+
 ../Util/Quality.h:
 
 /usr/include/inttypes.h:
 
-/usr/include/math.h:
-
-/usr/include/bits/huge_val.h:
-
-/usr/include/bits/huge_valf.h:
-
-/usr/include/bits/huge_vall.h:
-
-/usr/include/bits/inf.h:
-
-/usr/include/bits/nan.h:
-
-/usr/include/bits/mathdef.h:
-
-/usr/include/bits/mathcalls.h:
-
-/usr/include/bits/mathinline.h:
-
 /usr/local/lib/gcc/x86_64-unknown-linux-gnu/5.2.0/include/omp.h:
 
-../StringGraph/SGUtil.h:
+../Util/Util.h:
 
-../Bigraph/Bigraph.h:
+../Util/ReadTable.h:
 
-/usr/local/include/c++/5.2.0/map:
+../Util/SeqReader.h:
 
-/usr/local/include/c++/5.2.0/bits/stl_tree.h:
+../Util/Match.h:
 
-/usr/local/include/c++/5.2.0/bits/stl_map.h:
+../Util/SeqCoord.h:
 
-/usr/local/include/c++/5.2.0/bits/stl_multimap.h:
-
-../Bigraph/GraphCommon.h:
-
-../Bigraph/Vertex.h:
-
-/usr/local/include/c++/5.2.0/set:
-
-/usr/local/include/c++/5.2.0/bits/stl_set.h:
-
-/usr/local/include/c++/5.2.0/bits/stl_multiset.h:
-
-/usr/local/include/c++/5.2.0/iterator:
-
-/usr/local/include/c++/5.2.0/bits/stream_iterator.h:
+../Util/Interval.h:
 
 ../Util/QualityVector.h:
 
 ../Util/Alphabet.h:
 
-/usr/local/include/c++/5.2.0/utility:
-
-/usr/local/include/c++/5.2.0/bits/stl_relops.h:
-
-/usr/local/include/c++/5.2.0/limits:
-
-/usr/local/include/c++/5.2.0/algorithm:
-
-/usr/local/include/c++/5.2.0/bits/stl_algo.h:
-
-/usr/local/include/c++/5.2.0/bits/algorithmfwd.h:
-
-/usr/local/include/c++/5.2.0/bits/stl_heap.h:
-
-/usr/local/include/c++/5.2.0/bits/stl_tempbuf.h:
-
-../Util/Util.h:
-
 ../Util/DNADouble.h:
+
+../SuffixTools/BWT.h:
+
+../SuffixTools/RLBWT.h:
+
+../SuffixTools/Occurrence.h:
 
 ../Util/EncodedString.h:
 
@@ -596,6 +620,46 @@ subgraph.h:
 
 ../Util/NoCodec.h:
 
+../SuffixTools/SuffixArray.h:
+
+../SuffixTools/HitData.h:
+
+../Util/BitChar.h:
+
+../SuffixTools/BWTReader.h:
+
+../SuffixTools/FMMarkers.h:
+
+../SuffixTools/RLUnit.h:
+
+OverlapCommon.h:
+
+overlap.h:
+
+../config.h:
+
+../SuffixTools/BWTAlgorithms.h:
+
+../SuffixTools/BWTIndexSet.h:
+
+../SuffixTools/BWT.h:
+
+../SuffixTools/BWTIntervalCache.h:
+
+../SuffixTools/BWTInterval.h:
+
+../SuffixTools/SampledSuffixArray.h:
+
+../Util/ReadInfoTable.h:
+
+../Bigraph/Bigraph.h:
+
+../Bigraph/GraphCommon.h:
+
+../Bigraph/Vertex.h:
+
+../Util/QualityVector.h:
+
 ../Util/SimpleAllocator.h:
 
 ../Util/SimplePool.h:
@@ -606,19 +670,9 @@ subgraph.h:
 
 ../Util/Match.h:
 
-../Util/SeqCoord.h:
-
-../Util/Interval.h:
-
-../Util/QualityVector.h:
-
 ../Util/Pileup.h:
 
 ../Bigraph/Edge.h:
-
-../Util/Match.h:
-
-../Util/BitChar.h:
 
 ../Util/HashMap.h:
 
@@ -684,13 +738,15 @@ subgraph.h:
 
 /usr/local/include/sparsehash/dense_hash_set:
 
-../SQG/ASQG.h:
+../Util/QualityTable.h:
 
-../SQG/SQG.h:
+../Util/QualityCodec.h:
 
-../StringGraph/SGAlgorithms.h:
+../Bigraph/GraphCommon.h:
 
-../StringGraph/SGUtil.h:
+../Util/KmerDistribution.h:
+
+/usr/local/include/c++/5.2.0/cstddef:
 
 /usr/local/include/c++/5.2.0/queue:
 
@@ -702,60 +758,62 @@ subgraph.h:
 
 /usr/local/include/c++/5.2.0/bits/stl_queue.h:
 
-../StringGraph/SGVisitors.h:
+../Algorithm/OverlapAlgorithm.h:
 
-../StringGraph/SGAlgorithms.h:
-
-../SuffixTools/BWTIndexSet.h:
-
-../SuffixTools/BWT.h:
-
-../SuffixTools/RLBWT.h:
-
-../SuffixTools/STCommon.h:
-
-../SuffixTools/STGlobals.h:
-
-../Util/Alphabet.h:
-
-../SuffixTools/Occurrence.h:
-
-../SuffixTools/SuffixArray.h:
-
-../Util/ReadTable.h:
-
-../Util/SeqReader.h:
-
-../SuffixTools/HitData.h:
-
-../SuffixTools/BWTReader.h:
-
-../SuffixTools/FMMarkers.h:
-
-../SuffixTools/RLUnit.h:
-
-../SuffixTools/BWTIntervalCache.h:
+../Algorithm/OverlapBlock.h:
 
 ../SuffixTools/BWTInterval.h:
 
-../SuffixTools/SampledSuffixArray.h:
+../Algorithm/SearchHistory.h:
 
-../Util/ReadInfoTable.h:
+../Algorithm/SearchSeed.h:
 
-../Util/QualityTable.h:
-
-../Util/QualityCodec.h:
-
-../SuffixTools/BWTAlgorithms.h:
-
-../SuffixTools/BWTIndexSet.h:
-
-../Bigraph/GraphCommon.h:
-
-../Util/KmerDistribution.h:
-
-/usr/local/include/c++/5.2.0/cstddef:
+SGACommon.h:
 
 ../Util/Timer.h:
 
 /usr/include/sys/time.h:
+
+../SQG/ASQG.h:
+
+../SQG/SQG.h:
+
+../Concurrency/SequenceProcessFramework.h:
+
+../Concurrency/ThreadWorker.h:
+
+/usr/include/semaphore.h:
+
+/usr/include/bits/semaphore.h:
+
+../Concurrency/SequenceWorkItem.h:
+
+../Util/SeqReader.h:
+
+../Reassembler/ReassemblerProcess.h:
+
+../Concurrency/SequenceWorkItem.h:
+
+../SuffixTools/BWTIndexSet.h:
+
+../StringGraph/SGVisitors.h:
+
+../StringGraph/SGAlgorithms.h:
+
+../StringGraph/SGUtil.h:
+
+../Reassembler/ContigGraph.h:
+
+../Reassembler/ContigEdge.h:
+
+../Bigraph/Edge.h:
+
+../Reassembler/ContigVertex.h:
+
+../Bigraph/Vertex.h:
+
+../SuffixTools/BWTIntervalCache.h:
+
+../Reassembler/ContigGraph.h:
+
+../Reassembler/CGVisitors.h:

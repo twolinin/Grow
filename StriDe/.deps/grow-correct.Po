@@ -1,14 +1,13 @@
-libreassembler_a-ContigGraph.o: ContigGraph.cpp \
- /usr/include/stdc-predef.h ../Util/SeqReader.h \
- /usr/local/include/c++/5.2.0/fstream \
- /usr/local/include/c++/5.2.0/istream /usr/local/include/c++/5.2.0/ios \
- /usr/local/include/c++/5.2.0/iosfwd \
+grow-correct.o: correct.cpp /usr/include/stdc-predef.h \
+ /usr/local/include/c++/5.2.0/iostream \
  /usr/local/include/c++/5.2.0/x86_64-unknown-linux-gnu/bits/c++config.h \
  /usr/local/include/c++/5.2.0/x86_64-unknown-linux-gnu/bits/os_defines.h \
  /usr/include/features.h /usr/include/sys/cdefs.h \
  /usr/include/bits/wordsize.h /usr/include/gnu/stubs.h \
  /usr/include/gnu/stubs-64.h \
  /usr/local/include/c++/5.2.0/x86_64-unknown-linux-gnu/bits/cpu_defines.h \
+ /usr/local/include/c++/5.2.0/ostream /usr/local/include/c++/5.2.0/ios \
+ /usr/local/include/c++/5.2.0/iosfwd \
  /usr/local/include/c++/5.2.0/bits/stringfwd.h \
  /usr/local/include/c++/5.2.0/bits/memoryfwd.h \
  /usr/local/include/c++/5.2.0/bits/postypes.h \
@@ -78,16 +77,21 @@ libreassembler_a-ContigGraph.o: ContigGraph.cpp \
  /usr/local/include/c++/5.2.0/x86_64-unknown-linux-gnu/bits/ctype_inline.h \
  /usr/local/include/c++/5.2.0/bits/locale_facets.tcc \
  /usr/local/include/c++/5.2.0/bits/basic_ios.tcc \
- /usr/local/include/c++/5.2.0/ostream \
  /usr/local/include/c++/5.2.0/bits/ostream.tcc \
+ /usr/local/include/c++/5.2.0/istream \
  /usr/local/include/c++/5.2.0/bits/istream.tcc \
+ /usr/local/include/c++/5.2.0/fstream \
  /usr/local/include/c++/5.2.0/bits/codecvt.h \
  /usr/local/include/c++/5.2.0/cstdio /usr/include/libio.h \
  /usr/include/_G_config.h /usr/include/bits/stdio_lim.h \
  /usr/include/bits/sys_errlist.h /usr/include/bits/stdio.h \
  /usr/local/include/c++/5.2.0/x86_64-unknown-linux-gnu/bits/basic_file.h \
  /usr/local/include/c++/5.2.0/x86_64-unknown-linux-gnu/bits/c++io.h \
- /usr/local/include/c++/5.2.0/bits/fstream.tcc ../Util/Util.h \
+ /usr/local/include/c++/5.2.0/bits/fstream.tcc \
+ /usr/local/include/c++/5.2.0/sstream \
+ /usr/local/include/c++/5.2.0/bits/sstream.tcc \
+ /usr/local/include/c++/5.2.0/iterator \
+ /usr/local/include/c++/5.2.0/bits/stream_iterator.h ../Util/Util.h \
  /usr/local/include/c++/5.2.0/vector \
  /usr/local/include/c++/5.2.0/bits/stl_construct.h \
  /usr/local/include/c++/5.2.0/bits/stl_uninitialized.h \
@@ -98,8 +102,6 @@ libreassembler_a-ContigGraph.o: ContigGraph.cpp \
  /usr/local/include/c++/5.2.0/bits/stl_list.h \
  /usr/local/include/c++/5.2.0/bits/list.tcc \
  /usr/local/include/c++/5.2.0/cassert /usr/include/assert.h \
- /usr/local/include/c++/5.2.0/sstream \
- /usr/local/include/c++/5.2.0/bits/sstream.tcc \
  /usr/local/include/c++/5.2.0/cstring /usr/include/string.h \
  /usr/local/include/c++/5.2.0/cstdlib /usr/include/stdlib.h \
  /usr/include/bits/waitflags.h /usr/include/bits/waitstatus.h \
@@ -108,9 +110,8 @@ libreassembler_a-ContigGraph.o: ContigGraph.cpp \
  /usr/include/sys/sysmacros.h /usr/include/alloca.h \
  /usr/include/bits/stdlib-float.h \
  /usr/local/lib/gcc/x86_64-unknown-linux-gnu/5.2.0/include/stdint.h \
- /usr/include/stdint.h /usr/local/include/c++/5.2.0/iostream \
- ../Util/DNAString.h ../Thirdparty/gzstream.h /usr/local/include/zlib.h \
- /usr/local/include/zconf.h \
+ /usr/include/stdint.h ../Util/DNAString.h ../Thirdparty/gzstream.h \
+ /usr/local/include/zlib.h /usr/local/include/zconf.h \
  /usr/local/lib/gcc/x86_64-unknown-linux-gnu/5.2.0/include-fixed/limits.h \
  /usr/local/lib/gcc/x86_64-unknown-linux-gnu/5.2.0/include-fixed/syslimits.h \
  /usr/include/limits.h /usr/include/bits/posix1_lim.h \
@@ -125,31 +126,37 @@ libreassembler_a-ContigGraph.o: ContigGraph.cpp \
  /usr/include/bits/mathdef.h /usr/include/bits/mathcalls.h \
  /usr/include/bits/mathinline.h \
  /usr/local/lib/gcc/x86_64-unknown-linux-gnu/5.2.0/include/omp.h \
- ContigGraph.h ../Bigraph/Bigraph.h /usr/local/include/c++/5.2.0/map \
- /usr/local/include/c++/5.2.0/bits/stl_tree.h \
- /usr/local/include/c++/5.2.0/bits/stl_map.h \
- /usr/local/include/c++/5.2.0/bits/stl_multimap.h \
- ../Bigraph/GraphCommon.h ../Util/Util.h ../Bigraph/Vertex.h \
- /usr/local/include/c++/5.2.0/set \
- /usr/local/include/c++/5.2.0/bits/stl_set.h \
- /usr/local/include/c++/5.2.0/bits/stl_multiset.h \
- /usr/local/include/c++/5.2.0/iterator \
- /usr/local/include/c++/5.2.0/bits/stream_iterator.h \
- ../Util/QualityVector.h ../Util/Alphabet.h \
+ correct.h ../config.h ../SuffixTools/BWT.h ../SuffixTools/RLBWT.h \
+ ../SuffixTools/STCommon.h ../SuffixTools/STGlobals.h \
+ /usr/local/include/c++/5.2.0/algorithm \
  /usr/local/include/c++/5.2.0/utility \
  /usr/local/include/c++/5.2.0/bits/stl_relops.h \
- /usr/local/include/c++/5.2.0/limits \
- /usr/local/include/c++/5.2.0/algorithm \
  /usr/local/include/c++/5.2.0/bits/stl_algo.h \
  /usr/local/include/c++/5.2.0/bits/algorithmfwd.h \
  /usr/local/include/c++/5.2.0/bits/stl_heap.h \
- /usr/local/include/c++/5.2.0/bits/stl_tempbuf.h ../Util/DNADouble.h \
- ../Util/EncodedString.h ../Util/DNACodec.h ../Util/BWTCodec.h \
- ../Util/BWT4Codec.h ../Util/NoCodec.h ../Util/SimpleAllocator.h \
+ /usr/local/include/c++/5.2.0/bits/stl_tempbuf.h \
+ /usr/local/include/c++/5.2.0/map \
+ /usr/local/include/c++/5.2.0/bits/stl_tree.h \
+ /usr/local/include/c++/5.2.0/bits/stl_map.h \
+ /usr/local/include/c++/5.2.0/bits/stl_multimap.h \
+ /usr/local/include/c++/5.2.0/set \
+ /usr/local/include/c++/5.2.0/bits/stl_set.h \
+ /usr/local/include/c++/5.2.0/bits/stl_multiset.h ../Util/Alphabet.h \
+ /usr/local/include/c++/5.2.0/limits ../Util/Util.h \
+ ../SuffixTools/Occurrence.h ../Util/EncodedString.h ../Util/DNACodec.h \
+ ../Util/Alphabet.h ../Util/BWTCodec.h ../Util/BWT4Codec.h \
+ ../Util/NoCodec.h ../SuffixTools/SuffixArray.h ../Util/ReadTable.h \
+ ../Util/SeqReader.h ../Util/Match.h ../Util/SeqCoord.h \
+ ../Util/Interval.h ../Util/QualityVector.h ../Util/DNADouble.h \
+ ../SuffixTools/HitData.h ../Util/BitChar.h ../SuffixTools/BWTReader.h \
+ ../SuffixTools/FMMarkers.h ../SuffixTools/RLUnit.h \
+ ../SuffixTools/BWTAlgorithms.h ../SuffixTools/BWTIndexSet.h \
+ ../SuffixTools/BWT.h ../SuffixTools/BWTIntervalCache.h \
+ ../SuffixTools/BWTInterval.h ../SuffixTools/SampledSuffixArray.h \
+ ../Util/ReadInfoTable.h ../Bigraph/Bigraph.h ../Bigraph/GraphCommon.h \
+ ../Bigraph/Vertex.h ../Util/QualityVector.h ../Util/SimpleAllocator.h \
  ../Util/SimplePool.h ../Bigraph/EdgeDesc.h ../Util/MultiOverlap.h \
- ../Util/Match.h ../Util/SeqCoord.h ../Util/Interval.h \
- ../Util/QualityVector.h ../Util/Pileup.h ../Bigraph/Edge.h \
- ../Util/Match.h ../Util/BitChar.h ../Util/HashMap.h ../config.h \
+ ../Util/Match.h ../Util/Pileup.h ../Bigraph/Edge.h ../Util/HashMap.h \
  /usr/local/include/c++/5.2.0/tr1/unordered_map \
  /usr/local/include/c++/5.2.0/tr1/type_traits \
  /usr/local/include/c++/5.2.0/tr1/functional_hash.h \
@@ -180,20 +187,31 @@ libreassembler_a-ContigGraph.o: ContigGraph.cpp \
  /usr/local/include/google/sparse_hash_set \
  /usr/local/include/sparsehash/sparse_hash_set \
  /usr/local/include/google/dense_hash_set \
- /usr/local/include/sparsehash/dense_hash_set ContigEdge.h \
- ../Bigraph/Edge.h ContigVertex.h ../Bigraph/Vertex.h
+ /usr/local/include/sparsehash/dense_hash_set ../Util/QualityTable.h \
+ ../Util/QualityCodec.h ../Bigraph/GraphCommon.h \
+ ../Util/KmerDistribution.h /usr/local/include/c++/5.2.0/cstddef \
+ /usr/local/include/c++/5.2.0/queue /usr/local/include/c++/5.2.0/deque \
+ /usr/local/include/c++/5.2.0/bits/stl_deque.h \
+ /usr/local/include/c++/5.2.0/bits/deque.tcc \
+ /usr/local/include/c++/5.2.0/bits/stl_queue.h \
+ ../Algorithm/OverlapAlgorithm.h ../Algorithm/OverlapBlock.h \
+ ../SuffixTools/BWTInterval.h ../Algorithm/SearchHistory.h \
+ ../Algorithm/SearchSeed.h ../SuffixTools/SuffixArray.h SGACommon.h \
+ OverlapCommon.h overlap.h ../Util/Timer.h /usr/include/sys/time.h \
+ ../SQG/ASQG.h ../SQG/SQG.h ../Concurrency/SequenceProcessFramework.h \
+ ../Concurrency/ThreadWorker.h /usr/include/semaphore.h \
+ /usr/include/bits/semaphore.h ../Concurrency/SequenceWorkItem.h \
+ ../Util/SeqReader.h ../Algorithm/ErrorCorrectProcess.h \
+ ../Algorithm/OverlapAlgorithm.h ../Concurrency/SequenceWorkItem.h \
+ ../Util/Metrics.h ../SuffixTools/BWTIndexSet.h \
+ ../SuffixTools/SampledSuffixArray.h ../Thirdparty/multiple_alignment.h \
+ ../Thirdparty/overlapper.h ../FMIndexWalk/FMIndexWalkProcess.h \
+ ../Util/BitVector.h ../Util/BitChar.h ../Util/CorrectionThresholds.h \
+ ../SuffixTools/BWTIntervalCache.h
 
 /usr/include/stdc-predef.h:
 
-../Util/SeqReader.h:
-
-/usr/local/include/c++/5.2.0/fstream:
-
-/usr/local/include/c++/5.2.0/istream:
-
-/usr/local/include/c++/5.2.0/ios:
-
-/usr/local/include/c++/5.2.0/iosfwd:
+/usr/local/include/c++/5.2.0/iostream:
 
 /usr/local/include/c++/5.2.0/x86_64-unknown-linux-gnu/bits/c++config.h:
 
@@ -210,6 +228,12 @@ libreassembler_a-ContigGraph.o: ContigGraph.cpp \
 /usr/include/gnu/stubs-64.h:
 
 /usr/local/include/c++/5.2.0/x86_64-unknown-linux-gnu/bits/cpu_defines.h:
+
+/usr/local/include/c++/5.2.0/ostream:
+
+/usr/local/include/c++/5.2.0/ios:
+
+/usr/local/include/c++/5.2.0/iosfwd:
 
 /usr/local/include/c++/5.2.0/bits/stringfwd.h:
 
@@ -373,11 +397,13 @@ libreassembler_a-ContigGraph.o: ContigGraph.cpp \
 
 /usr/local/include/c++/5.2.0/bits/basic_ios.tcc:
 
-/usr/local/include/c++/5.2.0/ostream:
-
 /usr/local/include/c++/5.2.0/bits/ostream.tcc:
 
+/usr/local/include/c++/5.2.0/istream:
+
 /usr/local/include/c++/5.2.0/bits/istream.tcc:
+
+/usr/local/include/c++/5.2.0/fstream:
 
 /usr/local/include/c++/5.2.0/bits/codecvt.h:
 
@@ -398,6 +424,14 @@ libreassembler_a-ContigGraph.o: ContigGraph.cpp \
 /usr/local/include/c++/5.2.0/x86_64-unknown-linux-gnu/bits/c++io.h:
 
 /usr/local/include/c++/5.2.0/bits/fstream.tcc:
+
+/usr/local/include/c++/5.2.0/sstream:
+
+/usr/local/include/c++/5.2.0/bits/sstream.tcc:
+
+/usr/local/include/c++/5.2.0/iterator:
+
+/usr/local/include/c++/5.2.0/bits/stream_iterator.h:
 
 ../Util/Util.h:
 
@@ -422,10 +456,6 @@ libreassembler_a-ContigGraph.o: ContigGraph.cpp \
 /usr/local/include/c++/5.2.0/cassert:
 
 /usr/include/assert.h:
-
-/usr/local/include/c++/5.2.0/sstream:
-
-/usr/local/include/c++/5.2.0/bits/sstream.tcc:
 
 /usr/local/include/c++/5.2.0/cstring:
 
@@ -456,8 +486,6 @@ libreassembler_a-ContigGraph.o: ContigGraph.cpp \
 /usr/local/lib/gcc/x86_64-unknown-linux-gnu/5.2.0/include/stdint.h:
 
 /usr/include/stdint.h:
-
-/usr/local/include/c++/5.2.0/iostream:
 
 ../Util/DNAString.h:
 
@@ -517,45 +545,23 @@ libreassembler_a-ContigGraph.o: ContigGraph.cpp \
 
 /usr/local/lib/gcc/x86_64-unknown-linux-gnu/5.2.0/include/omp.h:
 
-ContigGraph.h:
+correct.h:
 
-../Bigraph/Bigraph.h:
+../config.h:
 
-/usr/local/include/c++/5.2.0/map:
+../SuffixTools/BWT.h:
 
-/usr/local/include/c++/5.2.0/bits/stl_tree.h:
+../SuffixTools/RLBWT.h:
 
-/usr/local/include/c++/5.2.0/bits/stl_map.h:
+../SuffixTools/STCommon.h:
 
-/usr/local/include/c++/5.2.0/bits/stl_multimap.h:
+../SuffixTools/STGlobals.h:
 
-../Bigraph/GraphCommon.h:
-
-../Util/Util.h:
-
-../Bigraph/Vertex.h:
-
-/usr/local/include/c++/5.2.0/set:
-
-/usr/local/include/c++/5.2.0/bits/stl_set.h:
-
-/usr/local/include/c++/5.2.0/bits/stl_multiset.h:
-
-/usr/local/include/c++/5.2.0/iterator:
-
-/usr/local/include/c++/5.2.0/bits/stream_iterator.h:
-
-../Util/QualityVector.h:
-
-../Util/Alphabet.h:
+/usr/local/include/c++/5.2.0/algorithm:
 
 /usr/local/include/c++/5.2.0/utility:
 
 /usr/local/include/c++/5.2.0/bits/stl_relops.h:
-
-/usr/local/include/c++/5.2.0/limits:
-
-/usr/local/include/c++/5.2.0/algorithm:
 
 /usr/local/include/c++/5.2.0/bits/stl_algo.h:
 
@@ -565,17 +571,87 @@ ContigGraph.h:
 
 /usr/local/include/c++/5.2.0/bits/stl_tempbuf.h:
 
-../Util/DNADouble.h:
+/usr/local/include/c++/5.2.0/map:
+
+/usr/local/include/c++/5.2.0/bits/stl_tree.h:
+
+/usr/local/include/c++/5.2.0/bits/stl_map.h:
+
+/usr/local/include/c++/5.2.0/bits/stl_multimap.h:
+
+/usr/local/include/c++/5.2.0/set:
+
+/usr/local/include/c++/5.2.0/bits/stl_set.h:
+
+/usr/local/include/c++/5.2.0/bits/stl_multiset.h:
+
+../Util/Alphabet.h:
+
+/usr/local/include/c++/5.2.0/limits:
+
+../Util/Util.h:
+
+../SuffixTools/Occurrence.h:
 
 ../Util/EncodedString.h:
 
 ../Util/DNACodec.h:
+
+../Util/Alphabet.h:
 
 ../Util/BWTCodec.h:
 
 ../Util/BWT4Codec.h:
 
 ../Util/NoCodec.h:
+
+../SuffixTools/SuffixArray.h:
+
+../Util/ReadTable.h:
+
+../Util/SeqReader.h:
+
+../Util/Match.h:
+
+../Util/SeqCoord.h:
+
+../Util/Interval.h:
+
+../Util/QualityVector.h:
+
+../Util/DNADouble.h:
+
+../SuffixTools/HitData.h:
+
+../Util/BitChar.h:
+
+../SuffixTools/BWTReader.h:
+
+../SuffixTools/FMMarkers.h:
+
+../SuffixTools/RLUnit.h:
+
+../SuffixTools/BWTAlgorithms.h:
+
+../SuffixTools/BWTIndexSet.h:
+
+../SuffixTools/BWT.h:
+
+../SuffixTools/BWTIntervalCache.h:
+
+../SuffixTools/BWTInterval.h:
+
+../SuffixTools/SampledSuffixArray.h:
+
+../Util/ReadInfoTable.h:
+
+../Bigraph/Bigraph.h:
+
+../Bigraph/GraphCommon.h:
+
+../Bigraph/Vertex.h:
+
+../Util/QualityVector.h:
 
 ../Util/SimpleAllocator.h:
 
@@ -587,23 +663,11 @@ ContigGraph.h:
 
 ../Util/Match.h:
 
-../Util/SeqCoord.h:
-
-../Util/Interval.h:
-
-../Util/QualityVector.h:
-
 ../Util/Pileup.h:
 
 ../Bigraph/Edge.h:
 
-../Util/Match.h:
-
-../Util/BitChar.h:
-
 ../Util/HashMap.h:
-
-../config.h:
 
 /usr/local/include/c++/5.2.0/tr1/unordered_map:
 
@@ -667,10 +731,86 @@ ContigGraph.h:
 
 /usr/local/include/sparsehash/dense_hash_set:
 
-ContigEdge.h:
+../Util/QualityTable.h:
 
-../Bigraph/Edge.h:
+../Util/QualityCodec.h:
 
-ContigVertex.h:
+../Bigraph/GraphCommon.h:
 
-../Bigraph/Vertex.h:
+../Util/KmerDistribution.h:
+
+/usr/local/include/c++/5.2.0/cstddef:
+
+/usr/local/include/c++/5.2.0/queue:
+
+/usr/local/include/c++/5.2.0/deque:
+
+/usr/local/include/c++/5.2.0/bits/stl_deque.h:
+
+/usr/local/include/c++/5.2.0/bits/deque.tcc:
+
+/usr/local/include/c++/5.2.0/bits/stl_queue.h:
+
+../Algorithm/OverlapAlgorithm.h:
+
+../Algorithm/OverlapBlock.h:
+
+../SuffixTools/BWTInterval.h:
+
+../Algorithm/SearchHistory.h:
+
+../Algorithm/SearchSeed.h:
+
+../SuffixTools/SuffixArray.h:
+
+SGACommon.h:
+
+OverlapCommon.h:
+
+overlap.h:
+
+../Util/Timer.h:
+
+/usr/include/sys/time.h:
+
+../SQG/ASQG.h:
+
+../SQG/SQG.h:
+
+../Concurrency/SequenceProcessFramework.h:
+
+../Concurrency/ThreadWorker.h:
+
+/usr/include/semaphore.h:
+
+/usr/include/bits/semaphore.h:
+
+../Concurrency/SequenceWorkItem.h:
+
+../Util/SeqReader.h:
+
+../Algorithm/ErrorCorrectProcess.h:
+
+../Algorithm/OverlapAlgorithm.h:
+
+../Concurrency/SequenceWorkItem.h:
+
+../Util/Metrics.h:
+
+../SuffixTools/BWTIndexSet.h:
+
+../SuffixTools/SampledSuffixArray.h:
+
+../Thirdparty/multiple_alignment.h:
+
+../Thirdparty/overlapper.h:
+
+../FMIndexWalk/FMIndexWalkProcess.h:
+
+../Util/BitVector.h:
+
+../Util/BitChar.h:
+
+../Util/CorrectionThresholds.h:
+
+../SuffixTools/BWTIntervalCache.h:

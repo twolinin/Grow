@@ -14,4 +14,7 @@ config.h.in
 
 */*.o
 */*.a
-
+*/Makefile
+*/Makefile.in
+*/.deps/
+StriDe/grow

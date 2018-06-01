@@ -1,6 +1,6 @@
-bin_PROGRAMS = stride
+bin_PROGRAMS = grow
 
-stride_CPPFLAGS = \
+grow_CPPFLAGS = \
 	-I$(top_srcdir)/Util \
 	-I$(top_srcdir)/Bigraph \
 	-I$(top_srcdir)/SuffixTools \
@@ -14,7 +14,7 @@ stride_CPPFLAGS = \
 	-I$(top_srcdir)/Reassembler \
 	-I$(top_srcdir)/Frequency
 
-stride_LDADD = \
+grow_LDADD = \
 	$(top_builddir)/StringGraph/libstringgraph.a \
 	$(top_builddir)/Concurrency/libconcurrency.a \
 	$(top_builddir)/Algorithm/libalgorithm.a \
@@ -28,9 +28,9 @@ stride_LDADD = \
 	$(top_builddir)/Reassembler/libreassembler.a \
 	$(top_builddir)/Frequency/libfrequency.a	
 
-stride_LDFLAGS = -pthread
+grow_LDFLAGS = -pthread
 
-stride_SOURCES = StriDe.cpp \
+grow_SOURCES = StriDe.cpp \
 		strideall.cpp strideall.h\
               index.cpp index.h \
               overlap.cpp overlap.h \

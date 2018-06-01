@@ -1,13 +1,23 @@
-stride-strideall.o: strideall.cpp /usr/include/stdc-predef.h \
- /usr/local/include/c++/5.2.0/string \
+grow-FMIndexWalk.o: FMIndexWalk.cpp /usr/include/stdc-predef.h \
+ /usr/local/include/c++/5.2.0/iostream \
  /usr/local/include/c++/5.2.0/x86_64-unknown-linux-gnu/bits/c++config.h \
  /usr/local/include/c++/5.2.0/x86_64-unknown-linux-gnu/bits/os_defines.h \
  /usr/include/features.h /usr/include/sys/cdefs.h \
  /usr/include/bits/wordsize.h /usr/include/gnu/stubs.h \
  /usr/include/gnu/stubs-64.h \
  /usr/local/include/c++/5.2.0/x86_64-unknown-linux-gnu/bits/cpu_defines.h \
+ /usr/local/include/c++/5.2.0/ostream /usr/local/include/c++/5.2.0/ios \
+ /usr/local/include/c++/5.2.0/iosfwd \
  /usr/local/include/c++/5.2.0/bits/stringfwd.h \
  /usr/local/include/c++/5.2.0/bits/memoryfwd.h \
+ /usr/local/include/c++/5.2.0/bits/postypes.h \
+ /usr/local/include/c++/5.2.0/cwchar /usr/include/wchar.h \
+ /usr/include/stdio.h \
+ /usr/local/lib/gcc/x86_64-unknown-linux-gnu/5.2.0/include/stdarg.h \
+ /usr/include/bits/wchar.h \
+ /usr/local/lib/gcc/x86_64-unknown-linux-gnu/5.2.0/include/stddef.h \
+ /usr/include/xlocale.h /usr/local/include/c++/5.2.0/exception \
+ /usr/local/include/c++/5.2.0/bits/atomic_lockfree_defines.h \
  /usr/local/include/c++/5.2.0/bits/char_traits.h \
  /usr/local/include/c++/5.2.0/bits/stl_algobase.h \
  /usr/local/include/c++/5.2.0/bits/functexcept.h \
@@ -24,31 +34,15 @@ stride-strideall.o: strideall.cpp /usr/include/stdc-predef.h \
  /usr/local/include/c++/5.2.0/bits/stl_iterator.h \
  /usr/local/include/c++/5.2.0/bits/ptr_traits.h \
  /usr/local/include/c++/5.2.0/bits/predefined_ops.h \
- /usr/local/include/c++/5.2.0/bits/postypes.h \
- /usr/local/include/c++/5.2.0/cwchar /usr/include/wchar.h \
- /usr/include/stdio.h \
- /usr/local/lib/gcc/x86_64-unknown-linux-gnu/5.2.0/include/stdarg.h \
- /usr/include/bits/wchar.h \
- /usr/local/lib/gcc/x86_64-unknown-linux-gnu/5.2.0/include/stddef.h \
- /usr/include/xlocale.h /usr/local/include/c++/5.2.0/bits/allocator.h \
- /usr/local/include/c++/5.2.0/x86_64-unknown-linux-gnu/bits/c++allocator.h \
- /usr/local/include/c++/5.2.0/ext/new_allocator.h \
- /usr/local/include/c++/5.2.0/new /usr/local/include/c++/5.2.0/exception \
- /usr/local/include/c++/5.2.0/bits/atomic_lockfree_defines.h \
  /usr/local/include/c++/5.2.0/bits/localefwd.h \
  /usr/local/include/c++/5.2.0/x86_64-unknown-linux-gnu/bits/c++locale.h \
  /usr/local/include/c++/5.2.0/clocale /usr/include/locale.h \
- /usr/include/bits/locale.h /usr/local/include/c++/5.2.0/iosfwd \
- /usr/local/include/c++/5.2.0/cctype /usr/include/ctype.h \
- /usr/include/bits/types.h /usr/include/bits/typesizes.h \
- /usr/include/endian.h /usr/include/bits/endian.h \
- /usr/include/bits/byteswap.h /usr/include/bits/byteswap-16.h \
- /usr/local/include/c++/5.2.0/bits/ostream_insert.h \
- /usr/local/include/c++/5.2.0/bits/cxxabi_forced.h \
- /usr/local/include/c++/5.2.0/bits/stl_function.h \
- /usr/local/include/c++/5.2.0/backward/binders.h \
- /usr/local/include/c++/5.2.0/bits/range_access.h \
- /usr/local/include/c++/5.2.0/bits/basic_string.h \
+ /usr/include/bits/locale.h /usr/local/include/c++/5.2.0/cctype \
+ /usr/include/ctype.h /usr/include/bits/types.h \
+ /usr/include/bits/typesizes.h /usr/include/endian.h \
+ /usr/include/bits/endian.h /usr/include/bits/byteswap.h \
+ /usr/include/bits/byteswap-16.h \
+ /usr/local/include/c++/5.2.0/bits/ios_base.h \
  /usr/local/include/c++/5.2.0/ext/atomicity.h \
  /usr/local/include/c++/5.2.0/x86_64-unknown-linux-gnu/bits/gthr.h \
  /usr/local/include/c++/5.2.0/x86_64-unknown-linux-gnu/bits/gthr-default.h \
@@ -57,12 +51,20 @@ stride-strideall.o: strideall.cpp /usr/include/stdc-predef.h \
  /usr/include/bits/timex.h /usr/include/bits/pthreadtypes.h \
  /usr/include/bits/setjmp.h \
  /usr/local/include/c++/5.2.0/x86_64-unknown-linux-gnu/bits/atomic_word.h \
+ /usr/local/include/c++/5.2.0/bits/locale_classes.h \
+ /usr/local/include/c++/5.2.0/string \
+ /usr/local/include/c++/5.2.0/bits/allocator.h \
+ /usr/local/include/c++/5.2.0/x86_64-unknown-linux-gnu/bits/c++allocator.h \
+ /usr/local/include/c++/5.2.0/ext/new_allocator.h \
+ /usr/local/include/c++/5.2.0/new \
+ /usr/local/include/c++/5.2.0/bits/ostream_insert.h \
+ /usr/local/include/c++/5.2.0/bits/cxxabi_forced.h \
+ /usr/local/include/c++/5.2.0/bits/stl_function.h \
+ /usr/local/include/c++/5.2.0/backward/binders.h \
+ /usr/local/include/c++/5.2.0/bits/range_access.h \
+ /usr/local/include/c++/5.2.0/bits/basic_string.h \
  /usr/local/include/c++/5.2.0/ext/alloc_traits.h \
  /usr/local/include/c++/5.2.0/bits/basic_string.tcc \
- /usr/local/include/c++/5.2.0/iostream \
- /usr/local/include/c++/5.2.0/ostream /usr/local/include/c++/5.2.0/ios \
- /usr/local/include/c++/5.2.0/bits/ios_base.h \
- /usr/local/include/c++/5.2.0/bits/locale_classes.h \
  /usr/local/include/c++/5.2.0/bits/locale_classes.tcc \
  /usr/local/include/c++/5.2.0/stdexcept \
  /usr/local/include/c++/5.2.0/streambuf \
@@ -85,9 +87,11 @@ stride-strideall.o: strideall.cpp /usr/include/stdc-predef.h \
  /usr/include/bits/sys_errlist.h /usr/include/bits/stdio.h \
  /usr/local/include/c++/5.2.0/x86_64-unknown-linux-gnu/bits/basic_file.h \
  /usr/local/include/c++/5.2.0/x86_64-unknown-linux-gnu/bits/c++io.h \
- /usr/local/include/c++/5.2.0/bits/fstream.tcc ../Util/Timer.h \
- /usr/include/sys/time.h /usr/include/sys/select.h \
- /usr/include/bits/select.h /usr/include/bits/sigset.h ../Util/Util.h \
+ /usr/local/include/c++/5.2.0/bits/fstream.tcc \
+ /usr/local/include/c++/5.2.0/sstream \
+ /usr/local/include/c++/5.2.0/bits/sstream.tcc \
+ /usr/local/include/c++/5.2.0/iterator \
+ /usr/local/include/c++/5.2.0/bits/stream_iterator.h ../Util/Util.h \
  /usr/local/include/c++/5.2.0/vector \
  /usr/local/include/c++/5.2.0/bits/stl_construct.h \
  /usr/local/include/c++/5.2.0/bits/stl_uninitialized.h \
@@ -98,13 +102,13 @@ stride-strideall.o: strideall.cpp /usr/include/stdc-predef.h \
  /usr/local/include/c++/5.2.0/bits/stl_list.h \
  /usr/local/include/c++/5.2.0/bits/list.tcc \
  /usr/local/include/c++/5.2.0/cassert /usr/include/assert.h \
- /usr/local/include/c++/5.2.0/sstream \
- /usr/local/include/c++/5.2.0/bits/sstream.tcc \
  /usr/local/include/c++/5.2.0/cstring /usr/include/string.h \
  /usr/local/include/c++/5.2.0/cstdlib /usr/include/stdlib.h \
  /usr/include/bits/waitflags.h /usr/include/bits/waitstatus.h \
- /usr/include/sys/types.h /usr/include/sys/sysmacros.h \
- /usr/include/alloca.h /usr/include/bits/stdlib-float.h \
+ /usr/include/sys/types.h /usr/include/sys/select.h \
+ /usr/include/bits/select.h /usr/include/bits/sigset.h \
+ /usr/include/sys/sysmacros.h /usr/include/alloca.h \
+ /usr/include/bits/stdlib-float.h \
  /usr/local/lib/gcc/x86_64-unknown-linux-gnu/5.2.0/include/stdint.h \
  /usr/include/stdint.h ../Util/DNAString.h ../Thirdparty/gzstream.h \
  /usr/local/include/zlib.h /usr/local/include/zconf.h \
@@ -122,7 +126,7 @@ stride-strideall.o: strideall.cpp /usr/include/stdc-predef.h \
  /usr/include/bits/mathdef.h /usr/include/bits/mathcalls.h \
  /usr/include/bits/mathinline.h \
  /usr/local/lib/gcc/x86_64-unknown-linux-gnu/5.2.0/include/omp.h \
- strideall.h ../config.h index.h ../SuffixTools/SuffixArray.h \
+ FMIndexWalk.h ../config.h ../SuffixTools/BWT.h ../SuffixTools/RLBWT.h \
  ../SuffixTools/STCommon.h ../SuffixTools/STGlobals.h \
  /usr/local/include/c++/5.2.0/algorithm \
  /usr/local/include/c++/5.2.0/utility \
@@ -138,15 +142,12 @@ stride-strideall.o: strideall.cpp /usr/include/stdc-predef.h \
  /usr/local/include/c++/5.2.0/set \
  /usr/local/include/c++/5.2.0/bits/stl_set.h \
  /usr/local/include/c++/5.2.0/bits/stl_multiset.h ../Util/Alphabet.h \
- /usr/local/include/c++/5.2.0/limits \
- /usr/local/include/c++/5.2.0/iterator \
- /usr/local/include/c++/5.2.0/bits/stream_iterator.h ../Util/Util.h \
- ../Util/ReadTable.h ../Util/SeqReader.h ../Util/Match.h \
- ../Util/SeqCoord.h ../Util/Interval.h ../Util/QualityVector.h \
- ../Util/Alphabet.h ../Util/DNADouble.h overlap.h ../SuffixTools/BWT.h \
- ../SuffixTools/RLBWT.h ../SuffixTools/Occurrence.h \
- ../Util/EncodedString.h ../Util/DNACodec.h ../Util/BWTCodec.h \
- ../Util/BWT4Codec.h ../Util/NoCodec.h ../SuffixTools/SuffixArray.h \
+ /usr/local/include/c++/5.2.0/limits ../Util/Util.h \
+ ../SuffixTools/Occurrence.h ../Util/EncodedString.h ../Util/DNACodec.h \
+ ../Util/Alphabet.h ../Util/BWTCodec.h ../Util/BWT4Codec.h \
+ ../Util/NoCodec.h ../SuffixTools/SuffixArray.h ../Util/ReadTable.h \
+ ../Util/SeqReader.h ../Util/Match.h ../Util/SeqCoord.h \
+ ../Util/Interval.h ../Util/QualityVector.h ../Util/DNADouble.h \
  ../SuffixTools/HitData.h ../Util/BitChar.h ../SuffixTools/BWTReader.h \
  ../SuffixTools/FMMarkers.h ../SuffixTools/RLUnit.h \
  ../SuffixTools/BWTAlgorithms.h ../SuffixTools/BWTIndexSet.h \
@@ -193,16 +194,22 @@ stride-strideall.o: strideall.cpp /usr/include/stdc-predef.h \
  /usr/local/include/c++/5.2.0/bits/stl_deque.h \
  /usr/local/include/c++/5.2.0/bits/deque.tcc \
  /usr/local/include/c++/5.2.0/bits/stl_queue.h \
+ ../SuffixTools/SuffixArray.h SGACommon.h OverlapCommon.h overlap.h \
  ../Algorithm/OverlapAlgorithm.h ../Algorithm/OverlapBlock.h \
  ../SuffixTools/BWTInterval.h ../Algorithm/SearchHistory.h \
- ../Algorithm/SearchSeed.h assemble.h ../StringGraph/SGVisitors.h \
- ../StringGraph/SGAlgorithms.h ../StringGraph/SGUtil.h ../SQG/ASQG.h \
- ../SQG/SQG.h ../SuffixTools/BWTIndexSet.h preprocess.h ../Util/Quality.h \
- correct.h filter.h fm-merge.h FMIndexWalk.h
+ ../Algorithm/SearchSeed.h ../Util/Timer.h /usr/include/sys/time.h \
+ ../SQG/ASQG.h ../SQG/SQG.h ../Concurrency/SequenceProcessFramework.h \
+ ../Concurrency/ThreadWorker.h /usr/include/semaphore.h \
+ /usr/include/bits/semaphore.h ../Concurrency/SequenceWorkItem.h \
+ ../Util/SeqReader.h ../FMIndexWalk/FMIndexWalkProcess.h \
+ ../Concurrency/SequenceWorkItem.h ../Util/Metrics.h \
+ ../SuffixTools/BWTIndexSet.h ../SuffixTools/SampledSuffixArray.h \
+ ../Util/BitVector.h ../Util/BitChar.h ../Util/CorrectionThresholds.h \
+ ../SuffixTools/BWTIntervalCache.h
 
 /usr/include/stdc-predef.h:
 
-/usr/local/include/c++/5.2.0/string:
+/usr/local/include/c++/5.2.0/iostream:
 
 /usr/local/include/c++/5.2.0/x86_64-unknown-linux-gnu/bits/c++config.h:
 
@@ -220,9 +227,35 @@ stride-strideall.o: strideall.cpp /usr/include/stdc-predef.h \
 
 /usr/local/include/c++/5.2.0/x86_64-unknown-linux-gnu/bits/cpu_defines.h:
 
+/usr/local/include/c++/5.2.0/ostream:
+
+/usr/local/include/c++/5.2.0/ios:
+
+/usr/local/include/c++/5.2.0/iosfwd:
+
 /usr/local/include/c++/5.2.0/bits/stringfwd.h:
 
 /usr/local/include/c++/5.2.0/bits/memoryfwd.h:
+
+/usr/local/include/c++/5.2.0/bits/postypes.h:
+
+/usr/local/include/c++/5.2.0/cwchar:
+
+/usr/include/wchar.h:
+
+/usr/include/stdio.h:
+
+/usr/local/lib/gcc/x86_64-unknown-linux-gnu/5.2.0/include/stdarg.h:
+
+/usr/include/bits/wchar.h:
+
+/usr/local/lib/gcc/x86_64-unknown-linux-gnu/5.2.0/include/stddef.h:
+
+/usr/include/xlocale.h:
+
+/usr/local/include/c++/5.2.0/exception:
+
+/usr/local/include/c++/5.2.0/bits/atomic_lockfree_defines.h:
 
 /usr/local/include/c++/5.2.0/bits/char_traits.h:
 
@@ -256,34 +289,6 @@ stride-strideall.o: strideall.cpp /usr/include/stdc-predef.h \
 
 /usr/local/include/c++/5.2.0/bits/predefined_ops.h:
 
-/usr/local/include/c++/5.2.0/bits/postypes.h:
-
-/usr/local/include/c++/5.2.0/cwchar:
-
-/usr/include/wchar.h:
-
-/usr/include/stdio.h:
-
-/usr/local/lib/gcc/x86_64-unknown-linux-gnu/5.2.0/include/stdarg.h:
-
-/usr/include/bits/wchar.h:
-
-/usr/local/lib/gcc/x86_64-unknown-linux-gnu/5.2.0/include/stddef.h:
-
-/usr/include/xlocale.h:
-
-/usr/local/include/c++/5.2.0/bits/allocator.h:
-
-/usr/local/include/c++/5.2.0/x86_64-unknown-linux-gnu/bits/c++allocator.h:
-
-/usr/local/include/c++/5.2.0/ext/new_allocator.h:
-
-/usr/local/include/c++/5.2.0/new:
-
-/usr/local/include/c++/5.2.0/exception:
-
-/usr/local/include/c++/5.2.0/bits/atomic_lockfree_defines.h:
-
 /usr/local/include/c++/5.2.0/bits/localefwd.h:
 
 /usr/local/include/c++/5.2.0/x86_64-unknown-linux-gnu/bits/c++locale.h:
@@ -293,8 +298,6 @@ stride-strideall.o: strideall.cpp /usr/include/stdc-predef.h \
 /usr/include/locale.h:
 
 /usr/include/bits/locale.h:
-
-/usr/local/include/c++/5.2.0/iosfwd:
 
 /usr/local/include/c++/5.2.0/cctype:
 
@@ -312,17 +315,7 @@ stride-strideall.o: strideall.cpp /usr/include/stdc-predef.h \
 
 /usr/include/bits/byteswap-16.h:
 
-/usr/local/include/c++/5.2.0/bits/ostream_insert.h:
-
-/usr/local/include/c++/5.2.0/bits/cxxabi_forced.h:
-
-/usr/local/include/c++/5.2.0/bits/stl_function.h:
-
-/usr/local/include/c++/5.2.0/backward/binders.h:
-
-/usr/local/include/c++/5.2.0/bits/range_access.h:
-
-/usr/local/include/c++/5.2.0/bits/basic_string.h:
+/usr/local/include/c++/5.2.0/bits/ios_base.h:
 
 /usr/local/include/c++/5.2.0/ext/atomicity.h:
 
@@ -348,19 +341,33 @@ stride-strideall.o: strideall.cpp /usr/include/stdc-predef.h \
 
 /usr/local/include/c++/5.2.0/x86_64-unknown-linux-gnu/bits/atomic_word.h:
 
+/usr/local/include/c++/5.2.0/bits/locale_classes.h:
+
+/usr/local/include/c++/5.2.0/string:
+
+/usr/local/include/c++/5.2.0/bits/allocator.h:
+
+/usr/local/include/c++/5.2.0/x86_64-unknown-linux-gnu/bits/c++allocator.h:
+
+/usr/local/include/c++/5.2.0/ext/new_allocator.h:
+
+/usr/local/include/c++/5.2.0/new:
+
+/usr/local/include/c++/5.2.0/bits/ostream_insert.h:
+
+/usr/local/include/c++/5.2.0/bits/cxxabi_forced.h:
+
+/usr/local/include/c++/5.2.0/bits/stl_function.h:
+
+/usr/local/include/c++/5.2.0/backward/binders.h:
+
+/usr/local/include/c++/5.2.0/bits/range_access.h:
+
+/usr/local/include/c++/5.2.0/bits/basic_string.h:
+
 /usr/local/include/c++/5.2.0/ext/alloc_traits.h:
 
 /usr/local/include/c++/5.2.0/bits/basic_string.tcc:
-
-/usr/local/include/c++/5.2.0/iostream:
-
-/usr/local/include/c++/5.2.0/ostream:
-
-/usr/local/include/c++/5.2.0/ios:
-
-/usr/local/include/c++/5.2.0/bits/ios_base.h:
-
-/usr/local/include/c++/5.2.0/bits/locale_classes.h:
 
 /usr/local/include/c++/5.2.0/bits/locale_classes.tcc:
 
@@ -416,15 +423,13 @@ stride-strideall.o: strideall.cpp /usr/include/stdc-predef.h \
 
 /usr/local/include/c++/5.2.0/bits/fstream.tcc:
 
-../Util/Timer.h:
+/usr/local/include/c++/5.2.0/sstream:
 
-/usr/include/sys/time.h:
+/usr/local/include/c++/5.2.0/bits/sstream.tcc:
 
-/usr/include/sys/select.h:
+/usr/local/include/c++/5.2.0/iterator:
 
-/usr/include/bits/select.h:
-
-/usr/include/bits/sigset.h:
+/usr/local/include/c++/5.2.0/bits/stream_iterator.h:
 
 ../Util/Util.h:
 
@@ -450,10 +455,6 @@ stride-strideall.o: strideall.cpp /usr/include/stdc-predef.h \
 
 /usr/include/assert.h:
 
-/usr/local/include/c++/5.2.0/sstream:
-
-/usr/local/include/c++/5.2.0/bits/sstream.tcc:
-
 /usr/local/include/c++/5.2.0/cstring:
 
 /usr/include/string.h:
@@ -467,6 +468,12 @@ stride-strideall.o: strideall.cpp /usr/include/stdc-predef.h \
 /usr/include/bits/waitstatus.h:
 
 /usr/include/sys/types.h:
+
+/usr/include/sys/select.h:
+
+/usr/include/bits/select.h:
+
+/usr/include/bits/sigset.h:
 
 /usr/include/sys/sysmacros.h:
 
@@ -536,13 +543,13 @@ stride-strideall.o: strideall.cpp /usr/include/stdc-predef.h \
 
 /usr/local/lib/gcc/x86_64-unknown-linux-gnu/5.2.0/include/omp.h:
 
-strideall.h:
+FMIndexWalk.h:
 
 ../config.h:
 
-index.h:
+../SuffixTools/BWT.h:
 
-../SuffixTools/SuffixArray.h:
+../SuffixTools/RLBWT.h:
 
 ../SuffixTools/STCommon.h:
 
@@ -580,11 +587,23 @@ index.h:
 
 /usr/local/include/c++/5.2.0/limits:
 
-/usr/local/include/c++/5.2.0/iterator:
-
-/usr/local/include/c++/5.2.0/bits/stream_iterator.h:
-
 ../Util/Util.h:
+
+../SuffixTools/Occurrence.h:
+
+../Util/EncodedString.h:
+
+../Util/DNACodec.h:
+
+../Util/Alphabet.h:
+
+../Util/BWTCodec.h:
+
+../Util/BWT4Codec.h:
+
+../Util/NoCodec.h:
+
+../SuffixTools/SuffixArray.h:
 
 ../Util/ReadTable.h:
 
@@ -598,29 +617,7 @@ index.h:
 
 ../Util/QualityVector.h:
 
-../Util/Alphabet.h:
-
 ../Util/DNADouble.h:
-
-overlap.h:
-
-../SuffixTools/BWT.h:
-
-../SuffixTools/RLBWT.h:
-
-../SuffixTools/Occurrence.h:
-
-../Util/EncodedString.h:
-
-../Util/DNACodec.h:
-
-../Util/BWTCodec.h:
-
-../Util/BWT4Codec.h:
-
-../Util/NoCodec.h:
-
-../SuffixTools/SuffixArray.h:
 
 ../SuffixTools/HitData.h:
 
@@ -752,6 +749,14 @@ overlap.h:
 
 /usr/local/include/c++/5.2.0/bits/stl_queue.h:
 
+../SuffixTools/SuffixArray.h:
+
+SGACommon.h:
+
+OverlapCommon.h:
+
+overlap.h:
+
 ../Algorithm/OverlapAlgorithm.h:
 
 ../Algorithm/OverlapBlock.h:
@@ -762,28 +767,40 @@ overlap.h:
 
 ../Algorithm/SearchSeed.h:
 
-assemble.h:
+../Util/Timer.h:
 
-../StringGraph/SGVisitors.h:
-
-../StringGraph/SGAlgorithms.h:
-
-../StringGraph/SGUtil.h:
+/usr/include/sys/time.h:
 
 ../SQG/ASQG.h:
 
 ../SQG/SQG.h:
 
+../Concurrency/SequenceProcessFramework.h:
+
+../Concurrency/ThreadWorker.h:
+
+/usr/include/semaphore.h:
+
+/usr/include/bits/semaphore.h:
+
+../Concurrency/SequenceWorkItem.h:
+
+../Util/SeqReader.h:
+
+../FMIndexWalk/FMIndexWalkProcess.h:
+
+../Concurrency/SequenceWorkItem.h:
+
+../Util/Metrics.h:
+
 ../SuffixTools/BWTIndexSet.h:
 
-preprocess.h:
+../SuffixTools/SampledSuffixArray.h:
 
-../Util/Quality.h:
+../Util/BitVector.h:
 
-correct.h:
+../Util/BitChar.h:
 
-filter.h:
+../Util/CorrectionThresholds.h:
 
-fm-merge.h:
-
-FMIndexWalk.h:
+../SuffixTools/BWTIntervalCache.h:

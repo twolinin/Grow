@@ -14,3 +14,7 @@ rm config.h.in
 
 rm */*.o
 rm */*.a
+rm */Makefile.in
+rm */Makefile
+rm -r */.deps/
+rm StriDe/grow

@@ -86,7 +86,7 @@ POST_INSTALL = :
 NORMAL_UNINSTALL = :
 PRE_UNINSTALL = :
 POST_UNINSTALL = :
-bin_PROGRAMS = stride$(EXEEXT)
+bin_PROGRAMS = grow$(EXEEXT)
 subdir = StriDe
 ACLOCAL_M4 = $(top_srcdir)/aclocal.m4
 am__aclocal_m4_deps = $(top_srcdir)/m4/m4_ax_openmp.m4 \
@@ -100,19 +100,18 @@ CONFIG_CLEAN_FILES =
 CONFIG_CLEAN_VPATH_FILES =
 am__installdirs = "$(DESTDIR)$(bindir)"
 PROGRAMS = $(bin_PROGRAMS)
-am_stride_OBJECTS = stride-StriDe.$(OBJEXT) stride-strideall.$(OBJEXT) \
-	stride-index.$(OBJEXT) stride-overlap.$(OBJEXT) \
-	stride-assemble.$(OBJEXT) stride-correct.$(OBJEXT) \
-	stride-oview.$(OBJEXT) stride-preprocess.$(OBJEXT) \
-	stride-subgraph.$(OBJEXT) stride-filter.$(OBJEXT) \
-	stride-fm-merge.$(OBJEXT) stride-OverlapCommon.$(OBJEXT) \
-	stride-kmerfreq.$(OBJEXT) stride-grep.$(OBJEXT) \
-	stride-FMIndexWalk.$(OBJEXT) stride-PacBioCorrection.$(OBJEXT) \
-	stride-PacBioHybridCorrection.$(OBJEXT) \
-	stride-asmlong.$(OBJEXT) stride-Reassembler.$(OBJEXT) \
-	stride-Frequency.$(OBJEXT)
-stride_OBJECTS = $(am_stride_OBJECTS)
-stride_DEPENDENCIES = $(top_builddir)/StringGraph/libstringgraph.a \
+am_grow_OBJECTS = grow-StriDe.$(OBJEXT) grow-strideall.$(OBJEXT) \
+	grow-index.$(OBJEXT) grow-overlap.$(OBJEXT) \
+	grow-assemble.$(OBJEXT) grow-correct.$(OBJEXT) \
+	grow-oview.$(OBJEXT) grow-preprocess.$(OBJEXT) \
+	grow-subgraph.$(OBJEXT) grow-filter.$(OBJEXT) \
+	grow-fm-merge.$(OBJEXT) grow-OverlapCommon.$(OBJEXT) \
+	grow-kmerfreq.$(OBJEXT) grow-grep.$(OBJEXT) \
+	grow-FMIndexWalk.$(OBJEXT) grow-PacBioCorrection.$(OBJEXT) \
+	grow-PacBioHybridCorrection.$(OBJEXT) grow-asmlong.$(OBJEXT) \
+	grow-Reassembler.$(OBJEXT) grow-Frequency.$(OBJEXT)
+grow_OBJECTS = $(am_grow_OBJECTS)
+grow_DEPENDENCIES = $(top_builddir)/StringGraph/libstringgraph.a \
 	$(top_builddir)/Concurrency/libconcurrency.a \
 	$(top_builddir)/Algorithm/libalgorithm.a \
 	$(top_builddir)/SuffixTools/libsuffixtools.a \
@@ -123,7 +122,7 @@ stride_DEPENDENCIES = $(top_builddir)/StringGraph/libstringgraph.a \
 	$(top_builddir)/Thirdparty/libthirdparty.a \
 	$(top_builddir)/Reassembler/libreassembler.a \
 	$(top_builddir)/Frequency/libfrequency.a
-stride_LINK = $(CXXLD) $(AM_CXXFLAGS) $(CXXFLAGS) $(stride_LDFLAGS) \
+grow_LINK = $(CXXLD) $(AM_CXXFLAGS) $(CXXFLAGS) $(grow_LDFLAGS) \
 	$(LDFLAGS) -o $@
 AM_V_P = $(am__v_P_@AM_V@)
 am__v_P_ = $(am__v_P_@AM_DEFAULT_V@)
@@ -170,8 +169,8 @@ AM_V_CCLD = $(am__v_CCLD_@AM_V@)
 am__v_CCLD_ = $(am__v_CCLD_@AM_DEFAULT_V@)
 am__v_CCLD_0 = @echo "  CCLD    " $@;
 am__v_CCLD_1 = 
-SOURCES = $(stride_SOURCES)
-DIST_SOURCES = $(stride_SOURCES)
+SOURCES = $(grow_SOURCES)
+DIST_SOURCES = $(grow_SOURCES)
 am__can_run_installinfo = \
   case $$AM_UPDATE_INFO_DIR in \
     n|no|NO) false;; \
@@ -291,7 +290,7 @@ target_alias = @target_alias@
 top_build_prefix = @top_build_prefix@
 top_builddir = @top_builddir@
 top_srcdir = @top_srcdir@
-stride_CPPFLAGS = \
+grow_CPPFLAGS = \
 	-I$(top_srcdir)/Util \
 	-I$(top_srcdir)/Bigraph \
 	-I$(top_srcdir)/SuffixTools \
@@ -305,7 +304,7 @@ stride_CPPFLAGS = \
 	-I$(top_srcdir)/Reassembler \
 	-I$(top_srcdir)/Frequency
 
-stride_LDADD = \
+grow_LDADD = \
 	$(top_builddir)/StringGraph/libstringgraph.a \
 	$(top_builddir)/Concurrency/libconcurrency.a \
 	$(top_builddir)/Algorithm/libalgorithm.a \
@@ -319,8 +318,8 @@ stride_LDADD = \
 	$(top_builddir)/Reassembler/libreassembler.a \
 	$(top_builddir)/Frequency/libfrequency.a	
 
-stride_LDFLAGS = -pthread
-stride_SOURCES = StriDe.cpp \
+grow_LDFLAGS = -pthread
+grow_SOURCES = StriDe.cpp \
 		strideall.cpp strideall.h\
               index.cpp index.h \
               overlap.cpp overlap.h \
@@ -418,9 +417,9 @@ uninstall-binPROGRAMS:
 clean-binPROGRAMS:
 	-test -z "$(bin_PROGRAMS)" || rm -f $(bin_PROGRAMS)
 
-stride$(EXEEXT): $(stride_OBJECTS) $(stride_DEPENDENCIES) $(EXTRA_stride_DEPENDENCIES) 
-	@rm -f stride$(EXEEXT)
-	$(AM_V_CXXLD)$(stride_LINK) $(stride_OBJECTS) $(stride_LDADD) $(LIBS)
+grow$(EXEEXT): $(grow_OBJECTS) $(grow_DEPENDENCIES) $(EXTRA_grow_DEPENDENCIES) 
+	@rm -f grow$(EXEEXT)
+	$(AM_V_CXXLD)$(grow_LINK) $(grow_OBJECTS) $(grow_LDADD) $(LIBS)
 
 mostlyclean-compile:
 	-rm -f *.$(OBJEXT)
@@ -428,26 +427,26 @@ mostlyclean-compile:
 distclean-compile:
 	-rm -f *.tab.c
 
-@AMDEP_TRUE@@am__include@ @am__quote@./$(DEPDIR)/stride-FMIndexWalk.Po@am__quote@
-@AMDEP_TRUE@@am__include@ @am__quote@./$(DEPDIR)/stride-Frequency.Po@am__quote@
-@AMDEP_TRUE@@am__include@ @am__quote@./$(DEPDIR)/stride-OverlapCommon.Po@am__quote@
-@AMDEP_TRUE@@am__include@ @am__quote@./$(DEPDIR)/stride-PacBioCorrection.Po@am__quote@
-@AMDEP_TRUE@@am__include@ @am__quote@./$(DEPDIR)/stride-PacBioHybridCorrection.Po@am__quote@
-@AMDEP_TRUE@@am__include@ @am__quote@./$(DEPDIR)/stride-Reassembler.Po@am__quote@
-@AMDEP_TRUE@@am__include@ @am__quote@./$(DEPDIR)/stride-StriDe.Po@am__quote@
-@AMDEP_TRUE@@am__include@ @am__quote@./$(DEPDIR)/stride-asmlong.Po@am__quote@
-@AMDEP_TRUE@@am__include@ @am__quote@./$(DEPDIR)/stride-assemble.Po@am__quote@
-@AMDEP_TRUE@@am__include@ @am__quote@./$(DEPDIR)/stride-correct.Po@am__quote@
-@AMDEP_TRUE@@am__include@ @am__quote@./$(DEPDIR)/stride-filter.Po@am__quote@
-@AMDEP_TRUE@@am__include@ @am__quote@./$(DEPDIR)/stride-fm-merge.Po@am__quote@
-@AMDEP_TRUE@@am__include@ @am__quote@./$(DEPDIR)/stride-grep.Po@am__quote@
-@AMDEP_TRUE@@am__include@ @am__quote@./$(DEPDIR)/stride-index.Po@am__quote@
-@AMDEP_TRUE@@am__include@ @am__quote@./$(DEPDIR)/stride-kmerfreq.Po@am__quote@
-@AMDEP_TRUE@@am__include@ @am__quote@./$(DEPDIR)/stride-overlap.Po@am__quote@
-@AMDEP_TRUE@@am__include@ @am__quote@./$(DEPDIR)/stride-oview.Po@am__quote@
-@AMDEP_TRUE@@am__include@ @am__quote@./$(DEPDIR)/stride-preprocess.Po@am__quote@
-@AMDEP_TRUE@@am__include@ @am__quote@./$(DEPDIR)/stride-strideall.Po@am__quote@
-@AMDEP_TRUE@@am__include@ @am__quote@./$(DEPDIR)/stride-subgraph.Po@am__quote@
+@AMDEP_TRUE@@am__include@ @am__quote@./$(DEPDIR)/grow-FMIndexWalk.Po@am__quote@
+@AMDEP_TRUE@@am__include@ @am__quote@./$(DEPDIR)/grow-Frequency.Po@am__quote@
+@AMDEP_TRUE@@am__include@ @am__quote@./$(DEPDIR)/grow-OverlapCommon.Po@am__quote@
+@AMDEP_TRUE@@am__include@ @am__quote@./$(DEPDIR)/grow-PacBioCorrection.Po@am__quote@
+@AMDEP_TRUE@@am__include@ @am__quote@./$(DEPDIR)/grow-PacBioHybridCorrection.Po@am__quote@
+@AMDEP_TRUE@@am__include@ @am__quote@./$(DEPDIR)/grow-Reassembler.Po@am__quote@
+@AMDEP_TRUE@@am__include@ @am__quote@./$(DEPDIR)/grow-StriDe.Po@am__quote@
+@AMDEP_TRUE@@am__include@ @am__quote@./$(DEPDIR)/grow-asmlong.Po@am__quote@
+@AMDEP_TRUE@@am__include@ @am__quote@./$(DEPDIR)/grow-assemble.Po@am__quote@
+@AMDEP_TRUE@@am__include@ @am__quote@./$(DEPDIR)/grow-correct.Po@am__quote@
+@AMDEP_TRUE@@am__include@ @am__quote@./$(DEPDIR)/grow-filter.Po@am__quote@
+@AMDEP_TRUE@@am__include@ @am__quote@./$(DEPDIR)/grow-fm-merge.Po@am__quote@
+@AMDEP_TRUE@@am__include@ @am__quote@./$(DEPDIR)/grow-grep.Po@am__quote@
+@AMDEP_TRUE@@am__include@ @am__quote@./$(DEPDIR)/grow-index.Po@am__quote@
+@AMDEP_TRUE@@am__include@ @am__quote@./$(DEPDIR)/grow-kmerfreq.Po@am__quote@
+@AMDEP_TRUE@@am__include@ @am__quote@./$(DEPDIR)/grow-overlap.Po@am__quote@
+@AMDEP_TRUE@@am__include@ @am__quote@./$(DEPDIR)/grow-oview.Po@am__quote@
+@AMDEP_TRUE@@am__include@ @am__quote@./$(DEPDIR)/grow-preprocess.Po@am__quote@
+@AMDEP_TRUE@@am__include@ @am__quote@./$(DEPDIR)/grow-strideall.Po@am__quote@
+@AMDEP_TRUE@@am__include@ @am__quote@./$(DEPDIR)/grow-subgraph.Po@am__quote@
 
 .cpp.o:
 @am__fastdepCXX_TRUE@	$(AM_V_CXX)$(CXXCOMPILE) -MT $@ -MD -MP -MF $(DEPDIR)/$*.Tpo -c -o $@ $<
@@ -463,285 +462,285 @@ distclean-compile:
 @AMDEP_TRUE@@am__fastdepCXX_FALSE@	DEPDIR=$(DEPDIR) $(CXXDEPMODE) $(depcomp) @AMDEPBACKSLASH@
 @am__fastdepCXX_FALSE@	$(AM_V_CXX@am__nodep@)$(CXXCOMPILE) -c -o $@ `$(CYGPATH_W) '$<'`
 
-stride-StriDe.o: StriDe.cpp
-@am__fastdepCXX_TRUE@	$(AM_V_CXX)$(CXX) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(stride_CPPFLAGS) $(CPPFLAGS) $(AM_CXXFLAGS) $(CXXFLAGS) -MT stride-StriDe.o -MD -MP -MF $(DEPDIR)/stride-StriDe.Tpo -c -o stride-StriDe.o `test -f 'StriDe.cpp' || echo '$(srcdir)/'`StriDe.cpp
-@am__fastdepCXX_TRUE@	$(AM_V_at)$(am__mv) $(DEPDIR)/stride-StriDe.Tpo $(DEPDIR)/stride-StriDe.Po
-@AMDEP_TRUE@@am__fastdepCXX_FALSE@	$(AM_V_CXX)source='StriDe.cpp' object='stride-StriDe.o' libtool=no @AMDEPBACKSLASH@
+grow-StriDe.o: StriDe.cpp
+@am__fastdepCXX_TRUE@	$(AM_V_CXX)$(CXX) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(grow_CPPFLAGS) $(CPPFLAGS) $(AM_CXXFLAGS) $(CXXFLAGS) -MT grow-StriDe.o -MD -MP -MF $(DEPDIR)/grow-StriDe.Tpo -c -o grow-StriDe.o `test -f 'StriDe.cpp' || echo '$(srcdir)/'`StriDe.cpp
+@am__fastdepCXX_TRUE@	$(AM_V_at)$(am__mv) $(DEPDIR)/grow-StriDe.Tpo $(DEPDIR)/grow-StriDe.Po
+@AMDEP_TRUE@@am__fastdepCXX_FALSE@	$(AM_V_CXX)source='StriDe.cpp' object='grow-StriDe.o' libtool=no @AMDEPBACKSLASH@
 @AMDEP_TRUE@@am__fastdepCXX_FALSE@	DEPDIR=$(DEPDIR) $(CXXDEPMODE) $(depcomp) @AMDEPBACKSLASH@
-@am__fastdepCXX_FALSE@	$(AM_V_CXX@am__nodep@)$(CXX) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(stride_CPPFLAGS) $(CPPFLAGS) $(AM_CXXFLAGS) $(CXXFLAGS) -c -o stride-StriDe.o `test -f 'StriDe.cpp' || echo '$(srcdir)/'`StriDe.cpp
+@am__fastdepCXX_FALSE@	$(AM_V_CXX@am__nodep@)$(CXX) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(grow_CPPFLAGS) $(CPPFLAGS) $(AM_CXXFLAGS) $(CXXFLAGS) -c -o grow-StriDe.o `test -f 'StriDe.cpp' || echo '$(srcdir)/'`StriDe.cpp
 
-stride-StriDe.obj: StriDe.cpp
-@am__fastdepCXX_TRUE@	$(AM_V_CXX)$(CXX) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(stride_CPPFLAGS) $(CPPFLAGS) $(AM_CXXFLAGS) $(CXXFLAGS) -MT stride-StriDe.obj -MD -MP -MF $(DEPDIR)/stride-StriDe.Tpo -c -o stride-StriDe.obj `if test -f 'StriDe.cpp'; then $(CYGPATH_W) 'StriDe.cpp'; else $(CYGPATH_W) '$(srcdir)/StriDe.cpp'; fi`
-@am__fastdepCXX_TRUE@	$(AM_V_at)$(am__mv) $(DEPDIR)/stride-StriDe.Tpo $(DEPDIR)/stride-StriDe.Po
-@AMDEP_TRUE@@am__fastdepCXX_FALSE@	$(AM_V_CXX)source='StriDe.cpp' object='stride-StriDe.obj' libtool=no @AMDEPBACKSLASH@
+grow-StriDe.obj: StriDe.cpp
+@am__fastdepCXX_TRUE@	$(AM_V_CXX)$(CXX) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(grow_CPPFLAGS) $(CPPFLAGS) $(AM_CXXFLAGS) $(CXXFLAGS) -MT grow-StriDe.obj -MD -MP -MF $(DEPDIR)/grow-StriDe.Tpo -c -o grow-StriDe.obj `if test -f 'StriDe.cpp'; then $(CYGPATH_W) 'StriDe.cpp'; else $(CYGPATH_W) '$(srcdir)/StriDe.cpp'; fi`
+@am__fastdepCXX_TRUE@	$(AM_V_at)$(am__mv) $(DEPDIR)/grow-StriDe.Tpo $(DEPDIR)/grow-StriDe.Po
+@AMDEP_TRUE@@am__fastdepCXX_FALSE@	$(AM_V_CXX)source='StriDe.cpp' object='grow-StriDe.obj' libtool=no @AMDEPBACKSLASH@
 @AMDEP_TRUE@@am__fastdepCXX_FALSE@	DEPDIR=$(DEPDIR) $(CXXDEPMODE) $(depcomp) @AMDEPBACKSLASH@
-@am__fastdepCXX_FALSE@	$(AM_V_CXX@am__nodep@)$(CXX) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(stride_CPPFLAGS) $(CPPFLAGS) $(AM_CXXFLAGS) $(CXXFLAGS) -c -o stride-StriDe.obj `if test -f 'StriDe.cpp'; then $(CYGPATH_W) 'StriDe.cpp'; else $(CYGPATH_W) '$(srcdir)/StriDe.cpp'; fi`
+@am__fastdepCXX_FALSE@	$(AM_V_CXX@am__nodep@)$(CXX) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(grow_CPPFLAGS) $(CPPFLAGS) $(AM_CXXFLAGS) $(CXXFLAGS) -c -o grow-StriDe.obj `if test -f 'StriDe.cpp'; then $(CYGPATH_W) 'StriDe.cpp'; else $(CYGPATH_W) '$(srcdir)/StriDe.cpp'; fi`
 
-stride-strideall.o: strideall.cpp
-@am__fastdepCXX_TRUE@	$(AM_V_CXX)$(CXX) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(stride_CPPFLAGS) $(CPPFLAGS) $(AM_CXXFLAGS) $(CXXFLAGS) -MT stride-strideall.o -MD -MP -MF $(DEPDIR)/stride-strideall.Tpo -c -o stride-strideall.o `test -f 'strideall.cpp' || echo '$(srcdir)/'`strideall.cpp
-@am__fastdepCXX_TRUE@	$(AM_V_at)$(am__mv) $(DEPDIR)/stride-strideall.Tpo $(DEPDIR)/stride-strideall.Po
-@AMDEP_TRUE@@am__fastdepCXX_FALSE@	$(AM_V_CXX)source='strideall.cpp' object='stride-strideall.o' libtool=no @AMDEPBACKSLASH@
+grow-strideall.o: strideall.cpp
+@am__fastdepCXX_TRUE@	$(AM_V_CXX)$(CXX) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(grow_CPPFLAGS) $(CPPFLAGS) $(AM_CXXFLAGS) $(CXXFLAGS) -MT grow-strideall.o -MD -MP -MF $(DEPDIR)/grow-strideall.Tpo -c -o grow-strideall.o `test -f 'strideall.cpp' || echo '$(srcdir)/'`strideall.cpp
+@am__fastdepCXX_TRUE@	$(AM_V_at)$(am__mv) $(DEPDIR)/grow-strideall.Tpo $(DEPDIR)/grow-strideall.Po
+@AMDEP_TRUE@@am__fastdepCXX_FALSE@	$(AM_V_CXX)source='strideall.cpp' object='grow-strideall.o' libtool=no @AMDEPBACKSLASH@
 @AMDEP_TRUE@@am__fastdepCXX_FALSE@	DEPDIR=$(DEPDIR) $(CXXDEPMODE) $(depcomp) @AMDEPBACKSLASH@
-@am__fastdepCXX_FALSE@	$(AM_V_CXX@am__nodep@)$(CXX) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(stride_CPPFLAGS) $(CPPFLAGS) $(AM_CXXFLAGS) $(CXXFLAGS) -c -o stride-strideall.o `test -f 'strideall.cpp' || echo '$(srcdir)/'`strideall.cpp
+@am__fastdepCXX_FALSE@	$(AM_V_CXX@am__nodep@)$(CXX) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(grow_CPPFLAGS) $(CPPFLAGS) $(AM_CXXFLAGS) $(CXXFLAGS) -c -o grow-strideall.o `test -f 'strideall.cpp' || echo '$(srcdir)/'`strideall.cpp
 
-stride-strideall.obj: strideall.cpp
-@am__fastdepCXX_TRUE@	$(AM_V_CXX)$(CXX) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(stride_CPPFLAGS) $(CPPFLAGS) $(AM_CXXFLAGS) $(CXXFLAGS) -MT stride-strideall.obj -MD -MP -MF $(DEPDIR)/stride-strideall.Tpo -c -o stride-strideall.obj `if test -f 'strideall.cpp'; then $(CYGPATH_W) 'strideall.cpp'; else $(CYGPATH_W) '$(srcdir)/strideall.cpp'; fi`
-@am__fastdepCXX_TRUE@	$(AM_V_at)$(am__mv) $(DEPDIR)/stride-strideall.Tpo $(DEPDIR)/stride-strideall.Po
-@AMDEP_TRUE@@am__fastdepCXX_FALSE@	$(AM_V_CXX)source='strideall.cpp' object='stride-strideall.obj' libtool=no @AMDEPBACKSLASH@
+grow-strideall.obj: strideall.cpp
+@am__fastdepCXX_TRUE@	$(AM_V_CXX)$(CXX) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(grow_CPPFLAGS) $(CPPFLAGS) $(AM_CXXFLAGS) $(CXXFLAGS) -MT grow-strideall.obj -MD -MP -MF $(DEPDIR)/grow-strideall.Tpo -c -o grow-strideall.obj `if test -f 'strideall.cpp'; then $(CYGPATH_W) 'strideall.cpp'; else $(CYGPATH_W) '$(srcdir)/strideall.cpp'; fi`
+@am__fastdepCXX_TRUE@	$(AM_V_at)$(am__mv) $(DEPDIR)/grow-strideall.Tpo $(DEPDIR)/grow-strideall.Po
+@AMDEP_TRUE@@am__fastdepCXX_FALSE@	$(AM_V_CXX)source='strideall.cpp' object='grow-strideall.obj' libtool=no @AMDEPBACKSLASH@
 @AMDEP_TRUE@@am__fastdepCXX_FALSE@	DEPDIR=$(DEPDIR) $(CXXDEPMODE) $(depcomp) @AMDEPBACKSLASH@
-@am__fastdepCXX_FALSE@	$(AM_V_CXX@am__nodep@)$(CXX) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(stride_CPPFLAGS) $(CPPFLAGS) $(AM_CXXFLAGS) $(CXXFLAGS) -c -o stride-strideall.obj `if test -f 'strideall.cpp'; then $(CYGPATH_W) 'strideall.cpp'; else $(CYGPATH_W) '$(srcdir)/strideall.cpp'; fi`
+@am__fastdepCXX_FALSE@	$(AM_V_CXX@am__nodep@)$(CXX) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(grow_CPPFLAGS) $(CPPFLAGS) $(AM_CXXFLAGS) $(CXXFLAGS) -c -o grow-strideall.obj `if test -f 'strideall.cpp'; then $(CYGPATH_W) 'strideall.cpp'; else $(CYGPATH_W) '$(srcdir)/strideall.cpp'; fi`
 
-stride-index.o: index.cpp
-@am__fastdepCXX_TRUE@	$(AM_V_CXX)$(CXX) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(stride_CPPFLAGS) $(CPPFLAGS) $(AM_CXXFLAGS) $(CXXFLAGS) -MT stride-index.o -MD -MP -MF $(DEPDIR)/stride-index.Tpo -c -o stride-index.o `test -f 'index.cpp' || echo '$(srcdir)/'`index.cpp
-@am__fastdepCXX_TRUE@	$(AM_V_at)$(am__mv) $(DEPDIR)/stride-index.Tpo $(DEPDIR)/stride-index.Po
-@AMDEP_TRUE@@am__fastdepCXX_FALSE@	$(AM_V_CXX)source='index.cpp' object='stride-index.o' libtool=no @AMDEPBACKSLASH@
+grow-index.o: index.cpp
+@am__fastdepCXX_TRUE@	$(AM_V_CXX)$(CXX) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(grow_CPPFLAGS) $(CPPFLAGS) $(AM_CXXFLAGS) $(CXXFLAGS) -MT grow-index.o -MD -MP -MF $(DEPDIR)/grow-index.Tpo -c -o grow-index.o `test -f 'index.cpp' || echo '$(srcdir)/'`index.cpp
+@am__fastdepCXX_TRUE@	$(AM_V_at)$(am__mv) $(DEPDIR)/grow-index.Tpo $(DEPDIR)/grow-index.Po
+@AMDEP_TRUE@@am__fastdepCXX_FALSE@	$(AM_V_CXX)source='index.cpp' object='grow-index.o' libtool=no @AMDEPBACKSLASH@
 @AMDEP_TRUE@@am__fastdepCXX_FALSE@	DEPDIR=$(DEPDIR) $(CXXDEPMODE) $(depcomp) @AMDEPBACKSLASH@
-@am__fastdepCXX_FALSE@	$(AM_V_CXX@am__nodep@)$(CXX) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(stride_CPPFLAGS) $(CPPFLAGS) $(AM_CXXFLAGS) $(CXXFLAGS) -c -o stride-index.o `test -f 'index.cpp' || echo '$(srcdir)/'`index.cpp
+@am__fastdepCXX_FALSE@	$(AM_V_CXX@am__nodep@)$(CXX) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(grow_CPPFLAGS) $(CPPFLAGS) $(AM_CXXFLAGS) $(CXXFLAGS) -c -o grow-index.o `test -f 'index.cpp' || echo '$(srcdir)/'`index.cpp
 
-stride-index.obj: index.cpp
-@am__fastdepCXX_TRUE@	$(AM_V_CXX)$(CXX) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(stride_CPPFLAGS) $(CPPFLAGS) $(AM_CXXFLAGS) $(CXXFLAGS) -MT stride-index.obj -MD -MP -MF $(DEPDIR)/stride-index.Tpo -c -o stride-index.obj `if test -f 'index.cpp'; then $(CYGPATH_W) 'index.cpp'; else $(CYGPATH_W) '$(srcdir)/index.cpp'; fi`
-@am__fastdepCXX_TRUE@	$(AM_V_at)$(am__mv) $(DEPDIR)/stride-index.Tpo $(DEPDIR)/stride-index.Po
-@AMDEP_TRUE@@am__fastdepCXX_FALSE@	$(AM_V_CXX)source='index.cpp' object='stride-index.obj' libtool=no @AMDEPBACKSLASH@
+grow-index.obj: index.cpp
+@am__fastdepCXX_TRUE@	$(AM_V_CXX)$(CXX) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(grow_CPPFLAGS) $(CPPFLAGS) $(AM_CXXFLAGS) $(CXXFLAGS) -MT grow-index.obj -MD -MP -MF $(DEPDIR)/grow-index.Tpo -c -o grow-index.obj `if test -f 'index.cpp'; then $(CYGPATH_W) 'index.cpp'; else $(CYGPATH_W) '$(srcdir)/index.cpp'; fi`
+@am__fastdepCXX_TRUE@	$(AM_V_at)$(am__mv) $(DEPDIR)/grow-index.Tpo $(DEPDIR)/grow-index.Po
+@AMDEP_TRUE@@am__fastdepCXX_FALSE@	$(AM_V_CXX)source='index.cpp' object='grow-index.obj' libtool=no @AMDEPBACKSLASH@
 @AMDEP_TRUE@@am__fastdepCXX_FALSE@	DEPDIR=$(DEPDIR) $(CXXDEPMODE) $(depcomp) @AMDEPBACKSLASH@
-@am__fastdepCXX_FALSE@	$(AM_V_CXX@am__nodep@)$(CXX) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(stride_CPPFLAGS) $(CPPFLAGS) $(AM_CXXFLAGS) $(CXXFLAGS) -c -o stride-index.obj `if test -f 'index.cpp'; then $(CYGPATH_W) 'index.cpp'; else $(CYGPATH_W) '$(srcdir)/index.cpp'; fi`
+@am__fastdepCXX_FALSE@	$(AM_V_CXX@am__nodep@)$(CXX) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(grow_CPPFLAGS) $(CPPFLAGS) $(AM_CXXFLAGS) $(CXXFLAGS) -c -o grow-index.obj `if test -f 'index.cpp'; then $(CYGPATH_W) 'index.cpp'; else $(CYGPATH_W) '$(srcdir)/index.cpp'; fi`
 
-stride-overlap.o: overlap.cpp
-@am__fastdepCXX_TRUE@	$(AM_V_CXX)$(CXX) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(stride_CPPFLAGS) $(CPPFLAGS) $(AM_CXXFLAGS) $(CXXFLAGS) -MT stride-overlap.o -MD -MP -MF $(DEPDIR)/stride-overlap.Tpo -c -o stride-overlap.o `test -f 'overlap.cpp' || echo '$(srcdir)/'`overlap.cpp
-@am__fastdepCXX_TRUE@	$(AM_V_at)$(am__mv) $(DEPDIR)/stride-overlap.Tpo $(DEPDIR)/stride-overlap.Po
-@AMDEP_TRUE@@am__fastdepCXX_FALSE@	$(AM_V_CXX)source='overlap.cpp' object='stride-overlap.o' libtool=no @AMDEPBACKSLASH@
+grow-overlap.o: overlap.cpp
+@am__fastdepCXX_TRUE@	$(AM_V_CXX)$(CXX) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(grow_CPPFLAGS) $(CPPFLAGS) $(AM_CXXFLAGS) $(CXXFLAGS) -MT grow-overlap.o -MD -MP -MF $(DEPDIR)/grow-overlap.Tpo -c -o grow-overlap.o `test -f 'overlap.cpp' || echo '$(srcdir)/'`overlap.cpp
+@am__fastdepCXX_TRUE@	$(AM_V_at)$(am__mv) $(DEPDIR)/grow-overlap.Tpo $(DEPDIR)/grow-overlap.Po
+@AMDEP_TRUE@@am__fastdepCXX_FALSE@	$(AM_V_CXX)source='overlap.cpp' object='grow-overlap.o' libtool=no @AMDEPBACKSLASH@
 @AMDEP_TRUE@@am__fastdepCXX_FALSE@	DEPDIR=$(DEPDIR) $(CXXDEPMODE) $(depcomp) @AMDEPBACKSLASH@
-@am__fastdepCXX_FALSE@	$(AM_V_CXX@am__nodep@)$(CXX) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(stride_CPPFLAGS) $(CPPFLAGS) $(AM_CXXFLAGS) $(CXXFLAGS) -c -o stride-overlap.o `test -f 'overlap.cpp' || echo '$(srcdir)/'`overlap.cpp
+@am__fastdepCXX_FALSE@	$(AM_V_CXX@am__nodep@)$(CXX) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(grow_CPPFLAGS) $(CPPFLAGS) $(AM_CXXFLAGS) $(CXXFLAGS) -c -o grow-overlap.o `test -f 'overlap.cpp' || echo '$(srcdir)/'`overlap.cpp
 
-stride-overlap.obj: overlap.cpp
-@am__fastdepCXX_TRUE@	$(AM_V_CXX)$(CXX) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(stride_CPPFLAGS) $(CPPFLAGS) $(AM_CXXFLAGS) $(CXXFLAGS) -MT stride-overlap.obj -MD -MP -MF $(DEPDIR)/stride-overlap.Tpo -c -o stride-overlap.obj `if test -f 'overlap.cpp'; then $(CYGPATH_W) 'overlap.cpp'; else $(CYGPATH_W) '$(srcdir)/overlap.cpp'; fi`
-@am__fastdepCXX_TRUE@	$(AM_V_at)$(am__mv) $(DEPDIR)/stride-overlap.Tpo $(DEPDIR)/stride-overlap.Po
-@AMDEP_TRUE@@am__fastdepCXX_FALSE@	$(AM_V_CXX)source='overlap.cpp' object='stride-overlap.obj' libtool=no @AMDEPBACKSLASH@
+grow-overlap.obj: overlap.cpp
+@am__fastdepCXX_TRUE@	$(AM_V_CXX)$(CXX) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(grow_CPPFLAGS) $(CPPFLAGS) $(AM_CXXFLAGS) $(CXXFLAGS) -MT grow-overlap.obj -MD -MP -MF $(DEPDIR)/grow-overlap.Tpo -c -o grow-overlap.obj `if test -f 'overlap.cpp'; then $(CYGPATH_W) 'overlap.cpp'; else $(CYGPATH_W) '$(srcdir)/overlap.cpp'; fi`
+@am__fastdepCXX_TRUE@	$(AM_V_at)$(am__mv) $(DEPDIR)/grow-overlap.Tpo $(DEPDIR)/grow-overlap.Po
+@AMDEP_TRUE@@am__fastdepCXX_FALSE@	$(AM_V_CXX)source='overlap.cpp' object='grow-overlap.obj' libtool=no @AMDEPBACKSLASH@
 @AMDEP_TRUE@@am__fastdepCXX_FALSE@	DEPDIR=$(DEPDIR) $(CXXDEPMODE) $(depcomp) @AMDEPBACKSLASH@
-@am__fastdepCXX_FALSE@	$(AM_V_CXX@am__nodep@)$(CXX) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(stride_CPPFLAGS) $(CPPFLAGS) $(AM_CXXFLAGS) $(CXXFLAGS) -c -o stride-overlap.obj `if test -f 'overlap.cpp'; then $(CYGPATH_W) 'overlap.cpp'; else $(CYGPATH_W) '$(srcdir)/overlap.cpp'; fi`
+@am__fastdepCXX_FALSE@	$(AM_V_CXX@am__nodep@)$(CXX) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(grow_CPPFLAGS) $(CPPFLAGS) $(AM_CXXFLAGS) $(CXXFLAGS) -c -o grow-overlap.obj `if test -f 'overlap.cpp'; then $(CYGPATH_W) 'overlap.cpp'; else $(CYGPATH_W) '$(srcdir)/overlap.cpp'; fi`
 
-stride-assemble.o: assemble.cpp
-@am__fastdepCXX_TRUE@	$(AM_V_CXX)$(CXX) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(stride_CPPFLAGS) $(CPPFLAGS) $(AM_CXXFLAGS) $(CXXFLAGS) -MT stride-assemble.o -MD -MP -MF $(DEPDIR)/stride-assemble.Tpo -c -o stride-assemble.o `test -f 'assemble.cpp' || echo '$(srcdir)/'`assemble.cpp
-@am__fastdepCXX_TRUE@	$(AM_V_at)$(am__mv) $(DEPDIR)/stride-assemble.Tpo $(DEPDIR)/stride-assemble.Po
-@AMDEP_TRUE@@am__fastdepCXX_FALSE@	$(AM_V_CXX)source='assemble.cpp' object='stride-assemble.o' libtool=no @AMDEPBACKSLASH@
+grow-assemble.o: assemble.cpp
+@am__fastdepCXX_TRUE@	$(AM_V_CXX)$(CXX) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(grow_CPPFLAGS) $(CPPFLAGS) $(AM_CXXFLAGS) $(CXXFLAGS) -MT grow-assemble.o -MD -MP -MF $(DEPDIR)/grow-assemble.Tpo -c -o grow-assemble.o `test -f 'assemble.cpp' || echo '$(srcdir)/'`assemble.cpp
+@am__fastdepCXX_TRUE@	$(AM_V_at)$(am__mv) $(DEPDIR)/grow-assemble.Tpo $(DEPDIR)/grow-assemble.Po
+@AMDEP_TRUE@@am__fastdepCXX_FALSE@	$(AM_V_CXX)source='assemble.cpp' object='grow-assemble.o' libtool=no @AMDEPBACKSLASH@
 @AMDEP_TRUE@@am__fastdepCXX_FALSE@	DEPDIR=$(DEPDIR) $(CXXDEPMODE) $(depcomp) @AMDEPBACKSLASH@
-@am__fastdepCXX_FALSE@	$(AM_V_CXX@am__nodep@)$(CXX) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(stride_CPPFLAGS) $(CPPFLAGS) $(AM_CXXFLAGS) $(CXXFLAGS) -c -o stride-assemble.o `test -f 'assemble.cpp' || echo '$(srcdir)/'`assemble.cpp
+@am__fastdepCXX_FALSE@	$(AM_V_CXX@am__nodep@)$(CXX) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(grow_CPPFLAGS) $(CPPFLAGS) $(AM_CXXFLAGS) $(CXXFLAGS) -c -o grow-assemble.o `test -f 'assemble.cpp' || echo '$(srcdir)/'`assemble.cpp
 
-stride-assemble.obj: assemble.cpp
-@am__fastdepCXX_TRUE@	$(AM_V_CXX)$(CXX) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(stride_CPPFLAGS) $(CPPFLAGS) $(AM_CXXFLAGS) $(CXXFLAGS) -MT stride-assemble.obj -MD -MP -MF $(DEPDIR)/stride-assemble.Tpo -c -o stride-assemble.obj `if test -f 'assemble.cpp'; then $(CYGPATH_W) 'assemble.cpp'; else $(CYGPATH_W) '$(srcdir)/assemble.cpp'; fi`
-@am__fastdepCXX_TRUE@	$(AM_V_at)$(am__mv) $(DEPDIR)/stride-assemble.Tpo $(DEPDIR)/stride-assemble.Po
-@AMDEP_TRUE@@am__fastdepCXX_FALSE@	$(AM_V_CXX)source='assemble.cpp' object='stride-assemble.obj' libtool=no @AMDEPBACKSLASH@
+grow-assemble.obj: assemble.cpp
+@am__fastdepCXX_TRUE@	$(AM_V_CXX)$(CXX) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(grow_CPPFLAGS) $(CPPFLAGS) $(AM_CXXFLAGS) $(CXXFLAGS) -MT grow-assemble.obj -MD -MP -MF $(DEPDIR)/grow-assemble.Tpo -c -o grow-assemble.obj `if test -f 'assemble.cpp'; then $(CYGPATH_W) 'assemble.cpp'; else $(CYGPATH_W) '$(srcdir)/assemble.cpp'; fi`
+@am__fastdepCXX_TRUE@	$(AM_V_at)$(am__mv) $(DEPDIR)/grow-assemble.Tpo $(DEPDIR)/grow-assemble.Po
+@AMDEP_TRUE@@am__fastdepCXX_FALSE@	$(AM_V_CXX)source='assemble.cpp' object='grow-assemble.obj' libtool=no @AMDEPBACKSLASH@
 @AMDEP_TRUE@@am__fastdepCXX_FALSE@	DEPDIR=$(DEPDIR) $(CXXDEPMODE) $(depcomp) @AMDEPBACKSLASH@
-@am__fastdepCXX_FALSE@	$(AM_V_CXX@am__nodep@)$(CXX) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(stride_CPPFLAGS) $(CPPFLAGS) $(AM_CXXFLAGS) $(CXXFLAGS) -c -o stride-assemble.obj `if test -f 'assemble.cpp'; then $(CYGPATH_W) 'assemble.cpp'; else $(CYGPATH_W) '$(srcdir)/assemble.cpp'; fi`
+@am__fastdepCXX_FALSE@	$(AM_V_CXX@am__nodep@)$(CXX) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(grow_CPPFLAGS) $(CPPFLAGS) $(AM_CXXFLAGS) $(CXXFLAGS) -c -o grow-assemble.obj `if test -f 'assemble.cpp'; then $(CYGPATH_W) 'assemble.cpp'; else $(CYGPATH_W) '$(srcdir)/assemble.cpp'; fi`
 
-stride-correct.o: correct.cpp
-@am__fastdepCXX_TRUE@	$(AM_V_CXX)$(CXX) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(stride_CPPFLAGS) $(CPPFLAGS) $(AM_CXXFLAGS) $(CXXFLAGS) -MT stride-correct.o -MD -MP -MF $(DEPDIR)/stride-correct.Tpo -c -o stride-correct.o `test -f 'correct.cpp' || echo '$(srcdir)/'`correct.cpp
-@am__fastdepCXX_TRUE@	$(AM_V_at)$(am__mv) $(DEPDIR)/stride-correct.Tpo $(DEPDIR)/stride-correct.Po
-@AMDEP_TRUE@@am__fastdepCXX_FALSE@	$(AM_V_CXX)source='correct.cpp' object='stride-correct.o' libtool=no @AMDEPBACKSLASH@
+grow-correct.o: correct.cpp
+@am__fastdepCXX_TRUE@	$(AM_V_CXX)$(CXX) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(grow_CPPFLAGS) $(CPPFLAGS) $(AM_CXXFLAGS) $(CXXFLAGS) -MT grow-correct.o -MD -MP -MF $(DEPDIR)/grow-correct.Tpo -c -o grow-correct.o `test -f 'correct.cpp' || echo '$(srcdir)/'`correct.cpp
+@am__fastdepCXX_TRUE@	$(AM_V_at)$(am__mv) $(DEPDIR)/grow-correct.Tpo $(DEPDIR)/grow-correct.Po
+@AMDEP_TRUE@@am__fastdepCXX_FALSE@	$(AM_V_CXX)source='correct.cpp' object='grow-correct.o' libtool=no @AMDEPBACKSLASH@
 @AMDEP_TRUE@@am__fastdepCXX_FALSE@	DEPDIR=$(DEPDIR) $(CXXDEPMODE) $(depcomp) @AMDEPBACKSLASH@
-@am__fastdepCXX_FALSE@	$(AM_V_CXX@am__nodep@)$(CXX) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(stride_CPPFLAGS) $(CPPFLAGS) $(AM_CXXFLAGS) $(CXXFLAGS) -c -o stride-correct.o `test -f 'correct.cpp' || echo '$(srcdir)/'`correct.cpp
+@am__fastdepCXX_FALSE@	$(AM_V_CXX@am__nodep@)$(CXX) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(grow_CPPFLAGS) $(CPPFLAGS) $(AM_CXXFLAGS) $(CXXFLAGS) -c -o grow-correct.o `test -f 'correct.cpp' || echo '$(srcdir)/'`correct.cpp
 
-stride-correct.obj: correct.cpp
-@am__fastdepCXX_TRUE@	$(AM_V_CXX)$(CXX) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(stride_CPPFLAGS) $(CPPFLAGS) $(AM_CXXFLAGS) $(CXXFLAGS) -MT stride-correct.obj -MD -MP -MF $(DEPDIR)/stride-correct.Tpo -c -o stride-correct.obj `if test -f 'correct.cpp'; then $(CYGPATH_W) 'correct.cpp'; else $(CYGPATH_W) '$(srcdir)/correct.cpp'; fi`
-@am__fastdepCXX_TRUE@	$(AM_V_at)$(am__mv) $(DEPDIR)/stride-correct.Tpo $(DEPDIR)/stride-correct.Po
-@AMDEP_TRUE@@am__fastdepCXX_FALSE@	$(AM_V_CXX)source='correct.cpp' object='stride-correct.obj' libtool=no @AMDEPBACKSLASH@
+grow-correct.obj: correct.cpp
+@am__fastdepCXX_TRUE@	$(AM_V_CXX)$(CXX) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(grow_CPPFLAGS) $(CPPFLAGS) $(AM_CXXFLAGS) $(CXXFLAGS) -MT grow-correct.obj -MD -MP -MF $(DEPDIR)/grow-correct.Tpo -c -o grow-correct.obj `if test -f 'correct.cpp'; then $(CYGPATH_W) 'correct.cpp'; else $(CYGPATH_W) '$(srcdir)/correct.cpp'; fi`
+@am__fastdepCXX_TRUE@	$(AM_V_at)$(am__mv) $(DEPDIR)/grow-correct.Tpo $(DEPDIR)/grow-correct.Po
+@AMDEP_TRUE@@am__fastdepCXX_FALSE@	$(AM_V_CXX)source='correct.cpp' object='grow-correct.obj' libtool=no @AMDEPBACKSLASH@
 @AMDEP_TRUE@@am__fastdepCXX_FALSE@	DEPDIR=$(DEPDIR) $(CXXDEPMODE) $(depcomp) @AMDEPBACKSLASH@
-@am__fastdepCXX_FALSE@	$(AM_V_CXX@am__nodep@)$(CXX) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(stride_CPPFLAGS) $(CPPFLAGS) $(AM_CXXFLAGS) $(CXXFLAGS) -c -o stride-correct.obj `if test -f 'correct.cpp'; then $(CYGPATH_W) 'correct.cpp'; else $(CYGPATH_W) '$(srcdir)/correct.cpp'; fi`
+@am__fastdepCXX_FALSE@	$(AM_V_CXX@am__nodep@)$(CXX) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(grow_CPPFLAGS) $(CPPFLAGS) $(AM_CXXFLAGS) $(CXXFLAGS) -c -o grow-correct.obj `if test -f 'correct.cpp'; then $(CYGPATH_W) 'correct.cpp'; else $(CYGPATH_W) '$(srcdir)/correct.cpp'; fi`
 
-stride-oview.o: oview.cpp
-@am__fastdepCXX_TRUE@	$(AM_V_CXX)$(CXX) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(stride_CPPFLAGS) $(CPPFLAGS) $(AM_CXXFLAGS) $(CXXFLAGS) -MT stride-oview.o -MD -MP -MF $(DEPDIR)/stride-oview.Tpo -c -o stride-oview.o `test -f 'oview.cpp' || echo '$(srcdir)/'`oview.cpp
-@am__fastdepCXX_TRUE@	$(AM_V_at)$(am__mv) $(DEPDIR)/stride-oview.Tpo $(DEPDIR)/stride-oview.Po
-@AMDEP_TRUE@@am__fastdepCXX_FALSE@	$(AM_V_CXX)source='oview.cpp' object='stride-oview.o' libtool=no @AMDEPBACKSLASH@
+grow-oview.o: oview.cpp
+@am__fastdepCXX_TRUE@	$(AM_V_CXX)$(CXX) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(grow_CPPFLAGS) $(CPPFLAGS) $(AM_CXXFLAGS) $(CXXFLAGS) -MT grow-oview.o -MD -MP -MF $(DEPDIR)/grow-oview.Tpo -c -o grow-oview.o `test -f 'oview.cpp' || echo '$(srcdir)/'`oview.cpp
+@am__fastdepCXX_TRUE@	$(AM_V_at)$(am__mv) $(DEPDIR)/grow-oview.Tpo $(DEPDIR)/grow-oview.Po
+@AMDEP_TRUE@@am__fastdepCXX_FALSE@	$(AM_V_CXX)source='oview.cpp' object='grow-oview.o' libtool=no @AMDEPBACKSLASH@
 @AMDEP_TRUE@@am__fastdepCXX_FALSE@	DEPDIR=$(DEPDIR) $(CXXDEPMODE) $(depcomp) @AMDEPBACKSLASH@
-@am__fastdepCXX_FALSE@	$(AM_V_CXX@am__nodep@)$(CXX) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(stride_CPPFLAGS) $(CPPFLAGS) $(AM_CXXFLAGS) $(CXXFLAGS) -c -o stride-oview.o `test -f 'oview.cpp' || echo '$(srcdir)/'`oview.cpp
+@am__fastdepCXX_FALSE@	$(AM_V_CXX@am__nodep@)$(CXX) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(grow_CPPFLAGS) $(CPPFLAGS) $(AM_CXXFLAGS) $(CXXFLAGS) -c -o grow-oview.o `test -f 'oview.cpp' || echo '$(srcdir)/'`oview.cpp
 
-stride-oview.obj: oview.cpp
-@am__fastdepCXX_TRUE@	$(AM_V_CXX)$(CXX) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(stride_CPPFLAGS) $(CPPFLAGS) $(AM_CXXFLAGS) $(CXXFLAGS) -MT stride-oview.obj -MD -MP -MF $(DEPDIR)/stride-oview.Tpo -c -o stride-oview.obj `if test -f 'oview.cpp'; then $(CYGPATH_W) 'oview.cpp'; else $(CYGPATH_W) '$(srcdir)/oview.cpp'; fi`
-@am__fastdepCXX_TRUE@	$(AM_V_at)$(am__mv) $(DEPDIR)/stride-oview.Tpo $(DEPDIR)/stride-oview.Po
-@AMDEP_TRUE@@am__fastdepCXX_FALSE@	$(AM_V_CXX)source='oview.cpp' object='stride-oview.obj' libtool=no @AMDEPBACKSLASH@
+grow-oview.obj: oview.cpp
+@am__fastdepCXX_TRUE@	$(AM_V_CXX)$(CXX) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(grow_CPPFLAGS) $(CPPFLAGS) $(AM_CXXFLAGS) $(CXXFLAGS) -MT grow-oview.obj -MD -MP -MF $(DEPDIR)/grow-oview.Tpo -c -o grow-oview.obj `if test -f 'oview.cpp'; then $(CYGPATH_W) 'oview.cpp'; else $(CYGPATH_W) '$(srcdir)/oview.cpp'; fi`
+@am__fastdepCXX_TRUE@	$(AM_V_at)$(am__mv) $(DEPDIR)/grow-oview.Tpo $(DEPDIR)/grow-oview.Po
+@AMDEP_TRUE@@am__fastdepCXX_FALSE@	$(AM_V_CXX)source='oview.cpp' object='grow-oview.obj' libtool=no @AMDEPBACKSLASH@
 @AMDEP_TRUE@@am__fastdepCXX_FALSE@	DEPDIR=$(DEPDIR) $(CXXDEPMODE) $(depcomp) @AMDEPBACKSLASH@
-@am__fastdepCXX_FALSE@	$(AM_V_CXX@am__nodep@)$(CXX) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(stride_CPPFLAGS) $(CPPFLAGS) $(AM_CXXFLAGS) $(CXXFLAGS) -c -o stride-oview.obj `if test -f 'oview.cpp'; then $(CYGPATH_W) 'oview.cpp'; else $(CYGPATH_W) '$(srcdir)/oview.cpp'; fi`
+@am__fastdepCXX_FALSE@	$(AM_V_CXX@am__nodep@)$(CXX) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(grow_CPPFLAGS) $(CPPFLAGS) $(AM_CXXFLAGS) $(CXXFLAGS) -c -o grow-oview.obj `if test -f 'oview.cpp'; then $(CYGPATH_W) 'oview.cpp'; else $(CYGPATH_W) '$(srcdir)/oview.cpp'; fi`
 
-stride-preprocess.o: preprocess.cpp
-@am__fastdepCXX_TRUE@	$(AM_V_CXX)$(CXX) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(stride_CPPFLAGS) $(CPPFLAGS) $(AM_CXXFLAGS) $(CXXFLAGS) -MT stride-preprocess.o -MD -MP -MF $(DEPDIR)/stride-preprocess.Tpo -c -o stride-preprocess.o `test -f 'preprocess.cpp' || echo '$(srcdir)/'`preprocess.cpp
-@am__fastdepCXX_TRUE@	$(AM_V_at)$(am__mv) $(DEPDIR)/stride-preprocess.Tpo $(DEPDIR)/stride-preprocess.Po
-@AMDEP_TRUE@@am__fastdepCXX_FALSE@	$(AM_V_CXX)source='preprocess.cpp' object='stride-preprocess.o' libtool=no @AMDEPBACKSLASH@
+grow-preprocess.o: preprocess.cpp
+@am__fastdepCXX_TRUE@	$(AM_V_CXX)$(CXX) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(grow_CPPFLAGS) $(CPPFLAGS) $(AM_CXXFLAGS) $(CXXFLAGS) -MT grow-preprocess.o -MD -MP -MF $(DEPDIR)/grow-preprocess.Tpo -c -o grow-preprocess.o `test -f 'preprocess.cpp' || echo '$(srcdir)/'`preprocess.cpp
+@am__fastdepCXX_TRUE@	$(AM_V_at)$(am__mv) $(DEPDIR)/grow-preprocess.Tpo $(DEPDIR)/grow-preprocess.Po
+@AMDEP_TRUE@@am__fastdepCXX_FALSE@	$(AM_V_CXX)source='preprocess.cpp' object='grow-preprocess.o' libtool=no @AMDEPBACKSLASH@
 @AMDEP_TRUE@@am__fastdepCXX_FALSE@	DEPDIR=$(DEPDIR) $(CXXDEPMODE) $(depcomp) @AMDEPBACKSLASH@
-@am__fastdepCXX_FALSE@	$(AM_V_CXX@am__nodep@)$(CXX) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(stride_CPPFLAGS) $(CPPFLAGS) $(AM_CXXFLAGS) $(CXXFLAGS) -c -o stride-preprocess.o `test -f 'preprocess.cpp' || echo '$(srcdir)/'`preprocess.cpp
+@am__fastdepCXX_FALSE@	$(AM_V_CXX@am__nodep@)$(CXX) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(grow_CPPFLAGS) $(CPPFLAGS) $(AM_CXXFLAGS) $(CXXFLAGS) -c -o grow-preprocess.o `test -f 'preprocess.cpp' || echo '$(srcdir)/'`preprocess.cpp
 
-stride-preprocess.obj: preprocess.cpp
-@am__fastdepCXX_TRUE@	$(AM_V_CXX)$(CXX) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(stride_CPPFLAGS) $(CPPFLAGS) $(AM_CXXFLAGS) $(CXXFLAGS) -MT stride-preprocess.obj -MD -MP -MF $(DEPDIR)/stride-preprocess.Tpo -c -o stride-preprocess.obj `if test -f 'preprocess.cpp'; then $(CYGPATH_W) 'preprocess.cpp'; else $(CYGPATH_W) '$(srcdir)/preprocess.cpp'; fi`
-@am__fastdepCXX_TRUE@	$(AM_V_at)$(am__mv) $(DEPDIR)/stride-preprocess.Tpo $(DEPDIR)/stride-preprocess.Po
-@AMDEP_TRUE@@am__fastdepCXX_FALSE@	$(AM_V_CXX)source='preprocess.cpp' object='stride-preprocess.obj' libtool=no @AMDEPBACKSLASH@
+grow-preprocess.obj: preprocess.cpp
+@am__fastdepCXX_TRUE@	$(AM_V_CXX)$(CXX) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(grow_CPPFLAGS) $(CPPFLAGS) $(AM_CXXFLAGS) $(CXXFLAGS) -MT grow-preprocess.obj -MD -MP -MF $(DEPDIR)/grow-preprocess.Tpo -c -o grow-preprocess.obj `if test -f 'preprocess.cpp'; then $(CYGPATH_W) 'preprocess.cpp'; else $(CYGPATH_W) '$(srcdir)/preprocess.cpp'; fi`
+@am__fastdepCXX_TRUE@	$(AM_V_at)$(am__mv) $(DEPDIR)/grow-preprocess.Tpo $(DEPDIR)/grow-preprocess.Po
+@AMDEP_TRUE@@am__fastdepCXX_FALSE@	$(AM_V_CXX)source='preprocess.cpp' object='grow-preprocess.obj' libtool=no @AMDEPBACKSLASH@
 @AMDEP_TRUE@@am__fastdepCXX_FALSE@	DEPDIR=$(DEPDIR) $(CXXDEPMODE) $(depcomp) @AMDEPBACKSLASH@
-@am__fastdepCXX_FALSE@	$(AM_V_CXX@am__nodep@)$(CXX) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(stride_CPPFLAGS) $(CPPFLAGS) $(AM_CXXFLAGS) $(CXXFLAGS) -c -o stride-preprocess.obj `if test -f 'preprocess.cpp'; then $(CYGPATH_W) 'preprocess.cpp'; else $(CYGPATH_W) '$(srcdir)/preprocess.cpp'; fi`
+@am__fastdepCXX_FALSE@	$(AM_V_CXX@am__nodep@)$(CXX) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(grow_CPPFLAGS) $(CPPFLAGS) $(AM_CXXFLAGS) $(CXXFLAGS) -c -o grow-preprocess.obj `if test -f 'preprocess.cpp'; then $(CYGPATH_W) 'preprocess.cpp'; else $(CYGPATH_W) '$(srcdir)/preprocess.cpp'; fi`
 
-stride-subgraph.o: subgraph.cpp
-@am__fastdepCXX_TRUE@	$(AM_V_CXX)$(CXX) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(stride_CPPFLAGS) $(CPPFLAGS) $(AM_CXXFLAGS) $(CXXFLAGS) -MT stride-subgraph.o -MD -MP -MF $(DEPDIR)/stride-subgraph.Tpo -c -o stride-subgraph.o `test -f 'subgraph.cpp' || echo '$(srcdir)/'`subgraph.cpp
-@am__fastdepCXX_TRUE@	$(AM_V_at)$(am__mv) $(DEPDIR)/stride-subgraph.Tpo $(DEPDIR)/stride-subgraph.Po
-@AMDEP_TRUE@@am__fastdepCXX_FALSE@	$(AM_V_CXX)source='subgraph.cpp' object='stride-subgraph.o' libtool=no @AMDEPBACKSLASH@
+grow-subgraph.o: subgraph.cpp
+@am__fastdepCXX_TRUE@	$(AM_V_CXX)$(CXX) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(grow_CPPFLAGS) $(CPPFLAGS) $(AM_CXXFLAGS) $(CXXFLAGS) -MT grow-subgraph.o -MD -MP -MF $(DEPDIR)/grow-subgraph.Tpo -c -o grow-subgraph.o `test -f 'subgraph.cpp' || echo '$(srcdir)/'`subgraph.cpp
+@am__fastdepCXX_TRUE@	$(AM_V_at)$(am__mv) $(DEPDIR)/grow-subgraph.Tpo $(DEPDIR)/grow-subgraph.Po
+@AMDEP_TRUE@@am__fastdepCXX_FALSE@	$(AM_V_CXX)source='subgraph.cpp' object='grow-subgraph.o' libtool=no @AMDEPBACKSLASH@
 @AMDEP_TRUE@@am__fastdepCXX_FALSE@	DEPDIR=$(DEPDIR) $(CXXDEPMODE) $(depcomp) @AMDEPBACKSLASH@
-@am__fastdepCXX_FALSE@	$(AM_V_CXX@am__nodep@)$(CXX) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(stride_CPPFLAGS) $(CPPFLAGS) $(AM_CXXFLAGS) $(CXXFLAGS) -c -o stride-subgraph.o `test -f 'subgraph.cpp' || echo '$(srcdir)/'`subgraph.cpp
+@am__fastdepCXX_FALSE@	$(AM_V_CXX@am__nodep@)$(CXX) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(grow_CPPFLAGS) $(CPPFLAGS) $(AM_CXXFLAGS) $(CXXFLAGS) -c -o grow-subgraph.o `test -f 'subgraph.cpp' || echo '$(srcdir)/'`subgraph.cpp
 
-stride-subgraph.obj: subgraph.cpp
-@am__fastdepCXX_TRUE@	$(AM_V_CXX)$(CXX) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(stride_CPPFLAGS) $(CPPFLAGS) $(AM_CXXFLAGS) $(CXXFLAGS) -MT stride-subgraph.obj -MD -MP -MF $(DEPDIR)/stride-subgraph.Tpo -c -o stride-subgraph.obj `if test -f 'subgraph.cpp'; then $(CYGPATH_W) 'subgraph.cpp'; else $(CYGPATH_W) '$(srcdir)/subgraph.cpp'; fi`
-@am__fastdepCXX_TRUE@	$(AM_V_at)$(am__mv) $(DEPDIR)/stride-subgraph.Tpo $(DEPDIR)/stride-subgraph.Po
-@AMDEP_TRUE@@am__fastdepCXX_FALSE@	$(AM_V_CXX)source='subgraph.cpp' object='stride-subgraph.obj' libtool=no @AMDEPBACKSLASH@
+grow-subgraph.obj: subgraph.cpp
+@am__fastdepCXX_TRUE@	$(AM_V_CXX)$(CXX) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(grow_CPPFLAGS) $(CPPFLAGS) $(AM_CXXFLAGS) $(CXXFLAGS) -MT grow-subgraph.obj -MD -MP -MF $(DEPDIR)/grow-subgraph.Tpo -c -o grow-subgraph.obj `if test -f 'subgraph.cpp'; then $(CYGPATH_W) 'subgraph.cpp'; else $(CYGPATH_W) '$(srcdir)/subgraph.cpp'; fi`
+@am__fastdepCXX_TRUE@	$(AM_V_at)$(am__mv) $(DEPDIR)/grow-subgraph.Tpo $(DEPDIR)/grow-subgraph.Po
+@AMDEP_TRUE@@am__fastdepCXX_FALSE@	$(AM_V_CXX)source='subgraph.cpp' object='grow-subgraph.obj' libtool=no @AMDEPBACKSLASH@
 @AMDEP_TRUE@@am__fastdepCXX_FALSE@	DEPDIR=$(DEPDIR) $(CXXDEPMODE) $(depcomp) @AMDEPBACKSLASH@
-@am__fastdepCXX_FALSE@	$(AM_V_CXX@am__nodep@)$(CXX) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(stride_CPPFLAGS) $(CPPFLAGS) $(AM_CXXFLAGS) $(CXXFLAGS) -c -o stride-subgraph.obj `if test -f 'subgraph.cpp'; then $(CYGPATH_W) 'subgraph.cpp'; else $(CYGPATH_W) '$(srcdir)/subgraph.cpp'; fi`
+@am__fastdepCXX_FALSE@	$(AM_V_CXX@am__nodep@)$(CXX) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(grow_CPPFLAGS) $(CPPFLAGS) $(AM_CXXFLAGS) $(CXXFLAGS) -c -o grow-subgraph.obj `if test -f 'subgraph.cpp'; then $(CYGPATH_W) 'subgraph.cpp'; else $(CYGPATH_W) '$(srcdir)/subgraph.cpp'; fi`
 
-stride-filter.o: filter.cpp
-@am__fastdepCXX_TRUE@	$(AM_V_CXX)$(CXX) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(stride_CPPFLAGS) $(CPPFLAGS) $(AM_CXXFLAGS) $(CXXFLAGS) -MT stride-filter.o -MD -MP -MF $(DEPDIR)/stride-filter.Tpo -c -o stride-filter.o `test -f 'filter.cpp' || echo '$(srcdir)/'`filter.cpp
-@am__fastdepCXX_TRUE@	$(AM_V_at)$(am__mv) $(DEPDIR)/stride-filter.Tpo $(DEPDIR)/stride-filter.Po
-@AMDEP_TRUE@@am__fastdepCXX_FALSE@	$(AM_V_CXX)source='filter.cpp' object='stride-filter.o' libtool=no @AMDEPBACKSLASH@
+grow-filter.o: filter.cpp
+@am__fastdepCXX_TRUE@	$(AM_V_CXX)$(CXX) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(grow_CPPFLAGS) $(CPPFLAGS) $(AM_CXXFLAGS) $(CXXFLAGS) -MT grow-filter.o -MD -MP -MF $(DEPDIR)/grow-filter.Tpo -c -o grow-filter.o `test -f 'filter.cpp' || echo '$(srcdir)/'`filter.cpp
+@am__fastdepCXX_TRUE@	$(AM_V_at)$(am__mv) $(DEPDIR)/grow-filter.Tpo $(DEPDIR)/grow-filter.Po
+@AMDEP_TRUE@@am__fastdepCXX_FALSE@	$(AM_V_CXX)source='filter.cpp' object='grow-filter.o' libtool=no @AMDEPBACKSLASH@
 @AMDEP_TRUE@@am__fastdepCXX_FALSE@	DEPDIR=$(DEPDIR) $(CXXDEPMODE) $(depcomp) @AMDEPBACKSLASH@
-@am__fastdepCXX_FALSE@	$(AM_V_CXX@am__nodep@)$(CXX) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(stride_CPPFLAGS) $(CPPFLAGS) $(AM_CXXFLAGS) $(CXXFLAGS) -c -o stride-filter.o `test -f 'filter.cpp' || echo '$(srcdir)/'`filter.cpp
+@am__fastdepCXX_FALSE@	$(AM_V_CXX@am__nodep@)$(CXX) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(grow_CPPFLAGS) $(CPPFLAGS) $(AM_CXXFLAGS) $(CXXFLAGS) -c -o grow-filter.o `test -f 'filter.cpp' || echo '$(srcdir)/'`filter.cpp
 
-stride-filter.obj: filter.cpp
-@am__fastdepCXX_TRUE@	$(AM_V_CXX)$(CXX) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(stride_CPPFLAGS) $(CPPFLAGS) $(AM_CXXFLAGS) $(CXXFLAGS) -MT stride-filter.obj -MD -MP -MF $(DEPDIR)/stride-filter.Tpo -c -o stride-filter.obj `if test -f 'filter.cpp'; then $(CYGPATH_W) 'filter.cpp'; else $(CYGPATH_W) '$(srcdir)/filter.cpp'; fi`
-@am__fastdepCXX_TRUE@	$(AM_V_at)$(am__mv) $(DEPDIR)/stride-filter.Tpo $(DEPDIR)/stride-filter.Po
-@AMDEP_TRUE@@am__fastdepCXX_FALSE@	$(AM_V_CXX)source='filter.cpp' object='stride-filter.obj' libtool=no @AMDEPBACKSLASH@
+grow-filter.obj: filter.cpp
+@am__fastdepCXX_TRUE@	$(AM_V_CXX)$(CXX) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(grow_CPPFLAGS) $(CPPFLAGS) $(AM_CXXFLAGS) $(CXXFLAGS) -MT grow-filter.obj -MD -MP -MF $(DEPDIR)/grow-filter.Tpo -c -o grow-filter.obj `if test -f 'filter.cpp'; then $(CYGPATH_W) 'filter.cpp'; else $(CYGPATH_W) '$(srcdir)/filter.cpp'; fi`
+@am__fastdepCXX_TRUE@	$(AM_V_at)$(am__mv) $(DEPDIR)/grow-filter.Tpo $(DEPDIR)/grow-filter.Po
+@AMDEP_TRUE@@am__fastdepCXX_FALSE@	$(AM_V_CXX)source='filter.cpp' object='grow-filter.obj' libtool=no @AMDEPBACKSLASH@
 @AMDEP_TRUE@@am__fastdepCXX_FALSE@	DEPDIR=$(DEPDIR) $(CXXDEPMODE) $(depcomp) @AMDEPBACKSLASH@
-@am__fastdepCXX_FALSE@	$(AM_V_CXX@am__nodep@)$(CXX) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(stride_CPPFLAGS) $(CPPFLAGS) $(AM_CXXFLAGS) $(CXXFLAGS) -c -o stride-filter.obj `if test -f 'filter.cpp'; then $(CYGPATH_W) 'filter.cpp'; else $(CYGPATH_W) '$(srcdir)/filter.cpp'; fi`
+@am__fastdepCXX_FALSE@	$(AM_V_CXX@am__nodep@)$(CXX) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(grow_CPPFLAGS) $(CPPFLAGS) $(AM_CXXFLAGS) $(CXXFLAGS) -c -o grow-filter.obj `if test -f 'filter.cpp'; then $(CYGPATH_W) 'filter.cpp'; else $(CYGPATH_W) '$(srcdir)/filter.cpp'; fi`
 
-stride-fm-merge.o: fm-merge.cpp
-@am__fastdepCXX_TRUE@	$(AM_V_CXX)$(CXX) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(stride_CPPFLAGS) $(CPPFLAGS) $(AM_CXXFLAGS) $(CXXFLAGS) -MT stride-fm-merge.o -MD -MP -MF $(DEPDIR)/stride-fm-merge.Tpo -c -o stride-fm-merge.o `test -f 'fm-merge.cpp' || echo '$(srcdir)/'`fm-merge.cpp
-@am__fastdepCXX_TRUE@	$(AM_V_at)$(am__mv) $(DEPDIR)/stride-fm-merge.Tpo $(DEPDIR)/stride-fm-merge.Po
-@AMDEP_TRUE@@am__fastdepCXX_FALSE@	$(AM_V_CXX)source='fm-merge.cpp' object='stride-fm-merge.o' libtool=no @AMDEPBACKSLASH@
+grow-fm-merge.o: fm-merge.cpp
+@am__fastdepCXX_TRUE@	$(AM_V_CXX)$(CXX) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(grow_CPPFLAGS) $(CPPFLAGS) $(AM_CXXFLAGS) $(CXXFLAGS) -MT grow-fm-merge.o -MD -MP -MF $(DEPDIR)/grow-fm-merge.Tpo -c -o grow-fm-merge.o `test -f 'fm-merge.cpp' || echo '$(srcdir)/'`fm-merge.cpp
+@am__fastdepCXX_TRUE@	$(AM_V_at)$(am__mv) $(DEPDIR)/grow-fm-merge.Tpo $(DEPDIR)/grow-fm-merge.Po
+@AMDEP_TRUE@@am__fastdepCXX_FALSE@	$(AM_V_CXX)source='fm-merge.cpp' object='grow-fm-merge.o' libtool=no @AMDEPBACKSLASH@
 @AMDEP_TRUE@@am__fastdepCXX_FALSE@	DEPDIR=$(DEPDIR) $(CXXDEPMODE) $(depcomp) @AMDEPBACKSLASH@
-@am__fastdepCXX_FALSE@	$(AM_V_CXX@am__nodep@)$(CXX) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(stride_CPPFLAGS) $(CPPFLAGS) $(AM_CXXFLAGS) $(CXXFLAGS) -c -o stride-fm-merge.o `test -f 'fm-merge.cpp' || echo '$(srcdir)/'`fm-merge.cpp
+@am__fastdepCXX_FALSE@	$(AM_V_CXX@am__nodep@)$(CXX) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(grow_CPPFLAGS) $(CPPFLAGS) $(AM_CXXFLAGS) $(CXXFLAGS) -c -o grow-fm-merge.o `test -f 'fm-merge.cpp' || echo '$(srcdir)/'`fm-merge.cpp
 
-stride-fm-merge.obj: fm-merge.cpp
-@am__fastdepCXX_TRUE@	$(AM_V_CXX)$(CXX) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(stride_CPPFLAGS) $(CPPFLAGS) $(AM_CXXFLAGS) $(CXXFLAGS) -MT stride-fm-merge.obj -MD -MP -MF $(DEPDIR)/stride-fm-merge.Tpo -c -o stride-fm-merge.obj `if test -f 'fm-merge.cpp'; then $(CYGPATH_W) 'fm-merge.cpp'; else $(CYGPATH_W) '$(srcdir)/fm-merge.cpp'; fi`
-@am__fastdepCXX_TRUE@	$(AM_V_at)$(am__mv) $(DEPDIR)/stride-fm-merge.Tpo $(DEPDIR)/stride-fm-merge.Po
-@AMDEP_TRUE@@am__fastdepCXX_FALSE@	$(AM_V_CXX)source='fm-merge.cpp' object='stride-fm-merge.obj' libtool=no @AMDEPBACKSLASH@
+grow-fm-merge.obj: fm-merge.cpp
+@am__fastdepCXX_TRUE@	$(AM_V_CXX)$(CXX) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(grow_CPPFLAGS) $(CPPFLAGS) $(AM_CXXFLAGS) $(CXXFLAGS) -MT grow-fm-merge.obj -MD -MP -MF $(DEPDIR)/grow-fm-merge.Tpo -c -o grow-fm-merge.obj `if test -f 'fm-merge.cpp'; then $(CYGPATH_W) 'fm-merge.cpp'; else $(CYGPATH_W) '$(srcdir)/fm-merge.cpp'; fi`
+@am__fastdepCXX_TRUE@	$(AM_V_at)$(am__mv) $(DEPDIR)/grow-fm-merge.Tpo $(DEPDIR)/grow-fm-merge.Po
+@AMDEP_TRUE@@am__fastdepCXX_FALSE@	$(AM_V_CXX)source='fm-merge.cpp' object='grow-fm-merge.obj' libtool=no @AMDEPBACKSLASH@
 @AMDEP_TRUE@@am__fastdepCXX_FALSE@	DEPDIR=$(DEPDIR) $(CXXDEPMODE) $(depcomp) @AMDEPBACKSLASH@
-@am__fastdepCXX_FALSE@	$(AM_V_CXX@am__nodep@)$(CXX) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(stride_CPPFLAGS) $(CPPFLAGS) $(AM_CXXFLAGS) $(CXXFLAGS) -c -o stride-fm-merge.obj `if test -f 'fm-merge.cpp'; then $(CYGPATH_W) 'fm-merge.cpp'; else $(CYGPATH_W) '$(srcdir)/fm-merge.cpp'; fi`
+@am__fastdepCXX_FALSE@	$(AM_V_CXX@am__nodep@)$(CXX) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(grow_CPPFLAGS) $(CPPFLAGS) $(AM_CXXFLAGS) $(CXXFLAGS) -c -o grow-fm-merge.obj `if test -f 'fm-merge.cpp'; then $(CYGPATH_W) 'fm-merge.cpp'; else $(CYGPATH_W) '$(srcdir)/fm-merge.cpp'; fi`
 
-stride-OverlapCommon.o: OverlapCommon.cpp
-@am__fastdepCXX_TRUE@	$(AM_V_CXX)$(CXX) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(stride_CPPFLAGS) $(CPPFLAGS) $(AM_CXXFLAGS) $(CXXFLAGS) -MT stride-OverlapCommon.o -MD -MP -MF $(DEPDIR)/stride-OverlapCommon.Tpo -c -o stride-OverlapCommon.o `test -f 'OverlapCommon.cpp' || echo '$(srcdir)/'`OverlapCommon.cpp
-@am__fastdepCXX_TRUE@	$(AM_V_at)$(am__mv) $(DEPDIR)/stride-OverlapCommon.Tpo $(DEPDIR)/stride-OverlapCommon.Po
-@AMDEP_TRUE@@am__fastdepCXX_FALSE@	$(AM_V_CXX)source='OverlapCommon.cpp' object='stride-OverlapCommon.o' libtool=no @AMDEPBACKSLASH@
+grow-OverlapCommon.o: OverlapCommon.cpp
+@am__fastdepCXX_TRUE@	$(AM_V_CXX)$(CXX) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(grow_CPPFLAGS) $(CPPFLAGS) $(AM_CXXFLAGS) $(CXXFLAGS) -MT grow-OverlapCommon.o -MD -MP -MF $(DEPDIR)/grow-OverlapCommon.Tpo -c -o grow-OverlapCommon.o `test -f 'OverlapCommon.cpp' || echo '$(srcdir)/'`OverlapCommon.cpp
+@am__fastdepCXX_TRUE@	$(AM_V_at)$(am__mv) $(DEPDIR)/grow-OverlapCommon.Tpo $(DEPDIR)/grow-OverlapCommon.Po
+@AMDEP_TRUE@@am__fastdepCXX_FALSE@	$(AM_V_CXX)source='OverlapCommon.cpp' object='grow-OverlapCommon.o' libtool=no @AMDEPBACKSLASH@
 @AMDEP_TRUE@@am__fastdepCXX_FALSE@	DEPDIR=$(DEPDIR) $(CXXDEPMODE) $(depcomp) @AMDEPBACKSLASH@
-@am__fastdepCXX_FALSE@	$(AM_V_CXX@am__nodep@)$(CXX) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(stride_CPPFLAGS) $(CPPFLAGS) $(AM_CXXFLAGS) $(CXXFLAGS) -c -o stride-OverlapCommon.o `test -f 'OverlapCommon.cpp' || echo '$(srcdir)/'`OverlapCommon.cpp
+@am__fastdepCXX_FALSE@	$(AM_V_CXX@am__nodep@)$(CXX) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(grow_CPPFLAGS) $(CPPFLAGS) $(AM_CXXFLAGS) $(CXXFLAGS) -c -o grow-OverlapCommon.o `test -f 'OverlapCommon.cpp' || echo '$(srcdir)/'`OverlapCommon.cpp
 
-stride-OverlapCommon.obj: OverlapCommon.cpp
-@am__fastdepCXX_TRUE@	$(AM_V_CXX)$(CXX) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(stride_CPPFLAGS) $(CPPFLAGS) $(AM_CXXFLAGS) $(CXXFLAGS) -MT stride-OverlapCommon.obj -MD -MP -MF $(DEPDIR)/stride-OverlapCommon.Tpo -c -o stride-OverlapCommon.obj `if test -f 'OverlapCommon.cpp'; then $(CYGPATH_W) 'OverlapCommon.cpp'; else $(CYGPATH_W) '$(srcdir)/OverlapCommon.cpp'; fi`
-@am__fastdepCXX_TRUE@	$(AM_V_at)$(am__mv) $(DEPDIR)/stride-OverlapCommon.Tpo $(DEPDIR)/stride-OverlapCommon.Po
-@AMDEP_TRUE@@am__fastdepCXX_FALSE@	$(AM_V_CXX)source='OverlapCommon.cpp' object='stride-OverlapCommon.obj' libtool=no @AMDEPBACKSLASH@
+grow-OverlapCommon.obj: OverlapCommon.cpp
+@am__fastdepCXX_TRUE@	$(AM_V_CXX)$(CXX) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(grow_CPPFLAGS) $(CPPFLAGS) $(AM_CXXFLAGS) $(CXXFLAGS) -MT grow-OverlapCommon.obj -MD -MP -MF $(DEPDIR)/grow-OverlapCommon.Tpo -c -o grow-OverlapCommon.obj `if test -f 'OverlapCommon.cpp'; then $(CYGPATH_W) 'OverlapCommon.cpp'; else $(CYGPATH_W) '$(srcdir)/OverlapCommon.cpp'; fi`
+@am__fastdepCXX_TRUE@	$(AM_V_at)$(am__mv) $(DEPDIR)/grow-OverlapCommon.Tpo $(DEPDIR)/grow-OverlapCommon.Po
+@AMDEP_TRUE@@am__fastdepCXX_FALSE@	$(AM_V_CXX)source='OverlapCommon.cpp' object='grow-OverlapCommon.obj' libtool=no @AMDEPBACKSLASH@
 @AMDEP_TRUE@@am__fastdepCXX_FALSE@	DEPDIR=$(DEPDIR) $(CXXDEPMODE) $(depcomp) @AMDEPBACKSLASH@
-@am__fastdepCXX_FALSE@	$(AM_V_CXX@am__nodep@)$(CXX) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(stride_CPPFLAGS) $(CPPFLAGS) $(AM_CXXFLAGS) $(CXXFLAGS) -c -o stride-OverlapCommon.obj `if test -f 'OverlapCommon.cpp'; then $(CYGPATH_W) 'OverlapCommon.cpp'; else $(CYGPATH_W) '$(srcdir)/OverlapCommon.cpp'; fi`
+@am__fastdepCXX_FALSE@	$(AM_V_CXX@am__nodep@)$(CXX) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(grow_CPPFLAGS) $(CPPFLAGS) $(AM_CXXFLAGS) $(CXXFLAGS) -c -o grow-OverlapCommon.obj `if test -f 'OverlapCommon.cpp'; then $(CYGPATH_W) 'OverlapCommon.cpp'; else $(CYGPATH_W) '$(srcdir)/OverlapCommon.cpp'; fi`
 
-stride-kmerfreq.o: kmerfreq.cpp
-@am__fastdepCXX_TRUE@	$(AM_V_CXX)$(CXX) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(stride_CPPFLAGS) $(CPPFLAGS) $(AM_CXXFLAGS) $(CXXFLAGS) -MT stride-kmerfreq.o -MD -MP -MF $(DEPDIR)/stride-kmerfreq.Tpo -c -o stride-kmerfreq.o `test -f 'kmerfreq.cpp' || echo '$(srcdir)/'`kmerfreq.cpp
-@am__fastdepCXX_TRUE@	$(AM_V_at)$(am__mv) $(DEPDIR)/stride-kmerfreq.Tpo $(DEPDIR)/stride-kmerfreq.Po
-@AMDEP_TRUE@@am__fastdepCXX_FALSE@	$(AM_V_CXX)source='kmerfreq.cpp' object='stride-kmerfreq.o' libtool=no @AMDEPBACKSLASH@
+grow-kmerfreq.o: kmerfreq.cpp
+@am__fastdepCXX_TRUE@	$(AM_V_CXX)$(CXX) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(grow_CPPFLAGS) $(CPPFLAGS) $(AM_CXXFLAGS) $(CXXFLAGS) -MT grow-kmerfreq.o -MD -MP -MF $(DEPDIR)/grow-kmerfreq.Tpo -c -o grow-kmerfreq.o `test -f 'kmerfreq.cpp' || echo '$(srcdir)/'`kmerfreq.cpp
+@am__fastdepCXX_TRUE@	$(AM_V_at)$(am__mv) $(DEPDIR)/grow-kmerfreq.Tpo $(DEPDIR)/grow-kmerfreq.Po
+@AMDEP_TRUE@@am__fastdepCXX_FALSE@	$(AM_V_CXX)source='kmerfreq.cpp' object='grow-kmerfreq.o' libtool=no @AMDEPBACKSLASH@
 @AMDEP_TRUE@@am__fastdepCXX_FALSE@	DEPDIR=$(DEPDIR) $(CXXDEPMODE) $(depcomp) @AMDEPBACKSLASH@
-@am__fastdepCXX_FALSE@	$(AM_V_CXX@am__nodep@)$(CXX) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(stride_CPPFLAGS) $(CPPFLAGS) $(AM_CXXFLAGS) $(CXXFLAGS) -c -o stride-kmerfreq.o `test -f 'kmerfreq.cpp' || echo '$(srcdir)/'`kmerfreq.cpp
+@am__fastdepCXX_FALSE@	$(AM_V_CXX@am__nodep@)$(CXX) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(grow_CPPFLAGS) $(CPPFLAGS) $(AM_CXXFLAGS) $(CXXFLAGS) -c -o grow-kmerfreq.o `test -f 'kmerfreq.cpp' || echo '$(srcdir)/'`kmerfreq.cpp
 
-stride-kmerfreq.obj: kmerfreq.cpp
-@am__fastdepCXX_TRUE@	$(AM_V_CXX)$(CXX) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(stride_CPPFLAGS) $(CPPFLAGS) $(AM_CXXFLAGS) $(CXXFLAGS) -MT stride-kmerfreq.obj -MD -MP -MF $(DEPDIR)/stride-kmerfreq.Tpo -c -o stride-kmerfreq.obj `if test -f 'kmerfreq.cpp'; then $(CYGPATH_W) 'kmerfreq.cpp'; else $(CYGPATH_W) '$(srcdir)/kmerfreq.cpp'; fi`
-@am__fastdepCXX_TRUE@	$(AM_V_at)$(am__mv) $(DEPDIR)/stride-kmerfreq.Tpo $(DEPDIR)/stride-kmerfreq.Po
-@AMDEP_TRUE@@am__fastdepCXX_FALSE@	$(AM_V_CXX)source='kmerfreq.cpp' object='stride-kmerfreq.obj' libtool=no @AMDEPBACKSLASH@
+grow-kmerfreq.obj: kmerfreq.cpp
+@am__fastdepCXX_TRUE@	$(AM_V_CXX)$(CXX) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(grow_CPPFLAGS) $(CPPFLAGS) $(AM_CXXFLAGS) $(CXXFLAGS) -MT grow-kmerfreq.obj -MD -MP -MF $(DEPDIR)/grow-kmerfreq.Tpo -c -o grow-kmerfreq.obj `if test -f 'kmerfreq.cpp'; then $(CYGPATH_W) 'kmerfreq.cpp'; else $(CYGPATH_W) '$(srcdir)/kmerfreq.cpp'; fi`
+@am__fastdepCXX_TRUE@	$(AM_V_at)$(am__mv) $(DEPDIR)/grow-kmerfreq.Tpo $(DEPDIR)/grow-kmerfreq.Po
+@AMDEP_TRUE@@am__fastdepCXX_FALSE@	$(AM_V_CXX)source='kmerfreq.cpp' object='grow-kmerfreq.obj' libtool=no @AMDEPBACKSLASH@
 @AMDEP_TRUE@@am__fastdepCXX_FALSE@	DEPDIR=$(DEPDIR) $(CXXDEPMODE) $(depcomp) @AMDEPBACKSLASH@
-@am__fastdepCXX_FALSE@	$(AM_V_CXX@am__nodep@)$(CXX) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(stride_CPPFLAGS) $(CPPFLAGS) $(AM_CXXFLAGS) $(CXXFLAGS) -c -o stride-kmerfreq.obj `if test -f 'kmerfreq.cpp'; then $(CYGPATH_W) 'kmerfreq.cpp'; else $(CYGPATH_W) '$(srcdir)/kmerfreq.cpp'; fi`
+@am__fastdepCXX_FALSE@	$(AM_V_CXX@am__nodep@)$(CXX) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(grow_CPPFLAGS) $(CPPFLAGS) $(AM_CXXFLAGS) $(CXXFLAGS) -c -o grow-kmerfreq.obj `if test -f 'kmerfreq.cpp'; then $(CYGPATH_W) 'kmerfreq.cpp'; else $(CYGPATH_W) '$(srcdir)/kmerfreq.cpp'; fi`
 
-stride-grep.o: grep.cpp
-@am__fastdepCXX_TRUE@	$(AM_V_CXX)$(CXX) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(stride_CPPFLAGS) $(CPPFLAGS) $(AM_CXXFLAGS) $(CXXFLAGS) -MT stride-grep.o -MD -MP -MF $(DEPDIR)/stride-grep.Tpo -c -o stride-grep.o `test -f 'grep.cpp' || echo '$(srcdir)/'`grep.cpp
-@am__fastdepCXX_TRUE@	$(AM_V_at)$(am__mv) $(DEPDIR)/stride-grep.Tpo $(DEPDIR)/stride-grep.Po
-@AMDEP_TRUE@@am__fastdepCXX_FALSE@	$(AM_V_CXX)source='grep.cpp' object='stride-grep.o' libtool=no @AMDEPBACKSLASH@
+grow-grep.o: grep.cpp
+@am__fastdepCXX_TRUE@	$(AM_V_CXX)$(CXX) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(grow_CPPFLAGS) $(CPPFLAGS) $(AM_CXXFLAGS) $(CXXFLAGS) -MT grow-grep.o -MD -MP -MF $(DEPDIR)/grow-grep.Tpo -c -o grow-grep.o `test -f 'grep.cpp' || echo '$(srcdir)/'`grep.cpp
+@am__fastdepCXX_TRUE@	$(AM_V_at)$(am__mv) $(DEPDIR)/grow-grep.Tpo $(DEPDIR)/grow-grep.Po
+@AMDEP_TRUE@@am__fastdepCXX_FALSE@	$(AM_V_CXX)source='grep.cpp' object='grow-grep.o' libtool=no @AMDEPBACKSLASH@
 @AMDEP_TRUE@@am__fastdepCXX_FALSE@	DEPDIR=$(DEPDIR) $(CXXDEPMODE) $(depcomp) @AMDEPBACKSLASH@
-@am__fastdepCXX_FALSE@	$(AM_V_CXX@am__nodep@)$(CXX) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(stride_CPPFLAGS) $(CPPFLAGS) $(AM_CXXFLAGS) $(CXXFLAGS) -c -o stride-grep.o `test -f 'grep.cpp' || echo '$(srcdir)/'`grep.cpp
+@am__fastdepCXX_FALSE@	$(AM_V_CXX@am__nodep@)$(CXX) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(grow_CPPFLAGS) $(CPPFLAGS) $(AM_CXXFLAGS) $(CXXFLAGS) -c -o grow-grep.o `test -f 'grep.cpp' || echo '$(srcdir)/'`grep.cpp
 
-stride-grep.obj: grep.cpp
-@am__fastdepCXX_TRUE@	$(AM_V_CXX)$(CXX) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(stride_CPPFLAGS) $(CPPFLAGS) $(AM_CXXFLAGS) $(CXXFLAGS) -MT stride-grep.obj -MD -MP -MF $(DEPDIR)/stride-grep.Tpo -c -o stride-grep.obj `if test -f 'grep.cpp'; then $(CYGPATH_W) 'grep.cpp'; else $(CYGPATH_W) '$(srcdir)/grep.cpp'; fi`
-@am__fastdepCXX_TRUE@	$(AM_V_at)$(am__mv) $(DEPDIR)/stride-grep.Tpo $(DEPDIR)/stride-grep.Po
-@AMDEP_TRUE@@am__fastdepCXX_FALSE@	$(AM_V_CXX)source='grep.cpp' object='stride-grep.obj' libtool=no @AMDEPBACKSLASH@
+grow-grep.obj: grep.cpp
+@am__fastdepCXX_TRUE@	$(AM_V_CXX)$(CXX) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(grow_CPPFLAGS) $(CPPFLAGS) $(AM_CXXFLAGS) $(CXXFLAGS) -MT grow-grep.obj -MD -MP -MF $(DEPDIR)/grow-grep.Tpo -c -o grow-grep.obj `if test -f 'grep.cpp'; then $(CYGPATH_W) 'grep.cpp'; else $(CYGPATH_W) '$(srcdir)/grep.cpp'; fi`
+@am__fastdepCXX_TRUE@	$(AM_V_at)$(am__mv) $(DEPDIR)/grow-grep.Tpo $(DEPDIR)/grow-grep.Po
+@AMDEP_TRUE@@am__fastdepCXX_FALSE@	$(AM_V_CXX)source='grep.cpp' object='grow-grep.obj' libtool=no @AMDEPBACKSLASH@
 @AMDEP_TRUE@@am__fastdepCXX_FALSE@	DEPDIR=$(DEPDIR) $(CXXDEPMODE) $(depcomp) @AMDEPBACKSLASH@
-@am__fastdepCXX_FALSE@	$(AM_V_CXX@am__nodep@)$(CXX) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(stride_CPPFLAGS) $(CPPFLAGS) $(AM_CXXFLAGS) $(CXXFLAGS) -c -o stride-grep.obj `if test -f 'grep.cpp'; then $(CYGPATH_W) 'grep.cpp'; else $(CYGPATH_W) '$(srcdir)/grep.cpp'; fi`
+@am__fastdepCXX_FALSE@	$(AM_V_CXX@am__nodep@)$(CXX) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(grow_CPPFLAGS) $(CPPFLAGS) $(AM_CXXFLAGS) $(CXXFLAGS) -c -o grow-grep.obj `if test -f 'grep.cpp'; then $(CYGPATH_W) 'grep.cpp'; else $(CYGPATH_W) '$(srcdir)/grep.cpp'; fi`
 
-stride-FMIndexWalk.o: FMIndexWalk.cpp
-@am__fastdepCXX_TRUE@	$(AM_V_CXX)$(CXX) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(stride_CPPFLAGS) $(CPPFLAGS) $(AM_CXXFLAGS) $(CXXFLAGS) -MT stride-FMIndexWalk.o -MD -MP -MF $(DEPDIR)/stride-FMIndexWalk.Tpo -c -o stride-FMIndexWalk.o `test -f 'FMIndexWalk.cpp' || echo '$(srcdir)/'`FMIndexWalk.cpp
-@am__fastdepCXX_TRUE@	$(AM_V_at)$(am__mv) $(DEPDIR)/stride-FMIndexWalk.Tpo $(DEPDIR)/stride-FMIndexWalk.Po
-@AMDEP_TRUE@@am__fastdepCXX_FALSE@	$(AM_V_CXX)source='FMIndexWalk.cpp' object='stride-FMIndexWalk.o' libtool=no @AMDEPBACKSLASH@
+grow-FMIndexWalk.o: FMIndexWalk.cpp
+@am__fastdepCXX_TRUE@	$(AM_V_CXX)$(CXX) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(grow_CPPFLAGS) $(CPPFLAGS) $(AM_CXXFLAGS) $(CXXFLAGS) -MT grow-FMIndexWalk.o -MD -MP -MF $(DEPDIR)/grow-FMIndexWalk.Tpo -c -o grow-FMIndexWalk.o `test -f 'FMIndexWalk.cpp' || echo '$(srcdir)/'`FMIndexWalk.cpp
+@am__fastdepCXX_TRUE@	$(AM_V_at)$(am__mv) $(DEPDIR)/grow-FMIndexWalk.Tpo $(DEPDIR)/grow-FMIndexWalk.Po
+@AMDEP_TRUE@@am__fastdepCXX_FALSE@	$(AM_V_CXX)source='FMIndexWalk.cpp' object='grow-FMIndexWalk.o' libtool=no @AMDEPBACKSLASH@
 @AMDEP_TRUE@@am__fastdepCXX_FALSE@	DEPDIR=$(DEPDIR) $(CXXDEPMODE) $(depcomp) @AMDEPBACKSLASH@
-@am__fastdepCXX_FALSE@	$(AM_V_CXX@am__nodep@)$(CXX) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(stride_CPPFLAGS) $(CPPFLAGS) $(AM_CXXFLAGS) $(CXXFLAGS) -c -o stride-FMIndexWalk.o `test -f 'FMIndexWalk.cpp' || echo '$(srcdir)/'`FMIndexWalk.cpp
+@am__fastdepCXX_FALSE@	$(AM_V_CXX@am__nodep@)$(CXX) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(grow_CPPFLAGS) $(CPPFLAGS) $(AM_CXXFLAGS) $(CXXFLAGS) -c -o grow-FMIndexWalk.o `test -f 'FMIndexWalk.cpp' || echo '$(srcdir)/'`FMIndexWalk.cpp
 
-stride-FMIndexWalk.obj: FMIndexWalk.cpp
-@am__fastdepCXX_TRUE@	$(AM_V_CXX)$(CXX) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(stride_CPPFLAGS) $(CPPFLAGS) $(AM_CXXFLAGS) $(CXXFLAGS) -MT stride-FMIndexWalk.obj -MD -MP -MF $(DEPDIR)/stride-FMIndexWalk.Tpo -c -o stride-FMIndexWalk.obj `if test -f 'FMIndexWalk.cpp'; then $(CYGPATH_W) 'FMIndexWalk.cpp'; else $(CYGPATH_W) '$(srcdir)/FMIndexWalk.cpp'; fi`
-@am__fastdepCXX_TRUE@	$(AM_V_at)$(am__mv) $(DEPDIR)/stride-FMIndexWalk.Tpo $(DEPDIR)/stride-FMIndexWalk.Po
-@AMDEP_TRUE@@am__fastdepCXX_FALSE@	$(AM_V_CXX)source='FMIndexWalk.cpp' object='stride-FMIndexWalk.obj' libtool=no @AMDEPBACKSLASH@
+grow-FMIndexWalk.obj: FMIndexWalk.cpp
+@am__fastdepCXX_TRUE@	$(AM_V_CXX)$(CXX) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(grow_CPPFLAGS) $(CPPFLAGS) $(AM_CXXFLAGS) $(CXXFLAGS) -MT grow-FMIndexWalk.obj -MD -MP -MF $(DEPDIR)/grow-FMIndexWalk.Tpo -c -o grow-FMIndexWalk.obj `if test -f 'FMIndexWalk.cpp'; then $(CYGPATH_W) 'FMIndexWalk.cpp'; else $(CYGPATH_W) '$(srcdir)/FMIndexWalk.cpp'; fi`
+@am__fastdepCXX_TRUE@	$(AM_V_at)$(am__mv) $(DEPDIR)/grow-FMIndexWalk.Tpo $(DEPDIR)/grow-FMIndexWalk.Po
+@AMDEP_TRUE@@am__fastdepCXX_FALSE@	$(AM_V_CXX)source='FMIndexWalk.cpp' object='grow-FMIndexWalk.obj' libtool=no @AMDEPBACKSLASH@
 @AMDEP_TRUE@@am__fastdepCXX_FALSE@	DEPDIR=$(DEPDIR) $(CXXDEPMODE) $(depcomp) @AMDEPBACKSLASH@
-@am__fastdepCXX_FALSE@	$(AM_V_CXX@am__nodep@)$(CXX) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(stride_CPPFLAGS) $(CPPFLAGS) $(AM_CXXFLAGS) $(CXXFLAGS) -c -o stride-FMIndexWalk.obj `if test -f 'FMIndexWalk.cpp'; then $(CYGPATH_W) 'FMIndexWalk.cpp'; else $(CYGPATH_W) '$(srcdir)/FMIndexWalk.cpp'; fi`
+@am__fastdepCXX_FALSE@	$(AM_V_CXX@am__nodep@)$(CXX) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(grow_CPPFLAGS) $(CPPFLAGS) $(AM_CXXFLAGS) $(CXXFLAGS) -c -o grow-FMIndexWalk.obj `if test -f 'FMIndexWalk.cpp'; then $(CYGPATH_W) 'FMIndexWalk.cpp'; else $(CYGPATH_W) '$(srcdir)/FMIndexWalk.cpp'; fi`
 
-stride-PacBioCorrection.o: PacBioCorrection.cpp
-@am__fastdepCXX_TRUE@	$(AM_V_CXX)$(CXX) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(stride_CPPFLAGS) $(CPPFLAGS) $(AM_CXXFLAGS) $(CXXFLAGS) -MT stride-PacBioCorrection.o -MD -MP -MF $(DEPDIR)/stride-PacBioCorrection.Tpo -c -o stride-PacBioCorrection.o `test -f 'PacBioCorrection.cpp' || echo '$(srcdir)/'`PacBioCorrection.cpp
-@am__fastdepCXX_TRUE@	$(AM_V_at)$(am__mv) $(DEPDIR)/stride-PacBioCorrection.Tpo $(DEPDIR)/stride-PacBioCorrection.Po
-@AMDEP_TRUE@@am__fastdepCXX_FALSE@	$(AM_V_CXX)source='PacBioCorrection.cpp' object='stride-PacBioCorrection.o' libtool=no @AMDEPBACKSLASH@
+grow-PacBioCorrection.o: PacBioCorrection.cpp
+@am__fastdepCXX_TRUE@	$(AM_V_CXX)$(CXX) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(grow_CPPFLAGS) $(CPPFLAGS) $(AM_CXXFLAGS) $(CXXFLAGS) -MT grow-PacBioCorrection.o -MD -MP -MF $(DEPDIR)/grow-PacBioCorrection.Tpo -c -o grow-PacBioCorrection.o `test -f 'PacBioCorrection.cpp' || echo '$(srcdir)/'`PacBioCorrection.cpp
+@am__fastdepCXX_TRUE@	$(AM_V_at)$(am__mv) $(DEPDIR)/grow-PacBioCorrection.Tpo $(DEPDIR)/grow-PacBioCorrection.Po
+@AMDEP_TRUE@@am__fastdepCXX_FALSE@	$(AM_V_CXX)source='PacBioCorrection.cpp' object='grow-PacBioCorrection.o' libtool=no @AMDEPBACKSLASH@
 @AMDEP_TRUE@@am__fastdepCXX_FALSE@	DEPDIR=$(DEPDIR) $(CXXDEPMODE) $(depcomp) @AMDEPBACKSLASH@
-@am__fastdepCXX_FALSE@	$(AM_V_CXX@am__nodep@)$(CXX) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(stride_CPPFLAGS) $(CPPFLAGS) $(AM_CXXFLAGS) $(CXXFLAGS) -c -o stride-PacBioCorrection.o `test -f 'PacBioCorrection.cpp' || echo '$(srcdir)/'`PacBioCorrection.cpp
+@am__fastdepCXX_FALSE@	$(AM_V_CXX@am__nodep@)$(CXX) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(grow_CPPFLAGS) $(CPPFLAGS) $(AM_CXXFLAGS) $(CXXFLAGS) -c -o grow-PacBioCorrection.o `test -f 'PacBioCorrection.cpp' || echo '$(srcdir)/'`PacBioCorrection.cpp
 
-stride-PacBioCorrection.obj: PacBioCorrection.cpp
-@am__fastdepCXX_TRUE@	$(AM_V_CXX)$(CXX) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(stride_CPPFLAGS) $(CPPFLAGS) $(AM_CXXFLAGS) $(CXXFLAGS) -MT stride-PacBioCorrection.obj -MD -MP -MF $(DEPDIR)/stride-PacBioCorrection.Tpo -c -o stride-PacBioCorrection.obj `if test -f 'PacBioCorrection.cpp'; then $(CYGPATH_W) 'PacBioCorrection.cpp'; else $(CYGPATH_W) '$(srcdir)/PacBioCorrection.cpp'; fi`
-@am__fastdepCXX_TRUE@	$(AM_V_at)$(am__mv) $(DEPDIR)/stride-PacBioCorrection.Tpo $(DEPDIR)/stride-PacBioCorrection.Po
-@AMDEP_TRUE@@am__fastdepCXX_FALSE@	$(AM_V_CXX)source='PacBioCorrection.cpp' object='stride-PacBioCorrection.obj' libtool=no @AMDEPBACKSLASH@
+grow-PacBioCorrection.obj: PacBioCorrection.cpp
+@am__fastdepCXX_TRUE@	$(AM_V_CXX)$(CXX) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(grow_CPPFLAGS) $(CPPFLAGS) $(AM_CXXFLAGS) $(CXXFLAGS) -MT grow-PacBioCorrection.obj -MD -MP -MF $(DEPDIR)/grow-PacBioCorrection.Tpo -c -o grow-PacBioCorrection.obj `if test -f 'PacBioCorrection.cpp'; then $(CYGPATH_W) 'PacBioCorrection.cpp'; else $(CYGPATH_W) '$(srcdir)/PacBioCorrection.cpp'; fi`
+@am__fastdepCXX_TRUE@	$(AM_V_at)$(am__mv) $(DEPDIR)/grow-PacBioCorrection.Tpo $(DEPDIR)/grow-PacBioCorrection.Po
+@AMDEP_TRUE@@am__fastdepCXX_FALSE@	$(AM_V_CXX)source='PacBioCorrection.cpp' object='grow-PacBioCorrection.obj' libtool=no @AMDEPBACKSLASH@
 @AMDEP_TRUE@@am__fastdepCXX_FALSE@	DEPDIR=$(DEPDIR) $(CXXDEPMODE) $(depcomp) @AMDEPBACKSLASH@
-@am__fastdepCXX_FALSE@	$(AM_V_CXX@am__nodep@)$(CXX) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(stride_CPPFLAGS) $(CPPFLAGS) $(AM_CXXFLAGS) $(CXXFLAGS) -c -o stride-PacBioCorrection.obj `if test -f 'PacBioCorrection.cpp'; then $(CYGPATH_W) 'PacBioCorrection.cpp'; else $(CYGPATH_W) '$(srcdir)/PacBioCorrection.cpp'; fi`
+@am__fastdepCXX_FALSE@	$(AM_V_CXX@am__nodep@)$(CXX) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(grow_CPPFLAGS) $(CPPFLAGS) $(AM_CXXFLAGS) $(CXXFLAGS) -c -o grow-PacBioCorrection.obj `if test -f 'PacBioCorrection.cpp'; then $(CYGPATH_W) 'PacBioCorrection.cpp'; else $(CYGPATH_W) '$(srcdir)/PacBioCorrection.cpp'; fi`
 
-stride-PacBioHybridCorrection.o: PacBioHybridCorrection.cpp
-@am__fastdepCXX_TRUE@	$(AM_V_CXX)$(CXX) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(stride_CPPFLAGS) $(CPPFLAGS) $(AM_CXXFLAGS) $(CXXFLAGS) -MT stride-PacBioHybridCorrection.o -MD -MP -MF $(DEPDIR)/stride-PacBioHybridCorrection.Tpo -c -o stride-PacBioHybridCorrection.o `test -f 'PacBioHybridCorrection.cpp' || echo '$(srcdir)/'`PacBioHybridCorrection.cpp
-@am__fastdepCXX_TRUE@	$(AM_V_at)$(am__mv) $(DEPDIR)/stride-PacBioHybridCorrection.Tpo $(DEPDIR)/stride-PacBioHybridCorrection.Po
-@AMDEP_TRUE@@am__fastdepCXX_FALSE@	$(AM_V_CXX)source='PacBioHybridCorrection.cpp' object='stride-PacBioHybridCorrection.o' libtool=no @AMDEPBACKSLASH@
+grow-PacBioHybridCorrection.o: PacBioHybridCorrection.cpp
+@am__fastdepCXX_TRUE@	$(AM_V_CXX)$(CXX) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(grow_CPPFLAGS) $(CPPFLAGS) $(AM_CXXFLAGS) $(CXXFLAGS) -MT grow-PacBioHybridCorrection.o -MD -MP -MF $(DEPDIR)/grow-PacBioHybridCorrection.Tpo -c -o grow-PacBioHybridCorrection.o `test -f 'PacBioHybridCorrection.cpp' || echo '$(srcdir)/'`PacBioHybridCorrection.cpp
+@am__fastdepCXX_TRUE@	$(AM_V_at)$(am__mv) $(DEPDIR)/grow-PacBioHybridCorrection.Tpo $(DEPDIR)/grow-PacBioHybridCorrection.Po
+@AMDEP_TRUE@@am__fastdepCXX_FALSE@	$(AM_V_CXX)source='PacBioHybridCorrection.cpp' object='grow-PacBioHybridCorrection.o' libtool=no @AMDEPBACKSLASH@
 @AMDEP_TRUE@@am__fastdepCXX_FALSE@	DEPDIR=$(DEPDIR) $(CXXDEPMODE) $(depcomp) @AMDEPBACKSLASH@
-@am__fastdepCXX_FALSE@	$(AM_V_CXX@am__nodep@)$(CXX) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(stride_CPPFLAGS) $(CPPFLAGS) $(AM_CXXFLAGS) $(CXXFLAGS) -c -o stride-PacBioHybridCorrection.o `test -f 'PacBioHybridCorrection.cpp' || echo '$(srcdir)/'`PacBioHybridCorrection.cpp
+@am__fastdepCXX_FALSE@	$(AM_V_CXX@am__nodep@)$(CXX) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(grow_CPPFLAGS) $(CPPFLAGS) $(AM_CXXFLAGS) $(CXXFLAGS) -c -o grow-PacBioHybridCorrection.o `test -f 'PacBioHybridCorrection.cpp' || echo '$(srcdir)/'`PacBioHybridCorrection.cpp
 
-stride-PacBioHybridCorrection.obj: PacBioHybridCorrection.cpp
-@am__fastdepCXX_TRUE@	$(AM_V_CXX)$(CXX) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(stride_CPPFLAGS) $(CPPFLAGS) $(AM_CXXFLAGS) $(CXXFLAGS) -MT stride-PacBioHybridCorrection.obj -MD -MP -MF $(DEPDIR)/stride-PacBioHybridCorrection.Tpo -c -o stride-PacBioHybridCorrection.obj `if test -f 'PacBioHybridCorrection.cpp'; then $(CYGPATH_W) 'PacBioHybridCorrection.cpp'; else $(CYGPATH_W) '$(srcdir)/PacBioHybridCorrection.cpp'; fi`
-@am__fastdepCXX_TRUE@	$(AM_V_at)$(am__mv) $(DEPDIR)/stride-PacBioHybridCorrection.Tpo $(DEPDIR)/stride-PacBioHybridCorrection.Po
-@AMDEP_TRUE@@am__fastdepCXX_FALSE@	$(AM_V_CXX)source='PacBioHybridCorrection.cpp' object='stride-PacBioHybridCorrection.obj' libtool=no @AMDEPBACKSLASH@
+grow-PacBioHybridCorrection.obj: PacBioHybridCorrection.cpp
+@am__fastdepCXX_TRUE@	$(AM_V_CXX)$(CXX) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(grow_CPPFLAGS) $(CPPFLAGS) $(AM_CXXFLAGS) $(CXXFLAGS) -MT grow-PacBioHybridCorrection.obj -MD -MP -MF $(DEPDIR)/grow-PacBioHybridCorrection.Tpo -c -o grow-PacBioHybridCorrection.obj `if test -f 'PacBioHybridCorrection.cpp'; then $(CYGPATH_W) 'PacBioHybridCorrection.cpp'; else $(CYGPATH_W) '$(srcdir)/PacBioHybridCorrection.cpp'; fi`
+@am__fastdepCXX_TRUE@	$(AM_V_at)$(am__mv) $(DEPDIR)/grow-PacBioHybridCorrection.Tpo $(DEPDIR)/grow-PacBioHybridCorrection.Po
+@AMDEP_TRUE@@am__fastdepCXX_FALSE@	$(AM_V_CXX)source='PacBioHybridCorrection.cpp' object='grow-PacBioHybridCorrection.obj' libtool=no @AMDEPBACKSLASH@
 @AMDEP_TRUE@@am__fastdepCXX_FALSE@	DEPDIR=$(DEPDIR) $(CXXDEPMODE) $(depcomp) @AMDEPBACKSLASH@
-@am__fastdepCXX_FALSE@	$(AM_V_CXX@am__nodep@)$(CXX) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(stride_CPPFLAGS) $(CPPFLAGS) $(AM_CXXFLAGS) $(CXXFLAGS) -c -o stride-PacBioHybridCorrection.obj `if test -f 'PacBioHybridCorrection.cpp'; then $(CYGPATH_W) 'PacBioHybridCorrection.cpp'; else $(CYGPATH_W) '$(srcdir)/PacBioHybridCorrection.cpp'; fi`
+@am__fastdepCXX_FALSE@	$(AM_V_CXX@am__nodep@)$(CXX) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(grow_CPPFLAGS) $(CPPFLAGS) $(AM_CXXFLAGS) $(CXXFLAGS) -c -o grow-PacBioHybridCorrection.obj `if test -f 'PacBioHybridCorrection.cpp'; then $(CYGPATH_W) 'PacBioHybridCorrection.cpp'; else $(CYGPATH_W) '$(srcdir)/PacBioHybridCorrection.cpp'; fi`
 
-stride-asmlong.o: asmlong.cpp
-@am__fastdepCXX_TRUE@	$(AM_V_CXX)$(CXX) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(stride_CPPFLAGS) $(CPPFLAGS) $(AM_CXXFLAGS) $(CXXFLAGS) -MT stride-asmlong.o -MD -MP -MF $(DEPDIR)/stride-asmlong.Tpo -c -o stride-asmlong.o `test -f 'asmlong.cpp' || echo '$(srcdir)/'`asmlong.cpp
-@am__fastdepCXX_TRUE@	$(AM_V_at)$(am__mv) $(DEPDIR)/stride-asmlong.Tpo $(DEPDIR)/stride-asmlong.Po
-@AMDEP_TRUE@@am__fastdepCXX_FALSE@	$(AM_V_CXX)source='asmlong.cpp' object='stride-asmlong.o' libtool=no @AMDEPBACKSLASH@
+grow-asmlong.o: asmlong.cpp
+@am__fastdepCXX_TRUE@	$(AM_V_CXX)$(CXX) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(grow_CPPFLAGS) $(CPPFLAGS) $(AM_CXXFLAGS) $(CXXFLAGS) -MT grow-asmlong.o -MD -MP -MF $(DEPDIR)/grow-asmlong.Tpo -c -o grow-asmlong.o `test -f 'asmlong.cpp' || echo '$(srcdir)/'`asmlong.cpp
+@am__fastdepCXX_TRUE@	$(AM_V_at)$(am__mv) $(DEPDIR)/grow-asmlong.Tpo $(DEPDIR)/grow-asmlong.Po
+@AMDEP_TRUE@@am__fastdepCXX_FALSE@	$(AM_V_CXX)source='asmlong.cpp' object='grow-asmlong.o' libtool=no @AMDEPBACKSLASH@
 @AMDEP_TRUE@@am__fastdepCXX_FALSE@	DEPDIR=$(DEPDIR) $(CXXDEPMODE) $(depcomp) @AMDEPBACKSLASH@
-@am__fastdepCXX_FALSE@	$(AM_V_CXX@am__nodep@)$(CXX) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(stride_CPPFLAGS) $(CPPFLAGS) $(AM_CXXFLAGS) $(CXXFLAGS) -c -o stride-asmlong.o `test -f 'asmlong.cpp' || echo '$(srcdir)/'`asmlong.cpp
+@am__fastdepCXX_FALSE@	$(AM_V_CXX@am__nodep@)$(CXX) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(grow_CPPFLAGS) $(CPPFLAGS) $(AM_CXXFLAGS) $(CXXFLAGS) -c -o grow-asmlong.o `test -f 'asmlong.cpp' || echo '$(srcdir)/'`asmlong.cpp
 
-stride-asmlong.obj: asmlong.cpp
-@am__fastdepCXX_TRUE@	$(AM_V_CXX)$(CXX) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(stride_CPPFLAGS) $(CPPFLAGS) $(AM_CXXFLAGS) $(CXXFLAGS) -MT stride-asmlong.obj -MD -MP -MF $(DEPDIR)/stride-asmlong.Tpo -c -o stride-asmlong.obj `if test -f 'asmlong.cpp'; then $(CYGPATH_W) 'asmlong.cpp'; else $(CYGPATH_W) '$(srcdir)/asmlong.cpp'; fi`
-@am__fastdepCXX_TRUE@	$(AM_V_at)$(am__mv) $(DEPDIR)/stride-asmlong.Tpo $(DEPDIR)/stride-asmlong.Po
-@AMDEP_TRUE@@am__fastdepCXX_FALSE@	$(AM_V_CXX)source='asmlong.cpp' object='stride-asmlong.obj' libtool=no @AMDEPBACKSLASH@
+grow-asmlong.obj: asmlong.cpp
+@am__fastdepCXX_TRUE@	$(AM_V_CXX)$(CXX) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(grow_CPPFLAGS) $(CPPFLAGS) $(AM_CXXFLAGS) $(CXXFLAGS) -MT grow-asmlong.obj -MD -MP -MF $(DEPDIR)/grow-asmlong.Tpo -c -o grow-asmlong.obj `if test -f 'asmlong.cpp'; then $(CYGPATH_W) 'asmlong.cpp'; else $(CYGPATH_W) '$(srcdir)/asmlong.cpp'; fi`
+@am__fastdepCXX_TRUE@	$(AM_V_at)$(am__mv) $(DEPDIR)/grow-asmlong.Tpo $(DEPDIR)/grow-asmlong.Po
+@AMDEP_TRUE@@am__fastdepCXX_FALSE@	$(AM_V_CXX)source='asmlong.cpp' object='grow-asmlong.obj' libtool=no @AMDEPBACKSLASH@
 @AMDEP_TRUE@@am__fastdepCXX_FALSE@	DEPDIR=$(DEPDIR) $(CXXDEPMODE) $(depcomp) @AMDEPBACKSLASH@
-@am__fastdepCXX_FALSE@	$(AM_V_CXX@am__nodep@)$(CXX) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(stride_CPPFLAGS) $(CPPFLAGS) $(AM_CXXFLAGS) $(CXXFLAGS) -c -o stride-asmlong.obj `if test -f 'asmlong.cpp'; then $(CYGPATH_W) 'asmlong.cpp'; else $(CYGPATH_W) '$(srcdir)/asmlong.cpp'; fi`
+@am__fastdepCXX_FALSE@	$(AM_V_CXX@am__nodep@)$(CXX) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(grow_CPPFLAGS) $(CPPFLAGS) $(AM_CXXFLAGS) $(CXXFLAGS) -c -o grow-asmlong.obj `if test -f 'asmlong.cpp'; then $(CYGPATH_W) 'asmlong.cpp'; else $(CYGPATH_W) '$(srcdir)/asmlong.cpp'; fi`
 
-stride-Reassembler.o: Reassembler.cpp
-@am__fastdepCXX_TRUE@	$(AM_V_CXX)$(CXX) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(stride_CPPFLAGS) $(CPPFLAGS) $(AM_CXXFLAGS) $(CXXFLAGS) -MT stride-Reassembler.o -MD -MP -MF $(DEPDIR)/stride-Reassembler.Tpo -c -o stride-Reassembler.o `test -f 'Reassembler.cpp' || echo '$(srcdir)/'`Reassembler.cpp
-@am__fastdepCXX_TRUE@	$(AM_V_at)$(am__mv) $(DEPDIR)/stride-Reassembler.Tpo $(DEPDIR)/stride-Reassembler.Po
-@AMDEP_TRUE@@am__fastdepCXX_FALSE@	$(AM_V_CXX)source='Reassembler.cpp' object='stride-Reassembler.o' libtool=no @AMDEPBACKSLASH@
+grow-Reassembler.o: Reassembler.cpp
+@am__fastdepCXX_TRUE@	$(AM_V_CXX)$(CXX) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(grow_CPPFLAGS) $(CPPFLAGS) $(AM_CXXFLAGS) $(CXXFLAGS) -MT grow-Reassembler.o -MD -MP -MF $(DEPDIR)/grow-Reassembler.Tpo -c -o grow-Reassembler.o `test -f 'Reassembler.cpp' || echo '$(srcdir)/'`Reassembler.cpp
+@am__fastdepCXX_TRUE@	$(AM_V_at)$(am__mv) $(DEPDIR)/grow-Reassembler.Tpo $(DEPDIR)/grow-Reassembler.Po
+@AMDEP_TRUE@@am__fastdepCXX_FALSE@	$(AM_V_CXX)source='Reassembler.cpp' object='grow-Reassembler.o' libtool=no @AMDEPBACKSLASH@
 @AMDEP_TRUE@@am__fastdepCXX_FALSE@	DEPDIR=$(DEPDIR) $(CXXDEPMODE) $(depcomp) @AMDEPBACKSLASH@
-@am__fastdepCXX_FALSE@	$(AM_V_CXX@am__nodep@)$(CXX) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(stride_CPPFLAGS) $(CPPFLAGS) $(AM_CXXFLAGS) $(CXXFLAGS) -c -o stride-Reassembler.o `test -f 'Reassembler.cpp' || echo '$(srcdir)/'`Reassembler.cpp
+@am__fastdepCXX_FALSE@	$(AM_V_CXX@am__nodep@)$(CXX) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(grow_CPPFLAGS) $(CPPFLAGS) $(AM_CXXFLAGS) $(CXXFLAGS) -c -o grow-Reassembler.o `test -f 'Reassembler.cpp' || echo '$(srcdir)/'`Reassembler.cpp
 
-stride-Reassembler.obj: Reassembler.cpp
-@am__fastdepCXX_TRUE@	$(AM_V_CXX)$(CXX) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(stride_CPPFLAGS) $(CPPFLAGS) $(AM_CXXFLAGS) $(CXXFLAGS) -MT stride-Reassembler.obj -MD -MP -MF $(DEPDIR)/stride-Reassembler.Tpo -c -o stride-Reassembler.obj `if test -f 'Reassembler.cpp'; then $(CYGPATH_W) 'Reassembler.cpp'; else $(CYGPATH_W) '$(srcdir)/Reassembler.cpp'; fi`
-@am__fastdepCXX_TRUE@	$(AM_V_at)$(am__mv) $(DEPDIR)/stride-Reassembler.Tpo $(DEPDIR)/stride-Reassembler.Po
-@AMDEP_TRUE@@am__fastdepCXX_FALSE@	$(AM_V_CXX)source='Reassembler.cpp' object='stride-Reassembler.obj' libtool=no @AMDEPBACKSLASH@
+grow-Reassembler.obj: Reassembler.cpp
+@am__fastdepCXX_TRUE@	$(AM_V_CXX)$(CXX) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(grow_CPPFLAGS) $(CPPFLAGS) $(AM_CXXFLAGS) $(CXXFLAGS) -MT grow-Reassembler.obj -MD -MP -MF $(DEPDIR)/grow-Reassembler.Tpo -c -o grow-Reassembler.obj `if test -f 'Reassembler.cpp'; then $(CYGPATH_W) 'Reassembler.cpp'; else $(CYGPATH_W) '$(srcdir)/Reassembler.cpp'; fi`
+@am__fastdepCXX_TRUE@	$(AM_V_at)$(am__mv) $(DEPDIR)/grow-Reassembler.Tpo $(DEPDIR)/grow-Reassembler.Po
+@AMDEP_TRUE@@am__fastdepCXX_FALSE@	$(AM_V_CXX)source='Reassembler.cpp' object='grow-Reassembler.obj' libtool=no @AMDEPBACKSLASH@
 @AMDEP_TRUE@@am__fastdepCXX_FALSE@	DEPDIR=$(DEPDIR) $(CXXDEPMODE) $(depcomp) @AMDEPBACKSLASH@
-@am__fastdepCXX_FALSE@	$(AM_V_CXX@am__nodep@)$(CXX) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(stride_CPPFLAGS) $(CPPFLAGS) $(AM_CXXFLAGS) $(CXXFLAGS) -c -o stride-Reassembler.obj `if test -f 'Reassembler.cpp'; then $(CYGPATH_W) 'Reassembler.cpp'; else $(CYGPATH_W) '$(srcdir)/Reassembler.cpp'; fi`
+@am__fastdepCXX_FALSE@	$(AM_V_CXX@am__nodep@)$(CXX) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(grow_CPPFLAGS) $(CPPFLAGS) $(AM_CXXFLAGS) $(CXXFLAGS) -c -o grow-Reassembler.obj `if test -f 'Reassembler.cpp'; then $(CYGPATH_W) 'Reassembler.cpp'; else $(CYGPATH_W) '$(srcdir)/Reassembler.cpp'; fi`
 
-stride-Frequency.o: Frequency.cpp
-@am__fastdepCXX_TRUE@	$(AM_V_CXX)$(CXX) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(stride_CPPFLAGS) $(CPPFLAGS) $(AM_CXXFLAGS) $(CXXFLAGS) -MT stride-Frequency.o -MD -MP -MF $(DEPDIR)/stride-Frequency.Tpo -c -o stride-Frequency.o `test -f 'Frequency.cpp' || echo '$(srcdir)/'`Frequency.cpp
-@am__fastdepCXX_TRUE@	$(AM_V_at)$(am__mv) $(DEPDIR)/stride-Frequency.Tpo $(DEPDIR)/stride-Frequency.Po
-@AMDEP_TRUE@@am__fastdepCXX_FALSE@	$(AM_V_CXX)source='Frequency.cpp' object='stride-Frequency.o' libtool=no @AMDEPBACKSLASH@
+grow-Frequency.o: Frequency.cpp
+@am__fastdepCXX_TRUE@	$(AM_V_CXX)$(CXX) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(grow_CPPFLAGS) $(CPPFLAGS) $(AM_CXXFLAGS) $(CXXFLAGS) -MT grow-Frequency.o -MD -MP -MF $(DEPDIR)/grow-Frequency.Tpo -c -o grow-Frequency.o `test -f 'Frequency.cpp' || echo '$(srcdir)/'`Frequency.cpp
+@am__fastdepCXX_TRUE@	$(AM_V_at)$(am__mv) $(DEPDIR)/grow-Frequency.Tpo $(DEPDIR)/grow-Frequency.Po
+@AMDEP_TRUE@@am__fastdepCXX_FALSE@	$(AM_V_CXX)source='Frequency.cpp' object='grow-Frequency.o' libtool=no @AMDEPBACKSLASH@
 @AMDEP_TRUE@@am__fastdepCXX_FALSE@	DEPDIR=$(DEPDIR) $(CXXDEPMODE) $(depcomp) @AMDEPBACKSLASH@
-@am__fastdepCXX_FALSE@	$(AM_V_CXX@am__nodep@)$(CXX) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(stride_CPPFLAGS) $(CPPFLAGS) $(AM_CXXFLAGS) $(CXXFLAGS) -c -o stride-Frequency.o `test -f 'Frequency.cpp' || echo '$(srcdir)/'`Frequency.cpp
+@am__fastdepCXX_FALSE@	$(AM_V_CXX@am__nodep@)$(CXX) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(grow_CPPFLAGS) $(CPPFLAGS) $(AM_CXXFLAGS) $(CXXFLAGS) -c -o grow-Frequency.o `test -f 'Frequency.cpp' || echo '$(srcdir)/'`Frequency.cpp
 
-stride-Frequency.obj: Frequency.cpp
-@am__fastdepCXX_TRUE@	$(AM_V_CXX)$(CXX) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(stride_CPPFLAGS) $(CPPFLAGS) $(AM_CXXFLAGS) $(CXXFLAGS) -MT stride-Frequency.obj -MD -MP -MF $(DEPDIR)/stride-Frequency.Tpo -c -o stride-Frequency.obj `if test -f 'Frequency.cpp'; then $(CYGPATH_W) 'Frequency.cpp'; else $(CYGPATH_W) '$(srcdir)/Frequency.cpp'; fi`
-@am__fastdepCXX_TRUE@	$(AM_V_at)$(am__mv) $(DEPDIR)/stride-Frequency.Tpo $(DEPDIR)/stride-Frequency.Po
-@AMDEP_TRUE@@am__fastdepCXX_FALSE@	$(AM_V_CXX)source='Frequency.cpp' object='stride-Frequency.obj' libtool=no @AMDEPBACKSLASH@
+grow-Frequency.obj: Frequency.cpp
+@am__fastdepCXX_TRUE@	$(AM_V_CXX)$(CXX) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(grow_CPPFLAGS) $(CPPFLAGS) $(AM_CXXFLAGS) $(CXXFLAGS) -MT grow-Frequency.obj -MD -MP -MF $(DEPDIR)/grow-Frequency.Tpo -c -o grow-Frequency.obj `if test -f 'Frequency.cpp'; then $(CYGPATH_W) 'Frequency.cpp'; else $(CYGPATH_W) '$(srcdir)/Frequency.cpp'; fi`
+@am__fastdepCXX_TRUE@	$(AM_V_at)$(am__mv) $(DEPDIR)/grow-Frequency.Tpo $(DEPDIR)/grow-Frequency.Po
+@AMDEP_TRUE@@am__fastdepCXX_FALSE@	$(AM_V_CXX)source='Frequency.cpp' object='grow-Frequency.obj' libtool=no @AMDEPBACKSLASH@
 @AMDEP_TRUE@@am__fastdepCXX_FALSE@	DEPDIR=$(DEPDIR) $(CXXDEPMODE) $(depcomp) @AMDEPBACKSLASH@
-@am__fastdepCXX_FALSE@	$(AM_V_CXX@am__nodep@)$(CXX) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(stride_CPPFLAGS) $(CPPFLAGS) $(AM_CXXFLAGS) $(CXXFLAGS) -c -o stride-Frequency.obj `if test -f 'Frequency.cpp'; then $(CYGPATH_W) 'Frequency.cpp'; else $(CYGPATH_W) '$(srcdir)/Frequency.cpp'; fi`
+@am__fastdepCXX_FALSE@	$(AM_V_CXX@am__nodep@)$(CXX) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(grow_CPPFLAGS) $(CPPFLAGS) $(AM_CXXFLAGS) $(CXXFLAGS) -c -o grow-Frequency.obj `if test -f 'Frequency.cpp'; then $(CYGPATH_W) 'Frequency.cpp'; else $(CYGPATH_W) '$(srcdir)/Frequency.cpp'; fi`
 
 ID: $(am__tagged_files)
 	$(am__define_uniq_tagged_files); mkid -fID $$unique
