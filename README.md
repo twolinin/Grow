@@ -15,9 +15,11 @@ An executable program called stride will be found under the StriDe folder.
 
 # Execution
 
-	stride index -t 10 ContigPrefix.fasta
-	stride index -t 10 SeqReadPrefix.fasta
+Example of a Step-by-step script. The Contigs are assembled by raw reads, and the raw read must be third generation sequencing data.
 
-	stride reassembler --first  -t 10 -p SeqReadPrefix -P ContigPrefix ContigPrefix.fasta
-	stride reassembler --second -t 10 -p SeqReadPrefix -P ContigPrefix Reassembler_first_Overlap.fa
-	stride reassembler --third  -t 10 -p SeqReadPrefix -P ContigPrefix Reassembler_second_NonOverlap.fa
+	stride index -t 10 Contig.fasta
+	stride index -t 10 RawRead.fasta
+
+	stride reassembler --first  -t 10 -p RawRead -P Contig Contig.fasta
+	stride reassembler --second -t 10 -p RawRead -P Contig Reassembler_first_Overlap.fa
+	stride reassembler --third  -t 10 -p RawRead -P Contig Reassembler_second_NonOverlap.fa
