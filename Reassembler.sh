@@ -1,5 +1,5 @@
 
-SD=./StriDe/stride
+SD=./StriDe/grow
 
 thread=$1
 TGSPrefix=$2

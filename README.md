@@ -3,9 +3,6 @@ Grow: Genome Reassembly at Low-Coverage Regions for Third-Generation Sequencing
 
 Third-generation sequencing (TGS) is becoming the preferred choice for de novo genome assembly mainly due to much longer reads and fast turnaround time. Unfortunately, existing TGS assemblers often failed to assemble through low-coverage regions because of insufficient sequencing depth or uneven coverage across the entire genome. This is further complicated by the overlapping algorithm underlying each assembler, which often employ dimensional reduction for speedup but sacrifice sensitivity in these regions.
 
-# Executable version
-A precompiled version under Linux 64bit (StriDe_Linux_64bit) can be directly downloaded and executed. 
-
 # Compile by yourself
 To compile StriDe assembler in your specific environment, type 
 
@@ -26,4 +23,7 @@ Example of a Step-by-step script. The Contigs are assembled by raw reads, and th
 	grow reassembler --second -t 10 -p RawRead -P Contig Reassembler_first_Overlap.fa
 	grow reassembler --third  -t 10 -p RawRead -P Contig Reassembler_second_NonOverlap.fa
 
+
+# Related Links
+https://github.com/ythuang0522/StriDe
 
